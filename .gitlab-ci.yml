@@ -1,0 +1,114 @@
+stages:
+  - build_and_test
+  - package
+  - security
+  - upload
+  - image
+
+services:
+  - docker:19.03.12-dind
+
+.cljs-job: &cljs
+  image: domaindrivenarchitecture/shadow-cljs
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - .shadow-cljs/
+      - .m2
+  before_script:
+    - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+    - npm install
+
+.clj-uploadjob: &clj
+  image: domaindrivenarchitecture/lein
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .m2
+  before_script:
+    - mkdir -p /root/.lein
+    - echo "{:auth {:repository-auth {#\"clojars\" {:username \"${CLOJARS_USER}\" :password \"${CLOJARS_TOKEN_DOMAINDRIVENARCHITECTURE}\" }}}}" > ~/.lein/profiles.clj
+
+test-cljs:
+  <<: *cljs
+  stage: build_and_test
+  script:
+    - shadow-cljs compile test
+
+test-clj:
+  <<: *clj
+  stage: build_and_test
+  script:
+    - lein test
+
+test-schema:
+  <<: *clj
+  stage: build_and_test
+  script:
+    - lein uberjar
+    - java -jar target/uberjar/c4k-gitea-standalone.jar valid-config.edn valid-auth.edn | kubeconform --kubernetes-version 1.19.0 --strict --skip Certificate -
+  artifacts:
+    paths:
+      - target/uberjar
+
+report-frontend:
+  <<: *cljs
+  stage: package
+  script:
+    - mkdir -p target/frontend-build
+    - shadow-cljs run shadow.cljs.build-report frontend target/frontend-build/build-report.html
+  artifacts:
+    paths:
+      - target/frontend-build/build-report.html
+
+package-frontend:
+  <<: *cljs
+  stage: package
+  script:
+    - mkdir -p target/frontend-build
+    - shadow-cljs release frontend
+    - cp public/js/main.js target/frontend-build/c4k-gitea.js
+    - sha256sum target/frontend-build/c4k-gitea.js > target/frontend-build/c4k-gitea.js.sha256
+    - sha512sum target/frontend-build/c4k-gitea.js > target/frontend-build/c4k-gitea.js.sha512
+  artifacts:
+    paths:
+      - target/frontend-build
+
+package-uberjar:
+  <<: *clj
+  stage: package
+  script:
+    - sha256sum target/uberjar/c4k-gitea-standalone.jar > target/uberjar/c4k-gitea-standalone.jar.sha256
+    - sha512sum target/uberjar/c4k-gitea-standalone.jar > target/uberjar/c4k-gitea-standalone.jar.sha512
+  artifacts:
+    paths:
+      - target/uberjar
+
+upload-clj-release:
+  <<: *clj
+  stage: upload
+  rules:
+    - if: '$CI_COMMIT_TAG != null'
+  script:
+    - lein deploy
+
+release:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  stage: upload
+  rules:
+    - if: '$CI_COMMIT_TAG != null'
+  artifacts:
+    paths:
+      - target/uberjar
+      - target/frontend-build
+  script:
+    - apk --no-cache add curl
+    - |
+      release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
+        --assets-link "{\"name\":\"c4k-gitea-standalone.jar\",\"url\":\"https://gitlab.com/domaindrivenarchitecture/c4k-gitea/-/jobs/${CI_JOB_ID}/artifacts/file/target/uberjar/c4k-gitea-standalone.jar\"}" \
+        --assets-link "{\"name\":\"c4k-gitea-standalone.jar.sha256\",\"url\":\"https://gitlab.com/domaindrivenarchitecture/c4k-gitea/-/jobs/${CI_JOB_ID}/artifacts/file/target/uberjar/c4k-gitea-standalone.jar.sha256\"}" \
+        --assets-link "{\"name\":\"c4k-gitea-standalone.jar.sha512\",\"url\":\"https://gitlab.com/domaindrivenarchitecture/c4k-gitea/-/jobs/${CI_JOB_ID}/artifacts/file/target/uberjar/c4k-gitea-standalone.jar.sha512\"}" \
+        --assets-link "{\"name\":\"c4k-gitea.js\",\"url\":\"https://gitlab.com/domaindrivenarchitecture/c4k-gitea/-/jobs/${CI_JOB_ID}/artifacts/file/target/frontend-build/c4k-gitea.js\"}" \
+        --assets-link "{\"name\":\"c4k-gitea.js.sha256\",\"url\":\"https://gitlab.com/domaindrivenarchitecture/c4k-gitea/-/jobs/${CI_JOB_ID}/artifacts/file/target/frontend-build/c4k-gitea.js.sha256\"}" \
+        --assets-link "{\"name\":\"c4k-gitea.js.sha512\",\"url\":\"https://gitlab.com/domaindrivenarchitecture/c4k-gitea/-/jobs/${CI_JOB_ID}/artifacts/file/target/frontend-build/c4k-gitea.js.sha512\"}" \

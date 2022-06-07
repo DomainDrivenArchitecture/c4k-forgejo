@@ -1,0 +1,33 @@
+{
+    "name": "c4k-gitea",
+    "description": "Generate c4k yaml for a gitea deployment.",
+    "author": "meissa GmbH",
+    "version": "0.0.1-SNAPSHOT",
+    "homepage": "https://gitlab.com/domaindrivenarchitecture/c4k-gitea#readme",
+    "repository": "https://www.npmjs.com/package/c4k-gitea",
+    "license": "APACHE2",
+    "main": "c4k-gitea.js",
+    "bin": {
+        "c4k-gitea": "./c4k-gitea.js"
+    },
+    "keywords": [
+        "cljs",
+        "gitea",
+        "k8s",
+        "c4k",
+        "deployment",
+        "yaml",
+        "convention4kubernetes"
+    ],
+    "bugs": {
+        "url": "https://gitlab.com/domaindrivenarchitecture/c4k-gitea/issues"
+    },
+    "dependencies": {
+        "js-base64": "^3.6.1",
+        "js-yaml": "^4.0.0"
+    },
+    "devDependencies": {
+        "shadow-cljs": "^2.11.18",
+        "source-map-support": "^0.5.19"
+    }
+}

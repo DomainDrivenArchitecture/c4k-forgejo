@@ -1,0 +1,61 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: gitea-root-pv
+  namespace: default
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /var/gitea/root
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitea-root-pvc
+  namespace: default
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  volumeName: gitea-root-pv
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: gitea-data-pv
+  namespace: default
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /var/gitea/data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitea-data-pvc
+  namespace: default
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  volumeName: gitea-data-pv
+  resources:
+    requests:
+      storage: 5Gi

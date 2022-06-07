@@ -1,0 +1,16 @@
+{:source-paths ["src/main/cljc"
+                "src/main/cljs"
+                "src/main/resources"
+                "src/test/cljc"
+                "src/test/cljs"
+                "src/test/resources"]
+ :dependencies [[org.domaindrivenarchitecture/c4k-common-cljs "2.0.3"]
+                [hickory "0.7.1"]]
+ :builds {:frontend {:target :browser
+                     :modules {:main {:init-fn dda.c4k-gitea.browser/init}}
+                     :release {}
+                     :compiler-options {:optimizations :advanced}}
+          :test {:target :node-test
+                 :output-to "target/node-tests.js"
+                 :autorun   true
+                 :repl-pprint  true}}}
