@@ -1,3 +1,2 @@
-{:django-secret-key "django"
- :postgres-db-user "shynet"
- :postgres-db-password "shynet-db-password"}
+{:postgres-db-user "gitea"
+ :postgres-db-password "gitea-db-password"}
