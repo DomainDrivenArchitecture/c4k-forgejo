@@ -26,7 +26,7 @@
                 {:name "GITEA__service__ENABLE_CAPTCHA", :value "true"}
                 {:name "GITEA__database__DB_TYPE", :value "postgres"}
                 {:name "GITEA__database__HOST",
-                 :value "postgresql-service.postgres.svc.cluster.local:5432"}
+                 :value "postgresql-service.default.svc.cluster.local:5432"}
                 {:name "GITEA__database__NAME", :value "postgres"}
                 {:name "GITEA__database__USER", :value "pg-user"}
                 {:name "GITEA__database__PASSWD", :value "pg-pw"}],
@@ -69,5 +69,3 @@
                 :backend
                 {:service {:name "gitea-service", :port {:number 3000}}}}]}}]}}
          (cut/generate-ingress {:fqdn "test.com" :issuer :staging}))))
-
-
