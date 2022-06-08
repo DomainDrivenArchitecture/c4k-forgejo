@@ -5,7 +5,7 @@ metadata:
   namespace: default
 data:
   app.ini: |
-    APP_NAME = Gitea AZ2
+    APP_NAME = Gitea meissa
     RUN_MODE = prod
     RUN_USER = git
 
@@ -29,7 +29,7 @@ data:
     SSH_LISTEN_PORT  = 22
     LFS_START_SERVER = true
     LFS_CONTENT_PATH = /data/git/lfs
-    LFS_JWT_SECRET   = 6x-yxhPA88_9SagCcu1b7E5SSZmeQOX_K32IUDdjknU
+    ;LFS_JWT_SECRET   = 
     OFFLINE_MODE     = false
 
     [database]
@@ -70,8 +70,8 @@ data:
 
     [security]
     INSTALL_LOCK   = true
-    SECRET_KEY     = UrTkoOE4Rw2BnMhqRSO7VqyCEYpmnI5YVDAnj0D0VSxEm1jiRSrUkJePj6al5j5D
-    INTERNAL_TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE2NTM0MTEyMjB9.kUwwf2sNwOr0fJwUvXr57Krhj2OudhTmDEQCCchbnUo
+    ;SECRET_KEY     = 
+    ;INTERNAL_TOKEN = 
 
     [service]
     DISABLE_REGISTRATION              = true
@@ -86,7 +86,7 @@ data:
     NO_REPLY_ADDRESS                  = noreply.localhost
 
     [oauth2]
-    JWT_SECRET = ZZWsXFEj1QpRO9LGGE8Z8XF46G_0LxlbQFUkacXvQjo
+    ;JWT_SECRET = 
 
     [mailer]
     ENABLED = false

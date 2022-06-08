@@ -13,7 +13,7 @@
 #?(:cljs
    (defmethod yaml/load-resource :gitea [resource-name]
      (case resource-name
-       "gitea/secret.yaml" (rc/inline "gitea/secret.yaml")
+       ; todo "gitea/secret.yaml" (rc/inline "gitea/secret.yaml")
        "gitea/certificate.yaml" (rc/inline "gitea/certificate.yaml")
        "gitea/deployments.yaml" (rc/inline "gitea/deployments.yaml")
        "gitea/ingress.yaml" (rc/inline "gitea/ingress.yaml")  
@@ -26,9 +26,6 @@
    (defmethod yaml/load-as-edn :gitea [resource-name]
      (yaml/from-string (yaml/load-resource resource-name))))
  
-(defn generate-appini-configmap []
-  (yaml/load-as-edn "gitea/appini-configmap.yaml"))
-
 (defn generate-deployment [config]
   (let [{:keys [postgres-db-user postgres-db-password]} config]
     (->
@@ -44,6 +41,3 @@
      (yaml/load-as-edn "gitea/ingress.yaml")
      (assoc-in [:metadata :annotations :cert-manager.io/cluster-issuer] letsencrypt-issuer)
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
-
-(defn generate-volumes []
-  (yaml/load-as-edn "gitea/volumes.yaml"))
