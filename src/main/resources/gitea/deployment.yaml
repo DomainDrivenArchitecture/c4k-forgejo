@@ -31,13 +31,13 @@ spec:
             - name: GITEA__database__DB_TYPE
               value: "postgres"
             - name: GITEA__database__HOST
-              value: "postgresql-service.postgres.svc.cluster.local:5432"  # Service.Namespace.svc.cluster.local
+              value: "postgresql-service.default.svc.cluster.local:5432"  # Service.Namespace.svc.cluster.local
             - name: GITEA__database__NAME
               value: postgres
             - name: GITEA__database__USER
               value: gitea
             - name: GITEA__database__PASSWD
-              value: gitea
+              value: gitea-db-user
           volumeMounts:
             - name: app-ini-config-volume
               mountPath: "/tmp/app.ini"

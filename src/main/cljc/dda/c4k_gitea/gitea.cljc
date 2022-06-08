@@ -14,12 +14,11 @@
    (defmethod yaml/load-resource :gitea [resource-name]
      (case resource-name
        ; todo "gitea/secret.yaml" (rc/inline "gitea/secret.yaml")
-       "gitea/certificate.yaml" (rc/inline "gitea/certificate.yaml")
-       "gitea/deployments.yaml" (rc/inline "gitea/deployments.yaml")
+       ; "gitea/certificate.yaml" (rc/inline "gitea/certificate.yaml")
+       "gitea/deployment.yaml" (rc/inline "gitea/deployment.yaml")
        "gitea/ingress.yaml" (rc/inline "gitea/ingress.yaml")  
-       "gitea/service-redis.yaml" (rc/inline "gitea/service-redis.yaml")
-       "gitea/service-webserver.yaml" (rc/inline "gitea/service-webserver.yaml")
-       "gitea/statefulset.yaml" (rc/inline "gitea/statefulset.yaml")
+       "gitea/services.yaml" (rc/inline "gitea/services.yaml")
+       "gitea/volumes.yaml" (rc/inline "gitea/volumes.yaml")
        (throw (js/Error. "Undefined Resource!")))))
 
 #?(:cljs
