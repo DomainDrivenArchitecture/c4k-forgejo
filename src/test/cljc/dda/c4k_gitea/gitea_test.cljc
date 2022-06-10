@@ -46,7 +46,7 @@
                :persistentVolumeClaim {:claimName "gitea-root-pvc"}}
               {:name "gitea-data-volume",
                :persistentVolumeClaim {:claimName "gitea-data-pvc"}}]}}}}
-         (cut/generate-deployment {:fqdn "test.com" :issuer :staging :postgres-db-user "pg-user" :postgres-db-password "pg-pw"}))))
+         (cut/generate-deployment {:fqdn "test.com" :issuer "staging" :postgres-db-user "pg-user" :postgres-db-password "pg-pw"}))))
 
 
 (deftest should-generate-ingress
@@ -68,4 +68,4 @@
                 :path "/",
                 :backend
                 {:service {:name "gitea-service", :port {:number 3000}}}}]}}]}}
-         (cut/generate-ingress {:fqdn "test.com" :issuer :staging}))))
+         (cut/generate-ingress {:fqdn "test.com" :issuer "staging"}))))

@@ -34,7 +34,7 @@
 
 (defn generate-ingress [config]
   (let [{:keys [fqdn issuer]
-         :or {issuer :staging}} config
+         :or {issuer "staging"}} config
         letsencrypt-issuer (name issuer)]
     (->
      (yaml/load-as-edn "gitea/ingress.yaml")
