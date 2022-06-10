@@ -69,5 +69,5 @@ with the following config.edn:
 ```
 {:fqdn "the-fqdn-from aws_route53_record.v4_neu"
  :postgres-data-volume-path "/var/postgres"         ;; Volume was configured at dda-k8s-crate, results in a PersistentVolume definition.
- :issuer :prod }
+ :issuer "prod" }
 ```

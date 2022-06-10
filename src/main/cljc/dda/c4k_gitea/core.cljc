@@ -6,7 +6,7 @@
   [dda.c4k-common.postgres :as postgres]
   [dda.c4k-gitea.gitea :as gitea]))
 
-(def config-defaults {:issuer :staging})
+(def config-defaults {:issuer "staging"})
 
 (def config? (s/keys :req-un [::gitea/fqdn]
                      :opt-un [::gitea/issuer]))
