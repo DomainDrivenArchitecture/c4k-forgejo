@@ -6,11 +6,12 @@ metadata:
 data:
   app.ini: |
     APP_NAME = Gitea meissa
-    RUN_MODE = prod
+    RUN_MODE = prod      # affects performance and debugging. Either “dev”, “prod” or “test”. Default: prod
     RUN_USER = git
 
     [repository]
     ROOT = /data/git/repositories
+    DEFAULT_PRIVATE = private
 
     [repository.local]
     LOCAL_COPY_PATH = /data/gitea/tmp/local-repo
@@ -27,7 +28,7 @@ data:
     DISABLE_SSH      = false
     SSH_PORT         = 22
     SSH_LISTEN_PORT  = 22
-    LFS_START_SERVER = true
+    LFS_START_SERVER = false
     LFS_CONTENT_PATH = /data/git/lfs
     ;LFS_JWT_SECRET   = 
     OFFLINE_MODE     = false

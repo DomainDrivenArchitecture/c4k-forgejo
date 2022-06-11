@@ -21,23 +21,9 @@ spec:
           image: gitea/gitea:1.16.8
           imagePullPolicy: Always
           # config settings
-          env:
-            - name: GITEA__service__DISABLE_REGISTRATION
-              value: "true"
-            - name: GITEA__repository__DEFAULT_PRIVATE
-              value: private
-            - name: GITEA__service__ENABLE_CAPTCHA
-              value: "true"
-            - name: GITEA__database__DB_TYPE
-              value: "postgres"
-            - name: GITEA__database__HOST
-              value: "postgresql-service.default.svc.cluster.local:5432"  # Service.Namespace.svc.cluster.local
-            - name: GITEA__database__NAME
-              value: postgres
-            - name: GITEA__database__USER
-              value: gitea
-            - name: GITEA__database__PASSWD
-              value: gitea-db-user
+          envFrom:
+            - configMapRef:
+                name: gitea-env
           volumeMounts:
             - name: app-ini-config-volume
               mountPath: "/tmp/app.ini"

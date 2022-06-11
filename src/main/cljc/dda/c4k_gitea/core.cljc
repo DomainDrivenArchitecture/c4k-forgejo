@@ -17,8 +17,10 @@
   (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
     (cm/concat-vec
      [(yaml/load-resource "gitea/volumes.yaml")
-      (yaml/load-resource "gitea/services.yaml")
-      (yaml/load-resource "gitea/appini-configmap.yaml")]
+      (yaml/load-resource "gitea/appini-configmap.yaml")
+      (yaml/load-resource "gitea/deployment.yaml")
+      (yaml/load-resource "gitea/services.yaml")]
+      
      (map yaml/to-string
           [(postgres/generate-config {:postgres-size :2gb :db-name "gitea"})
            (postgres/generate-secret config)
@@ -29,5 +31,5 @@
            (postgres/generate-deployment {:postgres-image "postgres:14"
                                           :postgres-size :2gb})
            (postgres/generate-service)
-           (gitea/generate-deployment config)
+           (gitea/generate-appini-env config)
            (gitea/generate-ingress config)]))))

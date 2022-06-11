@@ -5,48 +5,20 @@
    [dda.c4k-gitea.gitea :as cut]))
 
 
-(deftest should-generate-webserver-deployment
-  (is (= {:apiVersion "apps/v1",
-          :kind "Deployment",
-          :metadata
-          {:name "gitea", :namespace "default", :labels {:app "gitea"}},
-          :spec
-          {:replicas 1,
-           :selector {:matchLabels {:app "gitea"}},
-           :template
-           {:metadata {:name "gitea", :labels {:app "gitea"}},
-            :spec
-            {:containers
-             [{:name "gitea",
-               :image "gitea/gitea:1.16.8",
-               :imagePullPolicy "Always",
-               :env
-               [{:name "GITEA__service__DISABLE_REGISTRATION", :value "true"}
-                {:name "GITEA__repository__DEFAULT_PRIVATE", :value "private"}
-                {:name "GITEA__service__ENABLE_CAPTCHA", :value "true"}
-                {:name "GITEA__database__DB_TYPE", :value "postgres"}
-                {:name "GITEA__database__HOST",
-                 :value "postgresql-service.default.svc.cluster.local:5432"}
-                {:name "GITEA__database__NAME", :value "postgres"}
-                {:name "GITEA__database__USER", :value "pg-user"}
-                {:name "GITEA__database__PASSWD", :value "pg-pw"}],
-               :volumeMounts
-               [{:name "app-ini-config-volume",
-                 :mountPath "/tmp/app.ini",
-                 :subPath "app.ini"}
-                {:name "gitea-root-volume", :mountPath "/var/lib/gitea"}
-                {:name "gitea-data-volume", :mountPath "/data"}],
-               :ports
-               [{:containerPort 22, :name "git-ssh"}
-                {:containerPort 3000, :name "gitea"}]}],
-             :volumes
-             [{:name "app-ini-config-volume",
-               :configMap {:name "gitea-app-ini-config"}}
-              {:name "gitea-root-volume",
-               :persistentVolumeClaim {:claimName "gitea-root-pvc"}}
-              {:name "gitea-data-volume",
-               :persistentVolumeClaim {:claimName "gitea-data-pvc"}}]}}}}
-         (cut/generate-deployment {:fqdn "test.com" :issuer "staging" :postgres-db-user "pg-user" :postgres-db-password "pg-pw"}))))
+(deftest should-generate-appini-env
+  (is (= {:apiVersion "v1",
+          :kind "ConfigMap",
+          :metadata {:name "gitea-env", :namespace "default"},
+          :data
+          {:GITEA__database__DB_TYPE "postgres",
+           :GITEA__database__HOST
+           "postgresql-service.default.svc.cluster.local:5432",
+           :GITEA__database__NAME "gitea",
+           :GITEA__database__USER "pg-user",
+           :GITEA__database__PASSWD "pg-pw",
+           :GITEA__server__DOMAIN "test.com",
+           :GITEA__server__ROOT_URL "https://test.com"}}
+         (cut/generate-appini-env {:fqdn "test.com" :issuer "staging" :postgres-db-user "pg-user" :postgres-db-password "pg-pw"}))))
 
 
 (deftest should-generate-ingress

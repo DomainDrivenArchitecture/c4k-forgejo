@@ -25,12 +25,14 @@
    (defmethod yaml/load-as-edn :gitea [resource-name]
      (yaml/from-string (yaml/load-resource resource-name))))
  
-(defn generate-deployment [config]
-  (let [{:keys [postgres-db-user postgres-db-password]} config]
+(defn generate-appini-env [config]
+  (let [{:keys [postgres-db-user postgres-db-password fqdn]} config]
     (->
-     (yaml/load-as-edn "gitea/deployment.yaml")
-     (cm/replace-named-value "GITEA__database__USER" postgres-db-user)
-     (cm/replace-named-value "GITEA__database__PASSWD" postgres-db-password))))
+     (yaml/load-as-edn "gitea/appini-env-configmap.yaml")
+     (cm/replace-all-matching-values-by-new-value "FQDN" fqdn)
+     (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
+     (cm/replace-all-matching-values-by-new-value "DBUSER" postgres-db-user)
+     (cm/replace-all-matching-values-by-new-value "DBPW" postgres-db-password))))
 
 (defn generate-ingress [config]
   (let [{:keys [fqdn issuer]
@@ -40,3 +42,4 @@
      (yaml/load-as-edn "gitea/ingress.yaml")
      (assoc-in [:metadata :annotations :cert-manager.io/cluster-issuer] letsencrypt-issuer)
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
+  
