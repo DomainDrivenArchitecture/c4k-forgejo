@@ -13,12 +13,14 @@
    (defmethod yaml/load-resource :gitea [resource-name]
      (case resource-name
        "gitea/appini-configmap.yaml" (rc/inline "gitea/appini-configmap.yaml")
-       "gitea/apini-env-configmap.yaml" (rc/inline "gitea/apini-env-configmap.yaml")
+       "gitea/appini-env-configmap.yaml" (rc/inline "gitea/appini-env-configmap.yaml")
        "gitea/deployment.yaml" (rc/inline "gitea/deployment.yaml")
        "gitea/ingress.yaml" (rc/inline "gitea/ingress.yaml")  
        "gitea/services.yaml" (rc/inline "gitea/services.yaml")
        "gitea/volumes.yaml" (rc/inline "gitea/volumes.yaml")
-       (throw (js/Error. "Undefined Resource!"))))
+       (throw (js/Error. "Undefined Resource!")))))
+
+#?(:cljs
    (defmethod yaml/load-as-edn :gitea [resource-name]
      (yaml/from-string (yaml/load-resource resource-name))))
  

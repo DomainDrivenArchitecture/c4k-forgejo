@@ -41,8 +41,7 @@
        (br/generate-text-area
         "auth" "Your auth.edn:"
         "{:postgres-db-user \"gitea\"
-:postgres-db-password \"gitea-db-password\"
-:django-secret-key \"djangosecretkey\"}"
+:postgres-db-password \"gitea-db-password\"}"
         "5"))
       [(br/generate-br)]
       (br/generate-button "generate-button" "Generate c4k yaml")))]
@@ -72,7 +71,7 @@
   (br/validate! "issuer" ::gitea/issuer :optional true :deserializer keyword)
   (br/validate! "postgres-data-volume-path" ::pgc/postgres-data-volume-path :optional true)
   (br/validate! "auth" core/auth? :deserializer edn/read-string)
-  (br/set-validated!))
+  (br/set-form-validated!))
 
 (defn add-validate-listener [name]
   (-> (br/get-element-by-id name)
