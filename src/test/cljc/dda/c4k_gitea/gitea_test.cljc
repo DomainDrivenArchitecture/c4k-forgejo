@@ -2,8 +2,12 @@
   (:require
    #?(:clj [clojure.test :refer [deftest is are testing run-tests]]
       :cljs [cljs.test :refer-macros [deftest is are testing run-tests]])
+   [clojure.spec.test.alpha :as st]
    [dda.c4k-common.common-test :as ct]
    [dda.c4k-gitea.gitea :as cut]))
+
+(st/instrument `cut/generate-appini-env)
+(st/instrument `cut/generate-ingress)
 
 (deftest should-generate-appini-env
   (is (= {:GITEA__database__USER-c1 nil,
@@ -18,5 +22,5 @@
                       (cut/generate-appini-env {:fqdn "test.com" :issuer "staging" :postgres-db-user "pg-user" :postgres-db-password "pg-pw"})))))
 
 (deftest should-generate-ingress
-  (is (= {:hosts-c1 nil, :hosts-c2 "test.com", :host-c1 nil, :host-c2 "test.com"}
-         (ct/map-diff (cut/generate-ingress {}) (cut/generate-ingress {:fqdn "test.com" :issuer "staging"})))))
+  (is (= {:hosts-c1 "abc.de", :hosts-c2 "test.com", :host-c1 "abc.de", :host-c2 "test.com"}
+         (ct/map-diff (cut/generate-ingress {:fqdn "abc.de"}) (cut/generate-ingress {:fqdn "test.com" :issuer "staging"})))))
