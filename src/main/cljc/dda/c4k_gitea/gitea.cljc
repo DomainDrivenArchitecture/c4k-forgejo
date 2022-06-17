@@ -18,9 +18,7 @@
        "gitea/ingress.yaml" (rc/inline "gitea/ingress.yaml")  
        "gitea/services.yaml" (rc/inline "gitea/services.yaml")
        "gitea/volumes.yaml" (rc/inline "gitea/volumes.yaml")
-       (throw (js/Error. "Undefined Resource!")))))
-
-#?(:cljs
+       (throw (js/Error. "Undefined Resource!"))))
    (defmethod yaml/load-as-edn :gitea [resource-name]
      (yaml/from-string (yaml/load-resource resource-name))))
  
