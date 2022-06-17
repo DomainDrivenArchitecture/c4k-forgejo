@@ -2,7 +2,8 @@
  (:require
   [dda.c4k-common.yaml :as yaml]
   [dda.c4k-common.common :as cm]
-  [dda.c4k-gitea.gitea :as gitea]))
+  [dda.c4k-gitea.gitea :as gitea]
+  [dda.c4k-common.postgres :as postgres]))
 
 (defn k8s-objects [config]
   (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
