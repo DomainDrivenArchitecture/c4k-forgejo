@@ -11,8 +11,6 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  hostPath:
-    path: /var/gitea/root
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -27,5 +25,3 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  hostPath:
-    path: /var/gitea/data
