@@ -10,7 +10,7 @@ spec:
   tls:
     - hosts:
         - FQDN
-      secretName: gitea-ingress-cert
+      secretName: gitea-cert
   rules:
     - host: FQDN
       http:
