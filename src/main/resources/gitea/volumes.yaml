@@ -3,11 +3,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: gitea-root-pvc
   namespace: default
+  labels:
+    app: gitea
 spec:
   storageClassName: local-path
   accessModes:
     - ReadWriteOnce
-  volumeName: gitea-root-pv
   resources:
     requests:
       storage: 5Gi
@@ -17,11 +18,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: gitea-data-pvc
   namespace: default
+  labels:
+    app: gitea
 spec:
   storageClassName: local-path
   accessModes:
     - ReadWriteOnce
-  volumeName: gitea-data-pv
   resources:
     requests:
       storage: 5Gi
