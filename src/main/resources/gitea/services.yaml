@@ -9,7 +9,6 @@ spec:
   ports:
     - name: gitea-http
       port: 3000
-
 ---
 kind: Service
 apiVersion: v1
@@ -17,10 +16,9 @@ metadata:
   name: gitea-ssh-service
   namespace: default
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: gitea
   ports:
-    - port: 2225
+    - port: 22
       targetPort: 22
-      nodePort: 30005
