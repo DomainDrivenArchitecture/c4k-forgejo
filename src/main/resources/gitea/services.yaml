@@ -20,5 +20,7 @@ spec:
   selector:
     app: gitea
   ports:
-    - port: 22
+    - port: 2225
       targetPort: 22
+      nodePort: 30005
+
