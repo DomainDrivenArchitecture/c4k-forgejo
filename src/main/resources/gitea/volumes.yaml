@@ -4,7 +4,7 @@ metadata:
   name: gitea-root-pvc
   namespace: default
 spec:
-  storageClassName: manual
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   volumeName: gitea-root-pv
@@ -18,7 +18,7 @@ metadata:
   name: gitea-data-pvc
   namespace: default
 spec:
-  storageClassName: manual
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   volumeName: gitea-data-pv
