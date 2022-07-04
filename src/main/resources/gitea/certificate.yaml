@@ -4,7 +4,7 @@ metadata:
   name: gitea-cert
   namespace: default
 spec:
-  secretName: gitea-secret
+  secretName: gitea-cert
   commonName: FQDN
   duration: 2160h # 90d
   renewBefore: 360h # 15d

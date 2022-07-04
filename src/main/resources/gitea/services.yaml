@@ -22,5 +22,4 @@ spec:
   ports:
     - port: 2225
       targetPort: 22
-      nodePort: 30005
 
