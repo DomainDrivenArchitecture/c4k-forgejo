@@ -18,7 +18,7 @@
            (postgres/generate-secret config)
            (when (contains? config :postgres-data-volume-path)
              (postgres/generate-persistent-volume (select-keys config [:postgres-data-volume-path :pv-storage-size-gb])))
-           (postgres/generate-pvc {:pv-storage-size-gb 10
+           (postgres/generate-pvc {:pv-storage-size-gb 5
                                    :pvc-storage-class-name storage-class})
            (postgres/generate-deployment {:postgres-image "postgres:14"
                                           :postgres-size :2gb})
