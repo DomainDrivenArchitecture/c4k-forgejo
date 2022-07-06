@@ -5,6 +5,7 @@ metadata:
   namespace: default
   annotations:
     ingress.kubernetes.io/ssl-redirect: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd    
 spec:
   tls:
     - hosts:

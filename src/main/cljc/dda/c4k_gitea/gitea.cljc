@@ -28,6 +28,7 @@
        "gitea/certificate.yaml" (rc/inline "gitea/certificate.yaml")
        "gitea/ingress.yaml" (rc/inline "gitea/ingress.yaml")  
        "gitea/services.yaml" (rc/inline "gitea/services.yaml")
+       "gitea/traefik-middleware.yaml" (rc/inline "gitea/traefik-middleware.yaml")
        "gitea/volumes.yaml" (rc/inline "gitea/volumes.yaml")       
        (throw (js/Error. "Undefined Resource!")))))
 
