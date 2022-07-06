@@ -4,8 +4,7 @@ metadata:
   name: ingress-gitea
   namespace: default
   annotations:
-    kubernetes.io/ingress.class: "traefik"
-    cert-manager.io/cluster-issuer: ISSUER
+    ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   tls:
     - hosts:

@@ -19,8 +19,12 @@
           :GITEA__server__ROOT_URL-c1 "https://",
           :GITEA__server__ROOT_URL-c2 "https://test.com"}
          (ct/map-diff (cut/generate-appini-env {})
-                      (cut/generate-appini-env {:fqdn "test.com" :issuer "staging" :postgres-db-user "pg-user" :postgres-db-password "pg-pw"})))))
+                      (cut/generate-appini-env {:fqdn "test.com" 
+                                                :issuer "staging" 
+                                                :postgres-db-user "pg-user" 
+                                                :postgres-db-password "pg-pw"})))))
 
-(deftest should-generate-ingress
-  (is (= {:hosts-c1 "abc.de", :hosts-c2 "test.com", :host-c1 "abc.de", :host-c2 "test.com"}
-         (ct/map-diff (cut/generate-ingress {:fqdn "abc.de"}) (cut/generate-ingress {:fqdn "test.com" :issuer "staging"})))))
+(deftest should-generate-certificate
+  (is (= {:name-c2 "prod", :name-c1 "staging"}
+         (ct/map-diff (cut/generate-certificate {}) 
+                      (cut/generate-certificate {:issuer "prod"})))))

@@ -25,10 +25,10 @@
        "gitea/appini-configmap.yaml" (rc/inline "gitea/appini-configmap.yaml")
        "gitea/appini-env-configmap.yaml" (rc/inline "gitea/appini-env-configmap.yaml")
        "gitea/deployment.yaml" (rc/inline "gitea/deployment.yaml")
+       "gitea/certificate.yaml" (rc/inline "gitea/certificate.yaml")
        "gitea/ingress.yaml" (rc/inline "gitea/ingress.yaml")  
        "gitea/services.yaml" (rc/inline "gitea/services.yaml")
-       "gitea/volumes.yaml" (rc/inline "gitea/volumes.yaml")
-       "gitea/certificate.yaml" (rc/inline "gitea/certificate.yaml")
+       "gitea/volumes.yaml" (rc/inline "gitea/volumes.yaml")       
        (throw (js/Error. "Undefined Resource!")))))
 
 #?(:cljs
@@ -48,12 +48,9 @@
 
 (defn-spec generate-ingress pred/map-or-seq? 
   [config config?]
-  (let [{:keys [fqdn issuer]
-         :or {issuer "staging"}} config
-        letsencrypt-issuer (name issuer)]
+  (let [{:keys [fqdn issuer]} config]
     (->
      (yaml/load-as-edn "gitea/ingress.yaml")
-     (assoc-in [:metadata :annotations :cert-manager.io/cluster-issuer] letsencrypt-issuer)
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
   
 (defn-spec generate-certificate pred/map-or-seq?
