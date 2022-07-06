@@ -79,6 +79,7 @@ data:
     REQUIRE_SIGNIN_VIEW               = false
     REGISTER_EMAIL_CONFIRM            = false
     ENABLE_NOTIFY_MAIL                = false
+    EMAIL_DOMAIN_WHITELIST            = meissa-gmbh.de, meissa.de
     ALLOW_ONLY_EXTERNAL_REGISTRATION  = false
     ENABLE_CAPTCHA                    = false
     DEFAULT_KEEP_EMAIL_PRIVATE        = true
@@ -95,3 +96,6 @@ data:
     [openid]
     ENABLE_OPENID_SIGNIN = true
     ENABLE_OPENID_SIGNUP = true
+
+    [federation]
+    ENABLED = true
