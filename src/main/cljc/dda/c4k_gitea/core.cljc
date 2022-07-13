@@ -11,6 +11,7 @@
      [(yaml/load-resource "gitea/volumes.yaml")
       (yaml/load-resource "gitea/appini-configmap.yaml")
       (yaml/load-resource "gitea/deployment.yaml")
+      (yaml/load-resource "gitea/secrets.yaml")
       (yaml/load-resource "gitea/services.yaml")
       (yaml/load-resource "gitea/traefik-middleware.yaml")]
       
