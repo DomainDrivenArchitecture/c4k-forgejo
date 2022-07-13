@@ -24,6 +24,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: gitea-env
+            - secretRef:
+                name: gitea-secrets
           volumeMounts:
             - name: app-ini-config-volume
               mountPath: "/tmp/app.ini"
@@ -32,6 +34,8 @@ spec:
               mountPath: "/var/lib/gitea"
             - name: gitea-data-volume
               mountPath: "/data"
+            - name: gitea-secret-volume
+              mountPath: "/run/secrets"
           ports:
             - containerPort: 22
               name: git-ssh
@@ -47,3 +51,7 @@ spec:
         - name: gitea-data-volume
           persistentVolumeClaim:
             claimName: gitea-data-pvc
+        - name: gitea-secret-volume
+          secret: 
+            secretName: gitea-secrets
+          

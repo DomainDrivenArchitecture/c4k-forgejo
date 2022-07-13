@@ -55,7 +55,7 @@ data:
     [picture]
     AVATAR_UPLOAD_PATH            = /data/gitea/avatars
     REPOSITORY_AVATAR_UPLOAD_PATH = /data/gitea/repo-avatars
-    DISABLE_GRAVATAR              = false
+    DISABLE_GRAVATAR              = true # do we want our gitea talking to gravatar?
     ENABLE_FEDERATED_AVATAR       = true
 
     [attachment]
@@ -91,7 +91,13 @@ data:
     ;JWT_SECRET = 
 
     [mailer]
-    ENABLED = false
+    ENABLED        = false
+    FROM           = gitea@meissa-gmbh.de
+    MAILER_TYPE    = smtp
+    HOST           = mail.routing.net:587
+    IS_TLS_ENABLED = true
+    USER           = 
+    PASSWD         = 
 
     [openid]
     ENABLE_OPENID_SIGNIN = true

@@ -6,6 +6,7 @@
      :cljs [orchestra.core :refer-macros [defn-spec]])
   [dda.c4k-common.yaml :as yaml]
   [dda.c4k-common.common :as cm]
+  [dda.c4k-common.base64 :as b64]
   [dda.c4k-common.predicate :as pred]
   [dda.c4k-common.postgres :as postgres]))
 
@@ -27,6 +28,7 @@
        "gitea/deployment.yaml" (rc/inline "gitea/deployment.yaml")
        "gitea/certificate.yaml" (rc/inline "gitea/certificate.yaml")
        "gitea/ingress.yaml" (rc/inline "gitea/ingress.yaml")  
+       "gitea/secrets.yaml" (rc/inline "gitea/secrets.yaml")
        "gitea/services.yaml" (rc/inline "gitea/services.yaml")
        "gitea/traefik-middleware.yaml" (rc/inline "gitea/traefik-middleware.yaml")
        "gitea/volumes.yaml" (rc/inline "gitea/volumes.yaml")       
@@ -46,6 +48,15 @@
      (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
      (cm/replace-all-matching-values-by-new-value "DBUSER" postgres-db-user)
      (cm/replace-all-matching-values-by-new-value "DBPW" postgres-db-password))))
+
+(defn-spec generate-secrets pred/map-or-seq? 
+  [config config?]
+  (let [{:keys [mailer-user mailer-pw]} config]
+    (->
+     (yaml/load-as-edn "gitea/secrets.yaml")
+     (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode mailer-user))
+     (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailer-pw))
+     )))
 
 (defn-spec generate-ingress pred/map-or-seq? 
   [config config?]
