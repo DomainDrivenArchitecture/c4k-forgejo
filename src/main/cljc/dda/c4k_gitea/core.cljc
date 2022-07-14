@@ -11,10 +11,9 @@
      [(yaml/load-resource "gitea/volumes.yaml")
       (yaml/load-resource "gitea/appini-configmap.yaml")
       (yaml/load-resource "gitea/deployment.yaml")
-      (yaml/load-resource "gitea/secrets.yaml")
       (yaml/load-resource "gitea/services.yaml")
       (yaml/load-resource "gitea/traefik-middleware.yaml")]
-      
+     
      (map yaml/to-string
           [(postgres/generate-config {:postgres-size :2gb :db-name "gitea"})
            (postgres/generate-secret config)
