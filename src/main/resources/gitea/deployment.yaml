@@ -34,8 +34,6 @@ spec:
               mountPath: "/var/lib/gitea"
             - name: gitea-data-volume
               mountPath: "/data"
-            - name: gitea-secret-volume
-              mountPath: "/run/secrets"
           ports:
             - containerPort: 22
               name: git-ssh
@@ -51,7 +49,4 @@ spec:
         - name: gitea-data-volume
           persistentVolumeClaim:
             claimName: gitea-data-pvc
-        - name: gitea-secret-volume
-          secret: 
-            secretName: gitea-secrets
           
