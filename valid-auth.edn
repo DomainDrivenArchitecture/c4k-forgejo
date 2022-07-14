@@ -1,2 +1,4 @@
 {:postgres-db-user "gitea"
- :postgres-db-password "gitea-db-password"}
+ :postgres-db-password "gitea-db-password"
+ :maileruser ""
+ :mailerpw ""}
