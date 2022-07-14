@@ -90,15 +90,6 @@ data:
     [oauth2]
     ;JWT_SECRET = 
 
-    [mailer]
-    ENABLED        = false
-    FROM           = gitea@meissa-gmbh.de
-    MAILER_TYPE    = smtp
-    HOST           = mail.routing.net:587
-    IS_TLS_ENABLED = true
-    USER           = 
-    PASSWD         = 
-
     [openid]
     ENABLE_OPENID_SIGNIN = true
     ENABLE_OPENID_SIGNUP = true

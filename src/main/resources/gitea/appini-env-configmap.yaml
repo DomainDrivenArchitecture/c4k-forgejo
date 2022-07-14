@@ -12,3 +12,9 @@ data:
 
   GITEA__server__DOMAIN: FQDN
   GITEA__server__ROOT_URL: URL
+
+  GITEA__mailer__ENABLED: "true"
+  GITEA__mailer__FROM: gitea@meissa-gmbh.de
+  GITEA__mailer__MAILER_TYPE: smtp
+  GITEA__mailer__HOST: mail.routing.net:25
+  GITEA__mailer__IS_TLS_ENABLED: "true"
