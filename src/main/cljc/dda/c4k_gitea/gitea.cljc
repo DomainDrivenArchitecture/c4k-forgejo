@@ -12,13 +12,15 @@
 
 (s/def ::fqdn pred/fqdn-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
+(s/def ::maileruser pred/bash-env-string?)
+(s/def ::mailerpw pred/bash-env-string?)
 
 (def config-defaults {:issuer "staging"})
 
 (def config? (s/keys :req-un [::fqdn]
                      :opt-un [::issuer]))
 
-(def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password]))
+(def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::maileruser ::mailerpw]))
 
 #?(:cljs
    (defmethod yaml/load-resource :gitea [resource-name]
@@ -50,12 +52,12 @@
      (cm/replace-all-matching-values-by-new-value "DBPW" postgres-db-password))))
 
 (defn-spec generate-secrets pred/map-or-seq? 
-  [config config?]
-  (let [{:keys [mailer-user mailer-pw]} config]
+  [auth auth?]
+  (let [{:keys [maileruser mailerpw]} auth]
     (->
      (yaml/load-as-edn "gitea/secrets.yaml")
-     (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode mailer-user))
-     (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailer-pw))
+     (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode maileruser))
+     (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailerpw))
      )))
 
 (defn-spec generate-ingress pred/map-or-seq? 

@@ -26,6 +26,6 @@
                                           :postgres-size :2gb})
            (postgres/generate-service)
            (gitea/generate-appini-env config)
-           (gitea/generate-secrets config)
+           (gitea/generate-secrets (:auth config))
            (gitea/generate-ingress config)
            (gitea/generate-certificate config)]))))
