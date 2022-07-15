@@ -58,8 +58,8 @@
   (let [{:keys [postgres-db-user postgres-db-password mailer-user mailer-pw]} auth]
     (->
      (yaml/load-as-edn "gitea/secrets.yaml")
-     (cm/replace-all-matching-values-by-new-value "DBUSER" postgres-db-user)
-     (cm/replace-all-matching-values-by-new-value "DBPW" postgres-db-password)
+     (cm/replace-all-matching-values-by-new-value "DBUSER" (b64/encode postgres-db-user))
+     (cm/replace-all-matching-values-by-new-value "DBPW" (b64/encode postgres-db-password))
      (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode mailer-user))
      (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailer-pw)))))
 
