@@ -43,22 +43,26 @@
 (defn-spec generate-appini-env pred/map-or-seq?
   ; TODO: fix this to require the merged spec of auth and config instead of any
   [config any?]
-  (let [{:keys [postgres-db-user postgres-db-password fqdn]} config]
+  (let [{:keys [fqdn mailer-from mailer-host mailer-port service-whitelist-domains]} config]
     (->
-     (yaml/load-as-edn "gitea/appini-env-configmap.yaml")
+     (yaml/load-as-edn "gitea/appini-env-configmap.yaml")     
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn)
      (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
-     (cm/replace-all-matching-values-by-new-value "DBUSER" postgres-db-user)
-     (cm/replace-all-matching-values-by-new-value "DBPW" postgres-db-password))))
+     (cm/replace-all-matching-values-by-new-value "FROM" mailer-from)
+     (cm/replace-all-matching-values-by-new-value "HOST" mailer-host)
+     (cm/replace-all-matching-values-by-new-value "PORT" mailer-port)
+     (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-whitelist-domains)
+     )))
 
 (defn-spec generate-secrets pred/map-or-seq? 
   [auth auth?]
-  (let [{:keys [maileruser mailerpw]} auth]
+  (let [{:keys [postgres-db-user postgres-db-password mailer-user mailer-pw]} auth]
     (->
      (yaml/load-as-edn "gitea/secrets.yaml")
-     (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode maileruser))
-     (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailerpw))
-     )))
+     (cm/replace-all-matching-values-by-new-value "DBUSER" postgres-db-user)
+     (cm/replace-all-matching-values-by-new-value "DBPW" postgres-db-password)
+     (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode mailer-user))
+     (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailer-pw)))))
 
 (defn-spec generate-ingress pred/map-or-seq? 
   [config config?]

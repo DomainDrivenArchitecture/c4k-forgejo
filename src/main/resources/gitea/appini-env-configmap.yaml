@@ -7,16 +7,24 @@ data:
   GITEA__database__DB_TYPE: "postgres"
   GITEA__database__HOST: "postgresql-service:5432"  # Service.Namespace.svc.cluster.local
   GITEA__database__NAME: gitea
-  GITEA__database__USER: DBUSER
-  GITEA__database__PASSWD: DBPW
-
+  
   GITEA__server__DOMAIN: FQDN
   GITEA__server__ROOT_URL: URL
 
   GITEA__mailer__ENABLED: "true"
-  GITEA__mailer__FROM: gitea@meissa-gmbh.de
+  GITEA__mailer__FROM: FROM
   GITEA__mailer__MAILER_TYPE: smtp
-  GITEA__mailer__HOST: mail.routing.net:465
+  GITEA__mailer__HOST: HOST:PORT
   GITEA__mailer__IS_TLS_ENABLED: "true"
 
-  GITEA__service__DISABLE_REGISTRATION: "true"
+  GITEA__service__DISABLE_REGISTRATION: "true"  
+  GITEA__service__REQUIRE_SIGNIN_VIEW: "false"
+  GITEA__service__REGISTER_EMAIL_CONFIRM: "false"
+  GITEA__service__ENABLE_NOTIFY_MAIL: "false"
+  GITEA__service__EMAIL_DOMAIN_WHITELIST: WHITELISTDOMAINS 
+  GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "false"
+  GITEA__service__ENABLE_CAPTCHA: "false"
+  GITEA__service__DEFAULT_KEEP_EMAIL_PRIVATE: "true"
+  GITEA__service__DEFAULT_ALLOW_CREATE_ORGANIZATION: "true"
+  GITEA__service__DEFAULT_ENABLE_TIMETRACKING: "true"
+  GITEA__service__NO_REPLY_ADDRESS: noreply
