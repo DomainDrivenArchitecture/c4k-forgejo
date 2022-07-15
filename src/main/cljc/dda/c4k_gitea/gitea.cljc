@@ -12,15 +12,15 @@
 
 (s/def ::fqdn pred/fqdn-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
-(s/def ::maileruser pred/bash-env-string?)
-(s/def ::mailerpw pred/bash-env-string?)
+(s/def ::mailer-user pred/bash-env-string?)
+(s/def ::mailer-pw pred/bash-env-string?)
 
 (def config-defaults {:issuer "staging"})
 
 (def config? (s/keys :req-un [::fqdn]
                      :opt-un [::issuer]))
 
-(def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::maileruser ::mailerpw]))
+(def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
 
 #?(:cljs
    (defmethod yaml/load-resource :gitea [resource-name]
@@ -43,14 +43,13 @@
 (defn-spec generate-appini-env pred/map-or-seq?
   ; TODO: fix this to require the merged spec of auth and config instead of any
   [config any?]
-  (let [{:keys [fqdn mailer-from mailer-host mailer-port service-whitelist-domains]} config]
+  (let [{:keys [fqdn mailer-from mailer-host-port service-whitelist-domains]} config]
     (->
      (yaml/load-as-edn "gitea/appini-env-configmap.yaml")     
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn)
      (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
      (cm/replace-all-matching-values-by-new-value "FROM" mailer-from)
-     (cm/replace-all-matching-values-by-new-value "HOST" mailer-host)
-     (cm/replace-all-matching-values-by-new-value "PORT" mailer-port)
+     (cm/replace-all-matching-values-by-new-value "HOSTANDPORT" mailer-host-port)     
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-whitelist-domains)
      )))
 

@@ -12,19 +12,25 @@
 (st/instrument `cut/generate-secrets)
 
 (deftest should-generate-appini-env
-  (is (= {:GITEA__database__USER-c1 nil,
-          :GITEA__database__USER-c2 "pg-user",
-          :GITEA__database__PASSWD-c1 nil,
-          :GITEA__database__PASSWD-c2 "pg-pw",
-          :GITEA__server__DOMAIN-c1 nil,
+  (is (= {:GITEA__server__DOMAIN-c1 "",
           :GITEA__server__DOMAIN-c2 "test.com",
           :GITEA__server__ROOT_URL-c1 "https://",
-          :GITEA__server__ROOT_URL-c2 "https://test.com"}
-         (ct/map-diff (cut/generate-appini-env {})
-                      (cut/generate-appini-env {:fqdn "test.com" 
-                                                :issuer "staging" 
-                                                :postgres-db-user "pg-user" 
-                                                :postgres-db-password "pg-pw"})))))
+          :GITEA__server__ROOT_URL-c2 "https://test.com",
+          :GITEA__mailer__FROM-c1 "",
+          :GITEA__mailer__FROM-c2 "test@test.com",
+          :GITEA__mailer__HOST-c1 "",
+          :GITEA__mailer__HOST-c2 "mail.test.com:123",
+          :GITEA__service__EMAIL_DOMAIN_WHITELIST-c1 "",
+          :GITEA__service__EMAIL_DOMAIN_WHITELIST-c2 "abc.com,def.com"}
+         (ct/map-diff (cut/generate-appini-env {:fqdn ""                                                
+                                                :mailer-from ""
+                                                :mailer-host-port ""                                                
+                                                :service-whitelist-domains ""})
+                      (cut/generate-appini-env {:fqdn "test.com"                                                 
+                                                :mailer-from "test@test.com"
+                                                :mailer-host-port "mail.test.com:123"                                                
+                                                :service-whitelist-domains "abc.com,def.com"
+                                                })))))
 
 (deftest should-generate-certificate
   (is (= {:name-c2 "prod", :name-c1 "staging"}
@@ -32,15 +38,39 @@
                       (cut/generate-certificate {:issuer "prod"})))))
 
 (deftest should-generate-secret
-  (is (= {:GITEA__mailer__USER-c1 "",
-          :GITEA__mailer__USER-c2 (b64/encode "mailuser"),
+  (is (= {:GITEA__database__USER-c1 "",
+          :GITEA__database__USER-c2 "pg-user",
+          :GITEA__database__PASSWD-c1 "",
+          :GITEA__database__PASSWD-c2 "pg-pw",
+          :GITEA__mailer__USER-c1 "",
+          :GITEA__mailer__USER-c2 (b64/encode "maileruser"),
           :GITEA__mailer__PASSWD-c1 "",
-          :GITEA__mailer__PASSWD-c2 (b64/encode "mailpw")}
+          :GITEA__mailer__PASSWD-c2 (b64/encode "mailerpw")}
          (ct/map-diff (cut/generate-secrets {:postgres-db-user ""
                                              :postgres-db-password ""
-                                             :maileruser ""
-                                             :mailerpw ""})
-                      (cut/generate-secrets {:postgres-db-user ""
-                                             :postgres-db-password ""
-                                             :maileruser "mailuser"
-                                             :mailerpw "mailpw"})))))
+                                             :mailer-user ""
+                                             :mailer-pw ""})
+                      (cut/generate-secrets {:postgres-db-user "pg-user"
+                                             :postgres-db-password "pg-pw"
+                                             :mailer-user "maileruser"
+                                             :mailer-pw "mailerpw"})))))
+
+
+(not 
+ (= 
+  {:GITEA__server__DOMAIN-c2 "test.com",
+   :GITEA__mailer__FROM-c1 "",
+   :GITEA__service__EMAIL_DOMAIN_WHITELIST-c2 "abc.com,def.com",
+   :GITEA__service__EMAIL_DOMAIN_WHITELIST-c1 "",
+   :GITEA__mailer__HOST-c1 ":",
+   :GITEA__mailer__FROM-c2 "test@test.com",
+   :GITEA__mailer__HOST-c2 "mail.test.com:123",
+   :GITEA__server__ROOT_URL-c2 "https://test.com",
+   :GITEA__server__ROOT_URL-c1 "https://",
+   :GITEA__server__DOMAIN-c1 ""} 
+  {:GITEA__server__DOMAIN-c1 "",
+   :GITEA__server__DOMAIN-c2 "test.com",
+   :GITEA__server__ROOT_URL-c1 "https://",
+   :GITEA__server__ROOT_URL-c2 "https://test.com",
+   :GITEA__service__EMAIL_DOMAIN_WHITELIST-c1 "",
+   :GITEA__service__EMAIL_DOMAIN_WHITELIST-c2 "abc.com,def.com"}))

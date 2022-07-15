@@ -14,7 +14,7 @@ data:
   GITEA__mailer__ENABLED: "true"
   GITEA__mailer__FROM: FROM
   GITEA__mailer__MAILER_TYPE: smtp
-  GITEA__mailer__HOST: HOST:PORT
+  GITEA__mailer__HOST: HOSTANDPORT
   GITEA__mailer__IS_TLS_ENABLED: "true"
 
   GITEA__service__DISABLE_REGISTRATION: "true"  
