@@ -16,7 +16,7 @@ data:
   GITEA__database__CHARSET: utf8
 
   #[DEFAULT]
-  APP_NAME: APPNAME      # TODO: konfigurierbar machen
+  APP_NAME: APPNAME     
   RUN_MODE: prod
   RUN_USER: git
 
