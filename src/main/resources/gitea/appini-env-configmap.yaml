@@ -16,9 +16,9 @@ data:
   GITEA__database__CHARSET: utf8
 
   #[DEFAULT]
-  GITEA__DEFAULT__APP_NAME: APPNAME      # TODO: konfigurierbar machen
-  GITEA__DEFAULT__RUN_MODE: prod
-  GITEA__DEFAULT__RUN_USER: git
+  APP_NAME: APPNAME      # TODO: konfigurierbar machen
+  RUN_MODE: prod
+  RUN_USER: git
 
   #federation]
   GITEA__federation__ENABLED: "true"
@@ -27,7 +27,7 @@ data:
   GITEA__indexer__ISSUE_INDEXER_PATH: /data/gitea/indexers/issues.bleve
 
   #[log]
-  GITEA__log__MODE: console,file
+  GITEA__log__MODE: "console, file"
   GITEA__log__LEVEL: Info
   GITEA__log__ROOT_PATH: /data/gitea/log
 
@@ -41,11 +41,13 @@ data:
   #[oauth2]
   GITEA__oauth2__ENABLE: "false"
 
+  #[openid]
+  #GITEA__openid__ENABLE_OPENID: "false"
+
   #[picture]
   GITEA__picture__AVATAR_UPLOAD_PATH: /data/gitea/avatars
   GITEA__picture__REPOSITORY_AVATAR_UPLOAD_PATH: /data/gitea/repo-avatars
-  GITEA__picture__DISABLE_GRAVATAR: "true"
-  GITEA__picture__ENABLE_FEDERATED_AVATAR: "true"
+  GITEA__picture__DISABLE_GRAVATAR: "true"  
 
   #[repository]
   GITEA__repository__ROOT: /data/git/repositories
@@ -61,7 +63,7 @@ data:
   GITEA__server__SSH_DOMAIN: FQDN
   GITEA__server__ROOT_URL: URL 
   GITEA__server__HTTP_PORT: "3000"
-  GITEA__server__SSH_PORT: "22"
+  GITEA__server__SSH_PORT: "22"  
 
   #[service]
   GITEA__service__DISABLE_REGISTRATION: "true"  
