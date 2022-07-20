@@ -43,14 +43,23 @@
 (defn-spec generate-appini-env pred/map-or-seq?
   ; TODO: fix this to require the merged spec of auth and config instead of any
   [config any?]
-  (let [{:keys [fqdn mailer-from mailer-host-port service-whitelist-domains]} config]
+  (let [{:keys [
+                default-app-name 
+                fqdn 
+                mailer-from 
+                mailer-host-port 
+                service-whitelist-domains 
+                service-noreply-address]} 
+        config]
     (->
      (yaml/load-as-edn "gitea/appini-env-configmap.yaml")     
+     (cm/replace-all-matching-values-by-new-value "APPNAME" default-app-name)
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn)
      (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
      (cm/replace-all-matching-values-by-new-value "FROM" mailer-from)
      (cm/replace-all-matching-values-by-new-value "HOSTANDPORT" mailer-host-port)     
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-whitelist-domains)
+     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address)
      )))
 
 (defn-spec generate-secrets pred/map-or-seq? 

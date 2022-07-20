@@ -1,3 +1,9 @@
-{:fqdn "repo.test.meissa-gmbh.de"
- :issuer "staging" 
- :postgres-data-volume-path "/var/postgres"}
+{
+:default-app-name "Meissas awesome gitea"
+:fqdn "$fqdn"
+:issuer "$letsencrypt_endpoint"
+:mailer-from "$mailer_from"
+:mailer-host-port "$mailer_host_port"
+:service-whitelist-domains "$service_whitelist_domains"
+:service-noreply-address "$service_noreply_address"
+ }
