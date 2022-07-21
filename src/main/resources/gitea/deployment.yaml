@@ -27,9 +27,6 @@ spec:
             - secretRef:
                 name: gitea-secrets
           volumeMounts:
-            - name: app-ini-config-volume
-              mountPath: "/tmp/app.ini"
-              subPath: "app.ini"
             - name: gitea-root-volume
               mountPath: "/var/lib/gitea"
             - name: gitea-data-volume
@@ -40,9 +37,6 @@ spec:
             - containerPort: 3000
               name: gitea
       volumes:
-        - name: app-ini-config-volume
-          configMap:
-            name: gitea-app-ini-config
         - name: gitea-root-volume
           persistentVolumeClaim:
             claimName: gitea-root-pvc
