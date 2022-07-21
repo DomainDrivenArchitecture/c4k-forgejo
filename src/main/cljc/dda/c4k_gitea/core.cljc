@@ -8,8 +8,7 @@
 (defn k8s-objects [config]
   (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
     (cm/concat-vec
-     [(yaml/load-resource "gitea/volumes.yaml")
-      (yaml/load-resource "gitea/appini-configmap.yaml")
+     [(yaml/load-resource "gitea/volumes.yaml")      
       (yaml/load-resource "gitea/deployment.yaml")
       (yaml/load-resource "gitea/services.yaml")
       (yaml/load-resource "gitea/traefik-middleware.yaml")]
