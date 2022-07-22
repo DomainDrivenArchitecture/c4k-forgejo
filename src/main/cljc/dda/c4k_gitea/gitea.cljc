@@ -24,7 +24,7 @@
                                          (> 0 snd)
                                          (<= 65535 snd))))))
 ;TODO: Maybe move to pred/comma-separated-fqdn-list?
-(s/def ::mailer-domain-whitelist #(every? true? (map pred/fqdn-string? (str/split % #",")))) 
+(s/def ::service-domain-whitelist #(every? true? (map pred/fqdn-string? (str/split % #",")))) 
 (s/def ::service-noreply-address pred/fqdn-string?)
 (s/def ::mailer-user pred/bash-env-string?)
 (s/def ::mailer-pw pred/bash-env-string?)
@@ -33,7 +33,7 @@
 (def config-defaults {:issuer "staging"})
 
 (def config? (s/keys :req-un [::fqdn ::mailer-from ::mailer-host-port ::service-noreply-address]
-                     :opt-un [::issuer ::default-app-name ::mailer-domain-whitelist]))
+                     :opt-un [::issuer ::default-app-name ::service-domain-whitelist]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
 
@@ -62,10 +62,10 @@
                 fqdn
                 mailer-from
                 mailer-host-port
-                mailer-domain-whitelist
+                service-domain-whitelist
                 service-noreply-address]
          :or {default-app-name "Gitea instance"
-              mailer-domain-whitelist fqdn}}
+              service-domain-whitelist fqdn}}
         config]
     (->
      (yaml/load-as-edn "gitea/appini-env-configmap.yaml")
@@ -74,7 +74,7 @@
      (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
      (cm/replace-all-matching-values-by-new-value "FROM" mailer-from)
      (cm/replace-all-matching-values-by-new-value "HOSTANDPORT" mailer-host-port)
-     (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" mailer-domain-whitelist)
+     (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
      (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address))))
 
 (defn-spec generate-secrets pred/map-or-seq?
@@ -103,3 +103,4 @@
      (yaml/load-as-edn "gitea/certificate.yaml")
      (assoc-in [:spec :issuerRef :name] letsencrypt-issuer)
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
+

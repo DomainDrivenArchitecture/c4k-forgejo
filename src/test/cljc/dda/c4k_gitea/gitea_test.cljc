@@ -12,8 +12,8 @@
 (st/instrument `cut/generate-secrets)
 
 (deftest should-generate-appini-env
-  (is (= {:GITEA__DEFAULT__APP_NAME-c1 "",
-          :GITEA__DEFAULT__APP_NAME-c2 "test gitea",
+  (is (= {:APP_NAME-c1 "",
+          :APP_NAME-c2 "test gitea",
           :GITEA__mailer__FROM-c1 "",
           :GITEA__mailer__FROM-c2 "test@test.com",
           :GITEA__mailer__HOST-c1 "",
@@ -32,14 +32,14 @@
                                                 :fqdn ""                                                
                                                 :mailer-from ""
                                                 :mailer-host-port ""                                                
-                                                :service-whitelist-domains ""
+                                                :service-domain-whitelist ""
                                                 :service-noreply-address ""
                                                 })
                       (cut/generate-appini-env {:default-app-name "test gitea"
                                                 :fqdn "test.com"                                                 
                                                 :mailer-from "test@test.com"
                                                 :mailer-host-port "mail.test.com:123"                                                
-                                                :service-whitelist-domains "test.com,test.net"
+                                                :service-domain-whitelist "test.com,test.net"
                                                 :service-noreply-address "noreply@test.com"
                                                 })))))
 
