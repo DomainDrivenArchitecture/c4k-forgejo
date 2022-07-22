@@ -30,8 +30,13 @@
       (generate-group
        "domain"
        (cm/concat-vec
-        (br/generate-input-field "fqdn" "Your fqdn:" "gitea.prod.meissa-gmbh.de")
-        (br/generate-input-field "issuer" "(Optional) Your issuer prod/staging:" "")))
+        (br/generate-input-field "fqdn" "Your fqdn:" "repo.test.de")
+        (br/generate-input-field "mailer-from" "Your mailer email address:" "test@test.de")
+        (br/generate-input-field "mailer-host-port" "Your mailer host with port:" "test.de:123")
+        (br/generate-input-field "service-noreply-address" "Your noreply domain:" "test.de")
+        (br/generate-input-field "issuer" "(Optional) Your issuer prod/staging:" "")
+        (br/generate-input-field "app-name" "(Optional) Your app name:" "")
+        (br/generate-input-field "domain-whitelist" "(Optional) Domain whitelist for registration email-addresses:" "")))
       (generate-group
        "provider"
        (cm/concat-vec
@@ -41,7 +46,9 @@
        (br/generate-text-area
         "auth" "Your auth.edn:"
         "{:postgres-db-user \"gitea\"
-:postgres-db-password \"gitea-db-password\"}"
+         :postgres-db-password \"gitea-db-password\"
+         :mailer-user \"test@test.de\"
+         :mailer-pw \"mail-test-password\"}"
         "5"))
       [(br/generate-br)]
       (br/generate-button "generate-button" "Generate c4k yaml")))]
@@ -68,9 +75,14 @@
 
 (defn validate-all! []
   (br/validate! "fqdn" ::gitea/fqdn)
+  (br/validate! "mailer-from" ::gitea/mailer-from)
+  (br/validate! "mailer-host-port" ::gitea/mailer-host-port)
+  (br/validate! "service-noreply-address" ::gitea/service-noreply-address)
   (br/validate! "issuer" ::gitea/issuer :optional true :deserializer keyword)
+  (br/validate! "app-name" ::gitea/default-app-name)
+  (br/validate! "domain-whitelist" ::gitea/service-domain-whitelist)
   (br/validate! "postgres-data-volume-path" ::pgc/postgres-data-volume-path :optional true)
-  (br/validate! "auth" core/auth? :deserializer edn/read-string)
+  (br/validate! "auth" gitea/auth? :deserializer edn/read-string)
   (br/set-form-validated!))
 
 (defn add-validate-listener [name]
@@ -87,10 +99,15 @@
                               (-> (cm/generate-common
                                    (config-from-document)
                                    (br/get-content-from-element "auth" :deserializer edn/read-string)
-                                   core/config-defaults
+                                   gitea/config-defaults
                                    core/k8s-objects)
                                   (br/set-output!)))))
   (add-validate-listener "fqdn")
+  (add-validate-listener "mailer-from")
+  (add-validate-listener "mailer-host-port")
+  (add-validate-listener "service-noreply-address")
+  (add-validate-listener "app-name")
+  (add-validate-listener "domain-whitelist")
   (add-validate-listener "postgres-data-volume-path")
   (add-validate-listener "issuer")
   (add-validate-listener "auth"))
