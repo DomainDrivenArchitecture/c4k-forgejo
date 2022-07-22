@@ -2,9 +2,12 @@
   (:require
    [clojure.spec.alpha :as s]
    [clojure.string :as str]
+   [clojure.core :as c]
    #?(:cljs [shadow.resource :as rc])
    #?(:clj [orchestra.core :refer [defn-spec]]
       :cljs [orchestra.core :refer-macros [defn-spec]])
+   #?(:clj [clojure.edn :as edn]
+      :cljs [cljs.reader :as edn])
    [dda.c4k-common.yaml :as yaml]
    [dda.c4k-common.common :as cm]
    [dda.c4k-common.base64 :as b64]
@@ -19,10 +22,10 @@
                              (and (= (count split-string) 2)
                                   (pred/fqdn-string? (first split-string))
                                   ; TODO: Move this to pred/port-number?
-                                  (let [snd (second split-string)]
+                                  (let [snd (edn/read-string (second split-string))]
                                     (and (integer? snd)
-                                         (> 0 snd)
-                                         (<= 65535 snd))))))
+                                         (> snd 0)
+                                         (<= snd 65535))))))
 ;TODO: Maybe move to pred/comma-separated-fqdn-list?
 (s/def ::service-domain-whitelist #(every? true? (map pred/fqdn-string? (str/split % #",")))) 
 (s/def ::service-noreply-address pred/fqdn-string?)
@@ -40,7 +43,6 @@
 #?(:cljs
    (defmethod yaml/load-resource :gitea [resource-name]
      (case resource-name
-       "gitea/appini-configmap.yaml" (rc/inline "gitea/appini-configmap.yaml")
        "gitea/appini-env-configmap.yaml" (rc/inline "gitea/appini-env-configmap.yaml")
        "gitea/deployment.yaml" (rc/inline "gitea/deployment.yaml")
        "gitea/certificate.yaml" (rc/inline "gitea/certificate.yaml")
