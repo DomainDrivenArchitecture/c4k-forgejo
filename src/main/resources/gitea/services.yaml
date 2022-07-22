@@ -16,13 +16,13 @@ metadata:
   name: gitea-ssh-service
   namespace: default
   annotations: 
-    metallb.universe.tf/allow-shared-ip: "repo-server-svc"
+    metallb.universe.tf/allow-shared-ip: "shared-ip-service-group"
 spec:
   type: LoadBalancer
   selector:
     app: gitea
   ports:
-    - port: 2225
+    - port: 2222
       targetPort: 22
       protocol: TCP
 
