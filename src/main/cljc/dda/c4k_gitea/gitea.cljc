@@ -11,8 +11,8 @@
    [dda.c4k-common.predicate :as pred]
    [dda.c4k-common.postgres :as postgres]))
 
+(s/def ::default-app-name string?)
 (s/def ::fqdn pred/fqdn-string?)
-(s/def ::issuer pred/letsencrypt-issuer?)
 (s/def ::mailer-from pred/bash-env-string?)
 ; TODO: Move to pred/host-port?
 (s/def ::mailer-host-port #(let [split-string (str/split % #":")]
@@ -23,13 +23,17 @@
                                     (and (integer? snd)
                                          (> 0 snd)
                                          (<= 65535 snd))))))
+;TODO: Maybe move to pred/comma-separated-fqdn-list?
+(s/def ::mailer-domain-whitelist #(every? true? (map pred/fqdn-string? (str/split % #",")))) 
+(s/def ::service-noreply-address pred/fqdn-string?)
 (s/def ::mailer-user pred/bash-env-string?)
 (s/def ::mailer-pw pred/bash-env-string?)
+(s/def ::issuer pred/letsencrypt-issuer?)
 
 (def config-defaults {:issuer "staging"})
 
-(def config? (s/keys :req-un [::fqdn]
-                     :opt-un [::issuer]))
+(def config? (s/keys :req-un [::fqdn ::mailer-from ::mailer-host-port ::service-noreply-address]
+                     :opt-un [::issuer ::default-app-name ::mailer-domain-whitelist]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
 
