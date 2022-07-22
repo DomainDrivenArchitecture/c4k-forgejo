@@ -29,40 +29,40 @@
        "gitea/appini-env-configmap.yaml" (rc/inline "gitea/appini-env-configmap.yaml")
        "gitea/deployment.yaml" (rc/inline "gitea/deployment.yaml")
        "gitea/certificate.yaml" (rc/inline "gitea/certificate.yaml")
-       "gitea/ingress.yaml" (rc/inline "gitea/ingress.yaml")  
+       "gitea/ingress.yaml" (rc/inline "gitea/ingress.yaml")
        "gitea/secrets.yaml" (rc/inline "gitea/secrets.yaml")
        "gitea/services.yaml" (rc/inline "gitea/services.yaml")
        "gitea/traefik-middleware.yaml" (rc/inline "gitea/traefik-middleware.yaml")
-       "gitea/volumes.yaml" (rc/inline "gitea/volumes.yaml")       
+       "gitea/volumes.yaml" (rc/inline "gitea/volumes.yaml")
        (throw (js/Error. "Undefined Resource!")))))
 
 #?(:cljs
    (defmethod yaml/load-as-edn :gitea [resource-name]
      (yaml/from-string (yaml/load-resource resource-name))))
- 
+
 (defn-spec generate-appini-env pred/map-or-seq?
   ; TODO: fix this to require the merged spec of auth and config instead of any
   [config any?]
-  (let [{:keys [
-                default-app-name 
-                fqdn 
-                mailer-from 
-                mailer-host-port 
-                service-whitelist-domains 
-                service-noreply-address]} 
+  (let [{:keys [default-app-name
+                fqdn
+                mailer-from
+                mailer-host-port
+                mailer-domain-whitelist
+                service-noreply-address]
+         :or {default-app-name "Gitea instance"
+              mailer-domain-whitelist fqdn}}
         config]
     (->
-     (yaml/load-as-edn "gitea/appini-env-configmap.yaml")     
+     (yaml/load-as-edn "gitea/appini-env-configmap.yaml")
      (cm/replace-all-matching-values-by-new-value "APPNAME" default-app-name)
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn)
      (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
      (cm/replace-all-matching-values-by-new-value "FROM" mailer-from)
-     (cm/replace-all-matching-values-by-new-value "HOSTANDPORT" mailer-host-port)     
-     (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-whitelist-domains)
-     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address)
-     )))
+     (cm/replace-all-matching-values-by-new-value "HOSTANDPORT" mailer-host-port)
+     (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" mailer-domain-whitelist)
+     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address))))
 
-(defn-spec generate-secrets pred/map-or-seq? 
+(defn-spec generate-secrets pred/map-or-seq?
   [auth auth?]
   (let [{:keys [postgres-db-user postgres-db-password mailer-user mailer-pw]} auth]
     (->
@@ -72,13 +72,13 @@
      (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode mailer-user))
      (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailer-pw)))))
 
-(defn-spec generate-ingress pred/map-or-seq? 
+(defn-spec generate-ingress pred/map-or-seq?
   [config config?]
   (let [{:keys [fqdn issuer]} config]
     (->
      (yaml/load-as-edn "gitea/ingress.yaml")
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
-  
+
 (defn-spec generate-certificate pred/map-or-seq?
   [config config?]
   (let [{:keys [fqdn issuer]
