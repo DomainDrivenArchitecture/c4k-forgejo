@@ -1,17 +1,28 @@
 (ns dda.c4k-gitea.gitea
- (:require
-  [clojure.spec.alpha :as s]
-  #?(:cljs [shadow.resource :as rc])
-  #?(:clj [orchestra.core :refer [defn-spec]]
-     :cljs [orchestra.core :refer-macros [defn-spec]])
-  [dda.c4k-common.yaml :as yaml]
-  [dda.c4k-common.common :as cm]
-  [dda.c4k-common.base64 :as b64]
-  [dda.c4k-common.predicate :as pred]
-  [dda.c4k-common.postgres :as postgres]))
+  (:require
+   [clojure.spec.alpha :as s]
+   [clojure.string :as str]
+   #?(:cljs [shadow.resource :as rc])
+   #?(:clj [orchestra.core :refer [defn-spec]]
+      :cljs [orchestra.core :refer-macros [defn-spec]])
+   [dda.c4k-common.yaml :as yaml]
+   [dda.c4k-common.common :as cm]
+   [dda.c4k-common.base64 :as b64]
+   [dda.c4k-common.predicate :as pred]
+   [dda.c4k-common.postgres :as postgres]))
 
 (s/def ::fqdn pred/fqdn-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
+(s/def ::mailer-from pred/bash-env-string?)
+; TODO: Move to pred/host-port?
+(s/def ::mailer-host-port #(let [split-string (str/split % #":")]
+                             (and (= (count split-string) 2)
+                                  (pred/fqdn-string? (first split-string))
+                                  ; TODO: Move this to pred/port-number?
+                                  (let [snd (second split-string)]
+                                    (and (integer? snd)
+                                         (> 0 snd)
+                                         (<= 65535 snd))))))
 (s/def ::mailer-user pred/bash-env-string?)
 (s/def ::mailer-pw pred/bash-env-string?)
 
