@@ -80,6 +80,7 @@ package-uberjar:
   <<: *clj
   stage: package
   script:
+    - lein uberjar
     - sha256sum target/uberjar/c4k-gitea-standalone.jar > target/uberjar/c4k-gitea-standalone.jar.sha256
     - sha512sum target/uberjar/c4k-gitea-standalone.jar > target/uberjar/c4k-gitea-standalone.jar.sha512
   artifacts:
