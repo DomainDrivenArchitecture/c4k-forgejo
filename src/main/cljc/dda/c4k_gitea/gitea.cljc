@@ -28,7 +28,7 @@
                                          (<= snd 65535))))))
 ;TODO: Maybe move to pred/comma-separated-fqdn-list?
 (s/def ::service-domain-whitelist #(every? true? (map pred/fqdn-string? (str/split % #",")))) 
-(s/def ::service-noreply-address pred/fqdn-string?)
+(s/def ::service-noreply-address string?)
 (s/def ::mailer-user pred/bash-env-string?)
 (s/def ::mailer-pw pred/bash-env-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)

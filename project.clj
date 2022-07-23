@@ -40,8 +40,7 @@
                       "-H:ResourceConfigurationFiles=graalvm-resource-config.json"
                       "-H:Log=registerResource"
                       "-H:Name=target/graalvm/${:name}"]
-            "inst" ["shell" "sudo"
-                    "install"
-                    "-m=755"
-                    "target/uberjar/c4k-gitea-standalone.jar"
-                    "/usr/local/bin/c4k-gitea-standalone.jar"]})
+            "inst" ["shell"
+                    "sh"
+                    "-c"
+                    "lein uberjar && sudo install -m=755 target/uberjar/c4k-gitea-standalone.jar /usr/local/bin/c4k-gitea-standalone.jar"]})
