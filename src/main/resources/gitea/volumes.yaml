@@ -26,4 +26,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
+      # TODO: Review jem - 2022/07/26 - should be configurable & as large as posible ...
       storage: 15Gi

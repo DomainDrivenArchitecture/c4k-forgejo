@@ -18,6 +18,7 @@ spec:
     spec:
       containers:
         - name: gitea
+          # TODO: Review jem - 2022/07/26 - latest release?
           image: gitea/gitea:1.16.9
           imagePullPolicy: IfNotPresent
           # config settings
