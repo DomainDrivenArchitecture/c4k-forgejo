@@ -6,4 +6,5 @@
 :mailer-host-port "test.de:123"
 :service-whitelist-domains "test.de"
 :service-noreply-address "noreply@test.de"
+:volume-total-storage-size 6
  }

@@ -1,8 +1,6 @@
 (ns dda.c4k-gitea.gitea
   (:require
-   [clojure.spec.alpha :as s]
-   [clojure.string :as str]
-   [clojure.core :as c]
+   [clojure.spec.alpha :as s]   
    #?(:cljs [shadow.resource :as rc])
    #?(:clj [orchestra.core :refer [defn-spec]]
       :cljs [orchestra.core :refer-macros [defn-spec]])
@@ -23,13 +21,37 @@
 (s/def ::mailer-user pred/bash-env-string?)
 (s/def ::mailer-pw pred/bash-env-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
+(s/def ::volume-total-storage-size int?) ;TODO extend this for checking lower size limits
 
 (def config-defaults {:issuer "staging"})
 
-(def config? (s/keys :req-un [::fqdn ::mailer-from ::mailer-host-port ::service-noreply-address]
-                     :opt-un [::issuer ::default-app-name ::service-domain-whitelist]))
+(def config? (s/keys :req-un [::fqdn 
+                              ::mailer-from 
+                              ::mailer-host-port 
+                              ::service-noreply-address]
+                     :opt-un [::issuer 
+                              ::default-app-name 
+                              ::service-domain-whitelist]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
+
+(def vol? (s/keys :req-un [::volume-total-storage-size]))
+
+(defn root-storage-by-volume-size
+  [in]
+  (cond
+    (<= in 5) (throw (Exception. "Volume smaller or equal 5Gi!\nIncrease volume-total-storage-size to value > 5"))
+    (and (> in 5) (<= in 20)) 5
+    (and (> in 20) (<= in 100)) 10
+    (> in 100) 20))
+
+(defn data-storage-by-volume-size
+  [total root]
+  (cond
+    (and (<= total 20) (> total 5)) (- total root)
+    (and (<= total 100) (> total 20)) (- total root)
+    (> total 100) (- total root)))
+
 
 #?(:cljs
    (defmethod yaml/load-resource :gitea [resource-name]
@@ -41,7 +63,8 @@
        "gitea/secrets.yaml" (rc/inline "gitea/secrets.yaml")
        "gitea/services.yaml" (rc/inline "gitea/services.yaml")
        "gitea/traefik-middleware.yaml" (rc/inline "gitea/traefik-middleware.yaml")
-       "gitea/volumes.yaml" (rc/inline "gitea/volumes.yaml")
+       "gitea/rootvolume.yaml" (rc/inline "gitea/rootvolume.yaml")
+       "gitea/datavolume.yaml" (rc/inline "gitea/datavolume.yaml")
        (throw (js/Error. "Undefined Resource!")))))
 
 #?(:cljs
@@ -71,7 +94,10 @@
 
 (defn-spec generate-secrets pred/map-or-seq?
   [auth auth?]
-  (let [{:keys [postgres-db-user postgres-db-password mailer-user mailer-pw]} auth]
+  (let [{:keys [postgres-db-user 
+                postgres-db-password 
+                mailer-user 
+                mailer-pw]} auth]
     (->
      (yaml/load-as-edn "gitea/secrets.yaml")
      (cm/replace-all-matching-values-by-new-value "DBUSER" (b64/encode postgres-db-user))
@@ -96,3 +122,19 @@
      (assoc-in [:spec :issuerRef :name] letsencrypt-issuer)
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
 
+(defn-spec generate-root-volume pred/map-or-seq?
+  [config vol?]
+  (let [{:keys [volume-total-storage-size]} config
+        root-storage-size (root-storage-by-volume-size volume-total-storage-size)]
+    (->
+     (yaml/load-as-edn "gitea/rootvolume.yaml")
+     (cm/replace-all-matching-values-by-new-value "ROOTSTORAGESIZE" (str (str root-storage-size) "Gi")))))
+
+(defn-spec generate-data-volume pred/map-or-seq?
+  [config vol?]
+  (let [{:keys [volume-total-storage-size]} config
+        root-storage-size (root-storage-by-volume-size volume-total-storage-size)
+        data-storage-size (data-storage-by-volume-size volume-total-storage-size root-storage-size)]
+    (->     
+     (yaml/load-as-edn "gitea/datavolume.yaml")
+     (cm/replace-all-matching-values-by-new-value "DATASTORAGESIZE" (str (str data-storage-size) "Gi")))))

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitea-data-pvc
+  namespace: default
+  labels:
+    app: gitea
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:      
+      storage: DATASTORAGESIZE
+      
