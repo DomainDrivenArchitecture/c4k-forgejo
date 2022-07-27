@@ -11,7 +11,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: 10Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -27,4 +27,4 @@ spec:
   resources:
     requests:
       # TODO: Review jem - 2022/07/26 - should be configurable & as large as posible ...
-      storage: 15Gi
+      storage: 50Gi
