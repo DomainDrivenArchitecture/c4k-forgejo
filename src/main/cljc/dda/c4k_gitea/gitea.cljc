@@ -17,20 +17,8 @@
 (s/def ::default-app-name string?)
 (s/def ::fqdn pred/fqdn-string?)
 (s/def ::mailer-from pred/bash-env-string?)
-; TODO: Move to pred/host-port?
-; TODO: Review jem - 2022/07/26 - move to common & add unittest
-(s/def ::mailer-host-port #(let [split-string (str/split % #":")]
-                             (and (= (count split-string) 2)
-                                  (pred/fqdn-string? (first split-string))
-                                  ; TODO: Move this to pred/port-number?
-                                  ; TODO: Review jem - 2022/07/26 - move to common & add unittest
-                                  (let [snd (edn/read-string (second split-string))]
-                                    (and (integer? snd)
-                                         (> snd 0)
-                                         (<= snd 65535))))))
-;TODO: Maybe move to pred/comma-separated-fqdn-list?
-; TODO: Review jem - 2022/07/26 - move to common & add unittest
-(s/def ::service-domain-whitelist #(every? true? (map pred/fqdn-string? (str/split % #",")))) 
+(s/def ::mailer-host-port pred/host-and-port-string?)
+(s/def ::service-domain-whitelist #(pred/string-of-separated-by? pred/fqdn-string? #"," %))
 (s/def ::service-noreply-address string?)
 (s/def ::mailer-user pred/bash-env-string?)
 (s/def ::mailer-pw pred/bash-env-string?)
@@ -60,9 +48,8 @@
    (defmethod yaml/load-as-edn :gitea [resource-name]
      (yaml/from-string (yaml/load-resource resource-name))))
 
-(defn-spec generate-appini-env pred/map-or-seq?
-  ; TODO: Review jem - 2022/07/26 - as we do not need auth here just hand over config & spec it.
-  [config any?]
+(defn-spec generate-appini-env pred/map-or-seq?  
+  [config config?]
   (let [{:keys [default-app-name
                 fqdn
                 mailer-from

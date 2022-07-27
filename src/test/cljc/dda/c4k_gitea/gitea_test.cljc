@@ -16,23 +16,23 @@
           :APP_NAME-c2 "test gitea",
           :GITEA__mailer__FROM-c1 "",
           :GITEA__mailer__FROM-c2 "test@test.com",
-          :GITEA__mailer__HOST-c1 "",
+          :GITEA__mailer__HOST-c1 "m.t.de:123",
           :GITEA__mailer__HOST-c2 "mail.test.com:123",
-          :GITEA__server__DOMAIN-c1 "",
+          :GITEA__server__DOMAIN-c1 "test.de",
           :GITEA__server__DOMAIN-c2 "test.com",
-          :GITEA__server__ROOT_URL-c1 "https://",
+          :GITEA__server__ROOT_URL-c1 "https://test.de",
           :GITEA__server__ROOT_URL-c2 "https://test.com",
-          :GITEA__server__SSH_DOMAIN-c1 "",
+          :GITEA__server__SSH_DOMAIN-c1 "test.de",
           :GITEA__server__SSH_DOMAIN-c2 "test.com",
-          :GITEA__service__EMAIL_DOMAIN_WHITELIST-c1 "",
+          :GITEA__service__EMAIL_DOMAIN_WHITELIST-c1 "adb.de",
           :GITEA__service__EMAIL_DOMAIN_WHITELIST-c2 "test.com,test.net",
           :GITEA__service__NO_REPLY_ADDRESS-c1 "",
           :GITEA__service__NO_REPLY_ADDRESS-c2 "noreply@test.com"}
          (ct/map-diff (cut/generate-appini-env {:default-app-name ""
-                                                :fqdn ""                                                
+                                                :fqdn "test.de"                                                
                                                 :mailer-from ""
-                                                :mailer-host-port ""                                                
-                                                :service-domain-whitelist ""
+                                                :mailer-host-port "m.t.de:123"                                                
+                                                :service-domain-whitelist "adb.de"
                                                 :service-noreply-address ""
                                                 })
                       (cut/generate-appini-env {:default-app-name "test gitea"
@@ -66,37 +66,3 @@
                                              :mailer-user "maileruser"
                                              :mailer-pw "mailerpw"})))))
 
-
-(not 
- (=
-  {:GITEA__server__DOMAIN-c2 "test.com",
-   :GITEA__mailer__FROM-c1 "",
-   :GITEA__service__EMAIL_DOMAIN_WHITELIST-c2 "test.com,test.net",
-   :GITEA__service__EMAIL_DOMAIN_WHITELIST-c1 "",
-   :GITEA__mailer__HOST-c1 "",
-   :GITEA__service__NO_REPLY_ADDRESS-c1 "",
-   :GITEA__mailer__FROM-c2 "test@test.com",
-   :GITEA__mailer__HOST-c2 "mail.test.com:123",
-   :GITEA__server__ROOT_URL-c2 "https://test.com",
-   :GITEA__server__ROOT_URL-c1 "https://",
-   :GITEA__DEFAULT__APP_NAME-c2 "test gitea",
-   :GITEA__server__DOMAIN-c1 "",
-   :GITEA__DEFAULT__APP_NAME-c1 "",
-   :GITEA__service__NO_REPLY_ADDRESS-c2 "noreply@test.com"}
-  
-  {:GITEA__server__DOMAIN-c2 "test.com",
-   :GITEA__mailer__FROM-c1 "",
-   :GITEA__service__EMAIL_DOMAIN_WHITELIST-c2 "test.com,test.net",
-   :GITEA__service__EMAIL_DOMAIN_WHITELIST-c1 "",
-   :GITEA__mailer__HOST-c1 "",
-   :GITEA__service__NO_REPLY_ADDRESS-c1 "",
-   :GITEA__mailer__FROM-c2 "test@test.com",
-   :GITEA__mailer__HOST-c2 "mail.test.com:123",
-   :GITEA__server__ROOT_URL-c2 "https://test.com",
-   :GITEA__server__SSH_DOMAIN-c1 "",
-   :GITEA__server__ROOT_URL-c1 "https://",
-   :GITEA__DEFAULT__APP_NAME-c2 "test gitea",
-   :GITEA__server__SSH_DOMAIN-c2 "test.com",
-   :GITEA__server__DOMAIN-c1 "",
-   :GITEA__DEFAULT__APP_NAME-c1 "",
-   :GITEA__service__NO_REPLY_ADDRESS-c2 "noreply@test.com"}))
