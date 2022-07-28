@@ -22,7 +22,8 @@
            (postgres/generate-deployment {:postgres-image "postgres:14"
                                           :postgres-size :2gb})
            (postgres/generate-service)
-           (gitea/generate-volumes config)
+           (gitea/generate-root-volume config)
+           (gitea/generate-data-volume config)
            (gitea/generate-appini-env config)
            (gitea/generate-secrets config)
            (gitea/generate-ingress config)
