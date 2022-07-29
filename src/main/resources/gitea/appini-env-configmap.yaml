@@ -62,7 +62,6 @@ data:
   GITEA__server__DOMAIN: FQDN
   GITEA__server__SSH_DOMAIN: FQDN
   GITEA__server__ROOT_URL: URL
-  # TODO: Review jem - 2022/07/26 - what does http port mean? The outgoning port should be 80 for http // 443 for https!
   GITEA__server__HTTP_PORT: "3000"    # HTTP listen port of the server (in the pod)
   GITEA__server__SSH_PORT: "2222"     # SSH port displayed in clone URL
 
@@ -70,6 +69,8 @@ data:
   GITEA__service__DISABLE_REGISTRATION: "false"  
   GITEA__service__REQUIRE_SIGNIN_VIEW: "false"
   GITEA__service__REGISTER_EMAIL_CONFIRM: "true"
+  #TODO: require-email-confirmation-to-register, enable-email-notification, enable-federated-avatars (disable-gravatar ist aus)
+
   GITEA__service__ENABLE_NOTIFY_MAIL: "true"
   GITEA__service__EMAIL_DOMAIN_WHITELIST: WHITELISTDOMAINS 
   GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "false"
