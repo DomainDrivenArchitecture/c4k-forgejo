@@ -3,7 +3,7 @@
    #?(:clj [clojure.test :refer [deftest is are testing run-tests]]
       :cljs [cljs.test :refer-macros [deftest is are testing run-tests]])
    [clojure.spec.test.alpha :as st]
-   [dda.c4k-common.common-test :as ct]
+   [dda.c4k-common.test-helper :as th]
    [dda.c4k-common.base64 :as b64]
    [dda.c4k-gitea.gitea :as cut]))
 
@@ -28,7 +28,7 @@
           :GITEA__service__EMAIL_DOMAIN_WHITELIST-c2 "test.com,test.net",
           :GITEA__service__NO_REPLY_ADDRESS-c1 "",
           :GITEA__service__NO_REPLY_ADDRESS-c2 "noreply@test.com"}
-         (ct/map-diff (cut/generate-appini-env {:default-app-name ""
+         (th/map-diff (cut/generate-appini-env {:default-app-name ""
                                                 :fqdn "test.de"                                                
                                                 :mailer-from ""
                                                 :mailer-host-port "m.t.de:123"                                                
@@ -45,7 +45,7 @@
 
 (deftest should-generate-certificate
   (is (= {:name-c2 "prod", :name-c1 "staging"}
-         (ct/map-diff (cut/generate-certificate {}) 
+         (th/map-diff (cut/generate-certificate {}) 
                       (cut/generate-certificate {:issuer "prod"})))))
 
 (deftest should-generate-secret
@@ -57,7 +57,7 @@
           :GITEA__mailer__USER-c2 (b64/encode "maileruser"),
           :GITEA__mailer__PASSWD-c1 "",
           :GITEA__mailer__PASSWD-c2 (b64/encode "mailerpw")}
-         (ct/map-diff (cut/generate-secrets {:postgres-db-user ""
+         (th/map-diff (cut/generate-secrets {:postgres-db-user ""
                                              :postgres-db-password ""
                                              :mailer-user ""
                                              :mailer-pw ""})
@@ -69,11 +69,11 @@
 (deftest should-generate-root-volume
   (is (= {:storage-c1 "5Gi",
           :storage-c2 "20Gi"}
-         (ct/map-diff (cut/generate-root-volume {:volume-total-storage-size 6})
+         (th/map-diff (cut/generate-root-volume {:volume-total-storage-size 6})
                       (cut/generate-root-volume {:volume-total-storage-size 101})))))
 
 (deftest should-generate-data-volume
   (is (= {:storage-c1 "1Gi",
           :storage-c2 "15Gi"}
-         (ct/map-diff (cut/generate-data-volume {:volume-total-storage-size 6})
+         (th/map-diff (cut/generate-data-volume {:volume-total-storage-size 6})
                       (cut/generate-data-volume {:volume-total-storage-size 20})))))
