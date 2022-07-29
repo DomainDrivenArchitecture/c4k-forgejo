@@ -63,7 +63,6 @@
        "gitea/secrets.yaml" (rc/inline "gitea/secrets.yaml")
        "gitea/service.yaml" (rc/inline "gitea/service.yaml")
        "gitea/service-ssh.yaml" (rc/inline "gitea/service-ssh.yaml")
-       "gitea/traefik-middleware.yaml" (rc/inline "gitea/traefik-middleware.yaml")
        "gitea/rootvolume.yaml" (rc/inline "gitea/rootvolume.yaml")
        "gitea/datavolume.yaml" (rc/inline "gitea/datavolume.yaml")
        (throw (js/Error. "Undefined Resource!")))))
@@ -151,7 +150,3 @@
 (defn-spec generate-service-ssh pred/map-or-seq?
   []
   (yaml/load-as-edn "gitea/service-ssh.yaml"))
-
-(defn-spec generate-traefik-middleware pred/map-or-seq?
-  []
-  (yaml/load-as-edn "gitea/traefik-middleware.yaml"))

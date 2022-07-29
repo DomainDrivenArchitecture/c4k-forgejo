@@ -21,7 +21,6 @@
            (gitea/generate-deployment)
            (gitea/generate-service)
            (gitea/generate-service-ssh)
-           (gitea/generate-traefik-middleware)
            (gitea/generate-root-volume config)
            (gitea/generate-data-volume config)
            (gitea/generate-appini-env config)
