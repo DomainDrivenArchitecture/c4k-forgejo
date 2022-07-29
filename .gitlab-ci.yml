@@ -42,8 +42,7 @@ test-clj:
   script:
     - lein test
 
-# todo: fix "Middleware redirect-https failed validation: could not find schema for Middleware" and add again
-.test-schema:
+test-schema:
   <<: *clj
   stage: build_and_test
   script:
