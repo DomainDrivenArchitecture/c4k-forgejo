@@ -4,6 +4,9 @@ metadata:
   name: gitea-env
   namespace: default
 data:
+  #[admin]
+  GITEA__admin__DEFAULT_EMAIL_NOTIFICATIONS: "enabled" # Default configuration for email notifications for users (user configurable). Options: enabled, onmention, disabled
+
   #[attachments]
   GITEA__attachments__PATH: /data/gitea/attachments
 
@@ -47,7 +50,8 @@ data:
   #[picture]
   GITEA__picture__AVATAR_UPLOAD_PATH: /data/gitea/avatars
   GITEA__picture__REPOSITORY_AVATAR_UPLOAD_PATH: /data/gitea/repo-avatars
-  GITEA__picture__DISABLE_GRAVATAR: "true"  
+  GITEA__picture__DISABLE_GRAVATAR: "true"
+  GITEA__picture__ENABLE_FEDERATED_AVATAR: "true" # Enable support for federated avatars (see http://www.libravatar.org).
 
   #[repository]
   GITEA__repository__ROOT: /data/git/repositories
@@ -68,8 +72,9 @@ data:
   #[service]
   GITEA__service__DISABLE_REGISTRATION: "false"  
   GITEA__service__REQUIRE_SIGNIN_VIEW: "false"
-  GITEA__service__REGISTER_EMAIL_CONFIRM: "true"
-  #TODO: require-email-confirmation-to-register, enable-email-notification, enable-federated-avatars (disable-gravatar ist aus)
+  GITEA__service__REGISTER_EMAIL_CONFIRM: "true" # Enable this to ask for mail confirmation of registration. Requires "Mailer" to be enabled.
+  #TODO: Configure Mailer using smtp: https://docs.gitea.io/en-us/email-setup/#using-smtp
+
 
   GITEA__service__ENABLE_NOTIFY_MAIL: "true"
   GITEA__service__EMAIL_DOMAIN_WHITELIST: WHITELISTDOMAINS 
