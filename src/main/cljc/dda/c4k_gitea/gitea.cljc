@@ -138,3 +138,19 @@
     (->     
      (yaml/load-as-edn "gitea/datavolume.yaml")
      (cm/replace-all-matching-values-by-new-value "DATASTORAGESIZE" (str (str data-storage-size) "Gi")))))
+
+(defn-spec generate-deployment pred/map-or-seq?
+  []
+  (yaml/load-as-edn "gitea/deployment.yaml"))
+
+(defn-spec generate-service pred/map-or-seq?
+  []
+  (yaml/load-as-edn "gitea/service.yaml"))
+
+(defn-spec generate-service-ssh pred/map-or-seq?
+  []
+  (yaml/load-as-edn "gitea/service-ssh.yaml"))
+
+(defn-spec generate-traefik-middleware pred/map-or-seq?
+  []
+  (yaml/load-as-edn "gitea/traefik-middleware.yaml"))

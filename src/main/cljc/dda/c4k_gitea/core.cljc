@@ -7,11 +7,7 @@
 
 (defn k8s-objects [config]
   (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
-    (cm/concat-vec     
-      (yaml/load-resource "gitea/deployment.yaml")
-      (yaml/load-resource "gitea/services.yaml")
-      (yaml/load-resource "gitea/traefik-middleware.yaml")
-     
+    (cm/concat-vec
      (map yaml/to-string
           [(postgres/generate-config {:postgres-size :2gb :db-name "gitea"})
            (postgres/generate-secret config)
@@ -22,6 +18,10 @@
            (postgres/generate-deployment {:postgres-image "postgres:14"
                                           :postgres-size :2gb})
            (postgres/generate-service)
+           (gitea/generate-deployment)
+           (gitea/generate-service)
+           (gitea/generate-service-ssh)
+           (gitea/generate-traefik-middleware)
            (gitea/generate-root-volume config)
            (gitea/generate-data-volume config)
            (gitea/generate-appini-env config)
