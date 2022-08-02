@@ -16,7 +16,7 @@ data:
   GITEA__database__CHARSET: utf8
 
   #[DEFAULT]
-  APP_NAME: APPNAME     
+  APP_NAME: APPNAME
   RUN_MODE: prod
   RUN_USER: git
 
@@ -34,20 +34,22 @@ data:
   #[mailer]
   GITEA__mailer__ENABLED: "true"
   GITEA__mailer__FROM: FROM
-  GITEA__mailer__MAILER_TYPE: smtp
-  GITEA__mailer__HOST: HOSTANDPORT
-  GITEA__mailer__IS_TLS_ENABLED: "true"    
+  GITEA__mailer__MAILER_TYPE: smtp+startls
+  # TODO: jem 2022-08-02: outdated, use SMTP_ADDR & SMTP_PORT instead
+  GITEA__mailer__HOST: HOSTANDPORT  
 
   #[oauth2]
-  GITEA__oauth2__ENABLE: "false"
+  GITEA__oauth2__ENABLE: "true"
 
   #[openid]
-  #GITEA__openid__ENABLE_OPENID: "false"
+  GITEA__openid__ENABLE_OPENID: "true"
+  GITEA__openid__ENABLE_OPENID_SIGNIN: "true"
+  GITEA__openid__ENABLE_OPENID_SIGNUP: "true"
 
   #[picture]
   GITEA__picture__AVATAR_UPLOAD_PATH: /data/gitea/avatars
   GITEA__picture__REPOSITORY_AVATAR_UPLOAD_PATH: /data/gitea/repo-avatars
-  GITEA__picture__DISABLE_GRAVATAR: "true"  
+  GITEA__picture__DISABLE_GRAVATAR: "false"  
 
   #[repository]
   GITEA__repository__ROOT: /data/git/repositories
@@ -69,11 +71,10 @@ data:
   GITEA__service__DISABLE_REGISTRATION: "false"  
   GITEA__service__REQUIRE_SIGNIN_VIEW: "false"
   GITEA__service__REGISTER_EMAIL_CONFIRM: "true"
-  #TODO: require-email-confirmation-to-register, enable-email-notification, enable-federated-avatars (disable-gravatar ist aus)
-
   GITEA__service__ENABLE_NOTIFY_MAIL: "true"
   GITEA__service__EMAIL_DOMAIN_WHITELIST: WHITELISTDOMAINS 
   GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "false"
+  GITEA__service__ENABLE_BASIC_AUTHENTICATION: "true"
   GITEA__service__ENABLE_CAPTCHA: "false"
   GITEA__service__DEFAULT_KEEP_EMAIL_PRIVATE: "true"
   GITEA__service__DEFAULT_ALLOW_CREATE_ORGANIZATION: "true"
