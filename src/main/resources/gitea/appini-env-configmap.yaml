@@ -52,12 +52,8 @@ data:
   #[picture]
   GITEA__picture__AVATAR_UPLOAD_PATH: /data/gitea/avatars
   GITEA__picture__REPOSITORY_AVATAR_UPLOAD_PATH: /data/gitea/repo-avatars
-<<<<<<< HEAD
-  GITEA__picture__DISABLE_GRAVATAR: "false"  
-=======
-  GITEA__picture__DISABLE_GRAVATAR: "true"
+  GITEA__picture__DISABLE_GRAVATAR: "false"
   GITEA__picture__ENABLE_FEDERATED_AVATAR: "true" # Enable support for federated avatars (see http://www.libravatar.org).
->>>>>>> 9f818cf321ebc7af97f44980f1a60399f05488a4
 
   #[repository]
   GITEA__repository__ROOT: /data/git/repositories
@@ -78,14 +74,7 @@ data:
   #[service]
   GITEA__service__DISABLE_REGISTRATION: "false"  
   GITEA__service__REQUIRE_SIGNIN_VIEW: "false"
-<<<<<<< HEAD
   GITEA__service__REGISTER_EMAIL_CONFIRM: "true"
-=======
-  GITEA__service__REGISTER_EMAIL_CONFIRM: "true" # Enable this to ask for mail confirmation of registration. Requires "Mailer" to be enabled.
-  #TODO: Configure Mailer using smtp: https://docs.gitea.io/en-us/email-setup/#using-smtp
-
-
->>>>>>> 9f818cf321ebc7af97f44980f1a60399f05488a4
   GITEA__service__ENABLE_NOTIFY_MAIL: "true"
   GITEA__service__EMAIL_DOMAIN_WHITELIST: WHITELISTDOMAINS 
   GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "false"
