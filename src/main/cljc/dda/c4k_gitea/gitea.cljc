@@ -15,19 +15,21 @@
 (s/def ::default-app-name string?)
 (s/def ::fqdn pred/fqdn-string?)
 (s/def ::mailer-from pred/bash-env-string?)
-(s/def ::mailer-host-port pred/host-and-port-string?)
+(s/def ::mailer-host pred/fqdn-string?)
+(s/def ::mailer-port pred/port-number?)
 (s/def ::service-domain-whitelist #(pred/string-of-separated-by? pred/fqdn-string? #"," %))
 (s/def ::service-noreply-address string?)
 (s/def ::mailer-user pred/bash-env-string?)
 (s/def ::mailer-pw pred/bash-env-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
-(s/def ::volume-total-storage-size int?) ;TODO extend this for checking lower size limits
+(s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
 
 (def config-defaults {:issuer "staging"})
 
 (def config? (s/keys :req-un [::fqdn 
                               ::mailer-from 
-                              ::mailer-host-port 
+                              ::mailer-host
+                              ::mailer-port 
                               ::service-noreply-address]
                      :opt-un [::issuer 
                               ::default-app-name 
@@ -47,10 +49,7 @@
 
 (defn data-storage-by-volume-size
   [total root]
-  (cond
-    (and (<= total 20) (> total 5)) (- total root)
-    (and (<= total 100) (> total 20)) (- total root)
-    (> total 100) (- total root)))
+  (- total root))
 
 
 #?(:cljs
@@ -76,7 +75,8 @@
   (let [{:keys [default-app-name
                 fqdn
                 mailer-from
-                mailer-host-port
+                mailer-host
+                mailer-port
                 service-domain-whitelist
                 service-noreply-address]
          :or {default-app-name "Gitea instance"
@@ -88,7 +88,8 @@
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn)
      (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
      (cm/replace-all-matching-values-by-new-value "FROM" mailer-from)
-     (cm/replace-all-matching-values-by-new-value "HOSTANDPORT" mailer-host-port)
+     (cm/replace-all-matching-values-by-new-value "MAILER_HOST" mailer-host)
+     (cm/replace-all-matching-values-by-new-value "MAILER_PORT" mailer-port)
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
      (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address))))
 
