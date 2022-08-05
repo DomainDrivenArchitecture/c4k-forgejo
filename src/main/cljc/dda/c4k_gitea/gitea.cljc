@@ -21,7 +21,7 @@
 (s/def ::mailer-user pred/bash-env-string?)
 (s/def ::mailer-pw pred/bash-env-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
-(s/def ::volume-total-storage-size int?) ;TODO extend this for checking lower size limits
+(s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
 
 (def config-defaults {:issuer "staging"})
 
@@ -47,10 +47,7 @@
 
 (defn data-storage-by-volume-size
   [total root]
-  (cond
-    (and (<= total 20) (> total 5)) (- total root)
-    (and (<= total 100) (> total 20)) (- total root)
-    (> total 100) (- total root)))
+  (- total root))
 
 
 #?(:cljs
