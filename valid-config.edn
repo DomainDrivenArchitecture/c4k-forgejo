@@ -4,7 +4,7 @@
 :issuer "staging"
 :mailer-from "test@test.de"
 :mailer-host "test.de"
-:mailer-port "123"
+:mailer-port 123
 :service-whitelist-domains "test.de"
 :service-noreply-address "noreply@test.de"
 :volume-total-storage-size 6

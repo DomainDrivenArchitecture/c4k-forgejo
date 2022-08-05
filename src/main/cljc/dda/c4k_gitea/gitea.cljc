@@ -89,7 +89,7 @@
      (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
      (cm/replace-all-matching-values-by-new-value "FROM" mailer-from)
      (cm/replace-all-matching-values-by-new-value "MAILER_HOST" mailer-host)
-     (cm/replace-all-matching-values-by-new-value "MAILER_PORT" mailer-port)
+     (cm/replace-all-matching-values-by-new-value "MAILER_PORT" (str mailer-port))
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
      (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address))))
 
