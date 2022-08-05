@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/c4k-gitea "0.1.0"
+(defproject org.domaindrivenarchitecture/c4k-gitea "0.1.1-SNAPSHOT"
   :description "gitea c4k-installation package"
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
