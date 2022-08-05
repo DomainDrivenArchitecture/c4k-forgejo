@@ -38,9 +38,8 @@ data:
   GITEA__mailer__ENABLED: "true"
   GITEA__mailer__FROM: FROM
   GITEA__mailer__MAILER_TYPE: smtp+startls
-  GITEA__mailer__SMTP_ADDR: MAILER_HOST
-  GITEA__mailer__SMTP_PORT: MAILER_PORT
-
+  # TODO: jem 2022-08-02: outdated, use SMTP_ADDR & SMTP_PORT instead
+  GITEA__mailer__HOST: HOSTANDPORT  
 
   #[oauth2]
   GITEA__oauth2__ENABLE: "true"

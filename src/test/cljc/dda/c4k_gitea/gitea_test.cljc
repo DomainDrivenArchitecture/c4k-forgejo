@@ -16,10 +16,8 @@
           :APP_NAME-c2 "test gitea",
           :GITEA__mailer__FROM-c1 "",
           :GITEA__mailer__FROM-c2 "test@test.com",
-          :GITEA__mailer__SMTP_ADDR-c1 "m.t.de",
-          :GITEA__mailer__SMTP_PORT-c1 "123",
-          :GITEA__mailer__SMTP_ADDR-c2 "mail.test.com",
-          :GITEA__mailer__SMTP_PORT-c2 "456",
+          :GITEA__mailer__HOST-c1 "m.t.de:123",
+          :GITEA__mailer__HOST-c2 "mail.test.com:123",
           :GITEA__server__DOMAIN-c1 "test.de",
           :GITEA__server__DOMAIN-c2 "test.com",
           :GITEA__server__ROOT_URL-c1 "https://test.de",
@@ -33,16 +31,14 @@
          (th/map-diff (cut/generate-appini-env {:default-app-name ""
                                                 :fqdn "test.de"                                                
                                                 :mailer-from ""
-                                                :mailer-host "m.t.de"
-                                                :mailer-port 123                                              
+                                                :mailer-host-port "m.t.de:123"                                                
                                                 :service-domain-whitelist "adb.de"
                                                 :service-noreply-address ""
                                                 })
                       (cut/generate-appini-env {:default-app-name "test gitea"
                                                 :fqdn "test.com"                                                 
                                                 :mailer-from "test@test.com"
-                                                :mailer-host "mail.test.com"
-                                                :mailer-port 456                                              
+                                                :mailer-host-port "mail.test.com:123"                                                
                                                 :service-domain-whitelist "test.com,test.net"
                                                 :service-noreply-address "noreply@test.com"
                                                 })))))
