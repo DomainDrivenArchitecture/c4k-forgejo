@@ -69,11 +69,10 @@
         domain-whitelist (br/get-content-from-element "domain-whitelist" :optional true)]
     (merge
      {:fqdn (br/get-content-from-element "fqdn")
-      ;:mailer-from (br/get-content-from-element "mailer-from")
-      ;:mailer-host-port (br/get-content-from-element "mailer-host-port")
-      ;:service-noreply-address (br/get-content-from-element "service-noreply-address")
-      ;:volume-total-storage-size (br/get-content-from-element "volume-total-storage-size" :deserializer #(read-string %))} ; TODO: Do not use read-string!
-     }
+      :mailer-from (br/get-content-from-element "mailer-from")
+      :mailer-host-port (br/get-content-from-element "mailer-host-port")
+      :service-noreply-address (br/get-content-from-element "service-noreply-address")
+      :volume-total-storage-size (br/get-content-from-element "volume-total-storage-size" :deserializer js/parseInt)}
      (when (not (st/blank? postgres-data-volume-path))
        {:postgres-data-volume-path postgres-data-volume-path})
      (when (not (st/blank? issuer))
@@ -93,7 +92,7 @@
   (br/validate! "app-name" ::gitea/default-app-name :optional true)
   (br/validate! "domain-whitelist" ::gitea/service-domain-whitelist :optional true)
   (br/validate! "postgres-data-volume-path" ::pgc/postgres-data-volume-path :optional true)
-  (br/validate! "volume-total-storage-size" ::gitea/volume-total-storage-size)
+  (br/validate! "volume-total-storage-size" ::gitea/volume-total-storage-size :deserializer js/parseInt)
   (br/validate! "auth" gitea/auth? :deserializer edn/read-string)
   (br/set-form-validated!))
 
