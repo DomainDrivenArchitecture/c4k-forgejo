@@ -44,13 +44,12 @@
 
 (def vol? (s/keys :req-un [::volume-total-storage-size]))
 
-(defn root-storage-by-volume-size
-  [in]
+(defn-spec root-storage-by-volume-size int?
+  [volume-total-storage-size ::volume-total-storage-size]
   (cond
-    (<= in 5) (throw (Exception. "Volume smaller or equal 5Gi!\nIncrease volume-total-storage-size to value > 5"))
-    (and (> in 5) (<= in 20)) 5
-    (and (> in 20) (<= in 100)) 10
-    (> in 100) 20))
+    (and (> volume-total-storage-size 5) (<= volume-total-storage-size 20)) 5
+    (and (> volume-total-storage-size 20) (<= volume-total-storage-size 100)) 10
+    (> volume-total-storage-size 100) 20))
 
 (defn data-storage-by-volume-size
   [total root]
