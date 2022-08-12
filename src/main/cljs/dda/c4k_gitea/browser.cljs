@@ -63,10 +63,9 @@
 
 (defn config-from-document []
   (let [postgres-data-volume-path (br/get-content-from-element "postgres-data-volume-path" :optional true)
-        issuer (br/get-content-from-element "issuer" :optional true :deserializer keyword)
+        issuer (br/get-content-from-element "issuer" :optional true)
         app-name (br/get-content-from-element "app-name" :optional true)
         domain-whitelist (br/get-content-from-element "domain-whitelist" :optional true)]
-    (js/console.log postgres-data-volume-path)
     (merge
      {:fqdn (br/get-content-from-element "fqdn")}
      (when (not (st/blank? postgres-data-volume-path))
@@ -84,9 +83,9 @@
   (br/validate! "mailer-from" ::gitea/mailer-from)
   (br/validate! "mailer-host-port" ::gitea/mailer-host-port)
   (br/validate! "service-noreply-address" ::gitea/service-noreply-address)
-  (br/validate! "issuer" ::gitea/issuer :optional true :deserializer keyword)
-  (br/validate! "app-name" ::gitea/default-app-name)
-  (br/validate! "domain-whitelist" ::gitea/service-domain-whitelist)
+  (br/validate! "issuer" ::gitea/issuer :optional true)
+  (br/validate! "app-name" ::gitea/default-app-name :optional true)
+  (br/validate! "domain-whitelist" ::gitea/service-domain-whitelist :optional true)
   (br/validate! "postgres-data-volume-path" ::pgc/postgres-data-volume-path :optional true)
   (br/validate! "auth" gitea/auth? :deserializer edn/read-string)
   (br/set-form-validated!))
