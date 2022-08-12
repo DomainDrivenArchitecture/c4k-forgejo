@@ -63,7 +63,9 @@
 
 (defn config-from-document []
   (let [postgres-data-volume-path (br/get-content-from-element "postgres-data-volume-path" :optional true)
-        issuer (br/get-content-from-element "issuer" :optional true :deserializer keyword)]
+        issuer (br/get-content-from-element "issuer" :optional true :deserializer keyword)
+        app-name (br/get-content-from-element "app-name" :optional true)
+        domain-whitelist (br/get-content-from-element "domain-whitelist" :optional true)]
     (js/console.log postgres-data-volume-path)
     (merge
      {:fqdn (br/get-content-from-element "fqdn")}
@@ -71,6 +73,10 @@
        {:postgres-data-volume-path postgres-data-volume-path})
      (when (not (st/blank? issuer))
        {:issuer issuer})
+     (when (not (st/blank? app-name))
+       {:default-app-name app-name})
+     (when (not (st/blank? domain-whitelist))
+       {:service-domain-whitelist domain-whitelist})
      )))
 
 (defn validate-all! []

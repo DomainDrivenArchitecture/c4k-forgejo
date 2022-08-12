@@ -1,6 +1,7 @@
 (ns dda.c4k-gitea.gitea
   (:require
-   [clojure.spec.alpha :as s]   
+   [clojure.spec.alpha :as s]
+   [clojure.string :as st]
    #?(:cljs [shadow.resource :as rc])
    #?(:clj [orchestra.core :refer [defn-spec]]
       :cljs [orchestra.core :refer-macros [defn-spec]])
@@ -12,11 +13,17 @@
    [dda.c4k-common.predicate :as pred]
    [dda.c4k-common.postgres :as postgres]))
 
+(defn domain-list?
+  [input]
+  (or
+   (st/blank? input)
+   (pred/string-of-separated-by? pred/fqdn-string? #"," input)))
+
 (s/def ::default-app-name string?)
 (s/def ::fqdn pred/fqdn-string?)
 (s/def ::mailer-from pred/bash-env-string?)
 (s/def ::mailer-host-port pred/host-and-port-string?)
-(s/def ::service-domain-whitelist #(pred/string-of-separated-by? pred/fqdn-string? #"," %))
+(s/def ::service-domain-whitelist domain-list?)
 (s/def ::service-noreply-address string?)
 (s/def ::mailer-user pred/bash-env-string?)
 (s/def ::mailer-pw pred/bash-env-string?)
