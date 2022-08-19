@@ -93,8 +93,8 @@
      (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode mailer-user))
      (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailer-pw)))))
 
-(defn-spec generate-ingress pred/map-or-seq?
-  [config config?]
+(defn generate-ingress
+  [config]
   (let [{:keys [fqdn issuer]} config]
     (->
      (yaml/load-as-edn "gitea/ingress.yaml")

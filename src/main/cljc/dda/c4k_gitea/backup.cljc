@@ -11,8 +11,6 @@
 (s/def ::restic-password cm/bash-env-string?)
 (s/def ::restic-repository cm/bash-env-string?)
 
-(def auth? (s/keys :req-un [::aws-access-key-id ::aws-secret-access-key ::restic-password ::restic-repository]))
-
 #?(:cljs
    (defmethod yaml/load-resource :backup [resource-name]
      (case resource-name
