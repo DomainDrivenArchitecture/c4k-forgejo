@@ -6,4 +6,4 @@
    [dda.c4k-common.uberjar :as uberjar]))
 
 (defn -main [& cmd-args]
-  (uberjar/main-common "c4k-gitea" gitea/config? gitea/auth? gitea/config-defaults core/k8s-objects cmd-args))
+  (uberjar/main-common "c4k-gitea" core/config? core/auth? core/config-defaults core/k8s-objects cmd-args))
