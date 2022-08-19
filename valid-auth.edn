@@ -1,4 +1,7 @@
 {:postgres-db-user "gitea"
  :postgres-db-password "gitea-db-password"
  :mailer-user ""
- :mailer-pw ""}
+ :mailer-pw ""
+ :aws-access-key-id "AWS_KEY_ID"
+ :aws-secret-access-key "AWS_KEY_SECRET"
+ :restic-password ""}

@@ -1,10 +1,9 @@
-{
-:default-app-name "Meissas awesome gitea"
-:fqdn "test.de"
-:issuer "staging"
-:mailer-from "test@test.de"
-:mailer-host-port "test.de:123"
-:service-whitelist-domains "test.de"
-:service-noreply-address "noreply@test.de"
-:volume-total-storage-size 6
- }
+{:default-app-name "Meissas awesome gitea"
+ :fqdn "test.de"
+ :issuer "staging"
+ :mailer-from "test@test.de"
+ :mailer-host-port "test.de:123"
+ :service-whitelist-domains "test.de"
+ :service-noreply-address "noreply@test.de"
+ :volume-total-storage-size 6
+ :restic-repository "repo-path"}
