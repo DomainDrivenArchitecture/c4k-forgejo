@@ -1,9 +1,10 @@
 (ns dda.c4k-gitea.core
  (:require
+  [clojure.spec.alpha :as s]
   [dda.c4k-common.yaml :as yaml]
   [dda.c4k-common.common :as cm]
   [dda.c4k-gitea.gitea :as gitea]
-  [dda.c4k-gitea.gitea :as backup]
+  [dda.c4k-gitea.backup :as backup]
   [dda.c4k-common.postgres :as postgres]))
 
 (def config-defaults {:issuer "staging"})
@@ -19,8 +20,8 @@
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password
                             ::gitea/mailer-user ::gitea/mailer-pw
-                            ::backup/aws-access-key-id ::backup/aws-secret-access-key
-                            ::backup/restic-password]))
+                            ::backup/aws-access-key-id ::backup/aws-secret-access-key]
+                   :opt-un [::backup/restic-password])) ; TODO gec: Is restic password opt or req?
 
 (def vol? (s/keys :req-un [::gitea/volume-total-storage-size]))
 
