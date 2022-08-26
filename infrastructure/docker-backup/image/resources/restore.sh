@@ -21,7 +21,7 @@ function main() {
     cp /var/backups/restore/git/repositories/* /data/git/repositories/
     
     # adjust file permissions
-    #chown -R git:git /data
+    chown -R git:git /data
 
     # Regenerate Git Hooks
     /usr/local/bin/gitea -c '/data/gitea/conf/app.ini' admin regenerate hooks
