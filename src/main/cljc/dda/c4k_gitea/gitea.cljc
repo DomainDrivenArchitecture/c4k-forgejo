@@ -44,16 +44,9 @@
 
 (def vol? (s/keys :req-un [::volume-total-storage-size]))
 
-(defn-spec root-storage-by-volume-size int?
-  [volume-total-storage-size ::volume-total-storage-size]
-  (cond
-    (and (> volume-total-storage-size 5) (<= volume-total-storage-size 20)) 5
-    (and (> volume-total-storage-size 20) (<= volume-total-storage-size 100)) 10
-    (> volume-total-storage-size 100) 20))
-
 (defn data-storage-by-volume-size
-  [total root]
-  (- total root))
+  [total]
+  total)
 
 
 #?(:cljs
@@ -65,8 +58,7 @@
        "gitea/ingress.yaml" (rc/inline "gitea/ingress.yaml")
        "gitea/secrets.yaml" (rc/inline "gitea/secrets.yaml")
        "gitea/service.yaml" (rc/inline "gitea/service.yaml")
-       "gitea/service-ssh.yaml" (rc/inline "gitea/service-ssh.yaml")
-       "gitea/rootvolume.yaml" (rc/inline "gitea/rootvolume.yaml")
+       "gitea/service-ssh.yaml" (rc/inline "gitea/service-ssh.yaml")       
        "gitea/datavolume.yaml" (rc/inline "gitea/datavolume.yaml")
        (throw (js/Error. "Undefined Resource!")))))
 
@@ -125,19 +117,10 @@
      (assoc-in [:spec :issuerRef :name] letsencrypt-issuer)
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
 
-(defn-spec generate-root-volume pred/map-or-seq?
-  [config vol?]
-  (let [{:keys [volume-total-storage-size]} config
-        root-storage-size (root-storage-by-volume-size volume-total-storage-size)]
-    (->
-     (yaml/load-as-edn "gitea/rootvolume.yaml")
-     (cm/replace-all-matching-values-by-new-value "ROOTSTORAGESIZE" (str (str root-storage-size) "Gi")))))
-
 (defn-spec generate-data-volume pred/map-or-seq?
   [config vol?]
-  (let [{:keys [volume-total-storage-size]} config
-        root-storage-size (root-storage-by-volume-size volume-total-storage-size)
-        data-storage-size (data-storage-by-volume-size volume-total-storage-size root-storage-size)]
+  (let [{:keys [volume-total-storage-size]} config        
+        data-storage-size (data-storage-by-volume-size volume-total-storage-size)]
     (->     
      (yaml/load-as-edn "gitea/datavolume.yaml")
      (cm/replace-all-matching-values-by-new-value "DATASTORAGESIZE" (str (str data-storage-size) "Gi")))))

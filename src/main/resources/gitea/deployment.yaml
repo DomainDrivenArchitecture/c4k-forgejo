@@ -27,8 +27,6 @@ spec:
             - secretRef:
                 name: gitea-secrets
           volumeMounts:
-            - name: gitea-root-volume
-              mountPath: "/var/lib/gitea"
             - name: gitea-data-volume
               mountPath: "/data"
           ports:
@@ -37,9 +35,6 @@ spec:
             - containerPort: 3000
               name: gitea
       volumes:
-        - name: gitea-root-volume
-          persistentVolumeClaim:
-            claimName: gitea-root-pvc
         - name: gitea-data-volume
           persistentVolumeClaim:
             claimName: gitea-data-pvc

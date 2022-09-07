@@ -66,14 +66,8 @@
                                              :mailer-user "maileruser"
                                              :mailer-pw "mailerpw"})))))
 
-(deftest should-generate-root-volume
-  (is (= {:storage-c1 "5Gi",
-          :storage-c2 "20Gi"}
-         (th/map-diff (cut/generate-root-volume {:volume-total-storage-size 6})
-                      (cut/generate-root-volume {:volume-total-storage-size 101})))))
-
 (deftest should-generate-data-volume
   (is (= {:storage-c1 "1Gi",
           :storage-c2 "15Gi"}
-         (th/map-diff (cut/generate-data-volume {:volume-total-storage-size 6})
-                      (cut/generate-data-volume {:volume-total-storage-size 20})))))
+         (th/map-diff (cut/generate-data-volume {:volume-total-storage-size 1})
+                      (cut/generate-data-volume {:volume-total-storage-size 15})))))
