@@ -93,7 +93,7 @@
   (br/validate! "domain-whitelist" ::gitea/service-domain-whitelist :optional true)
   (br/validate! "postgres-data-volume-path" ::pgc/postgres-data-volume-path :optional true)
   (br/validate! "volume-total-storage-size" ::gitea/volume-total-storage-size :deserializer js/parseInt)
-  (br/validate! "auth" gitea/auth? :deserializer edn/read-string)
+  (br/validate! "auth" core/auth? :deserializer edn/read-string)
   (br/set-form-validated!))
 
 (defn add-validate-listener [name]

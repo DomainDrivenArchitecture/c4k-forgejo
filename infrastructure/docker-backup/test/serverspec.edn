@@ -1,0 +1,6 @@
+{:file [{:path "/usr/local/bin/init.sh" :mod "700"}
+        {:path "/usr/local/bin/backup.sh" :mod "700"}
+        {:path "/usr/local/bin/restore.sh" :mod "700"}
+        {:path "/usr/local/bin/restic-snapshots.sh" :mod "700"}
+        {:path "/entrypoint.sh" :mod "700"}
+        {:path "/entrypoint-start-and-wait.sh" :mod "700"}]}

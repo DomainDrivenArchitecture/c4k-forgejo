@@ -1,15 +1,35 @@
 (ns dda.c4k-gitea.core
  (:require
+  [clojure.spec.alpha :as s]
   [dda.c4k-common.yaml :as yaml]
   [dda.c4k-common.common :as cm]
   [dda.c4k-gitea.gitea :as gitea]
+  [dda.c4k-gitea.backup :as backup]
   [dda.c4k-common.postgres :as postgres]))
+
+(def config-defaults {:issuer "staging"})
+
+(def config? (s/keys :req-un [::gitea/fqdn 
+                              ::gitea/mailer-from 
+                              ::gitea/mailer-host-port 
+                              ::gitea/service-noreply-address]
+                     :opt-un [::gitea/issuer 
+                              ::gitea/default-app-name 
+                              ::gitea/service-domain-whitelist
+                              ::backup/restic-repository]))
+
+(def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password
+                            ::gitea/mailer-user ::gitea/mailer-pw
+                            ::backup/aws-access-key-id ::backup/aws-secret-access-key]
+                   :opt-un [::backup/restic-password])) ; TODO gec: Is restic password opt or req?
+
+(def vol? (s/keys :req-un [::gitea/volume-total-storage-size]))
 
 (defn k8s-objects [config]
   (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
-    (cm/concat-vec
-     (map yaml/to-string
-          (filter #(not (nil? %))
+    (map yaml/to-string
+         (filter #(not (nil? %))
+                 (cm/concat-vec
                   [(postgres/generate-config {:postgres-size :2gb :db-name "gitea"})
                    (postgres/generate-secret config)
                    (when (contains? config :postgres-data-volume-path)
@@ -26,4 +46,9 @@
                    (gitea/generate-appini-env config)
                    (gitea/generate-secrets config)
                    (gitea/generate-ingress config)
-                   (gitea/generate-certificate config)])))))
+                   (gitea/generate-certificate config)]
+                  (when (contains? config :restic-repository)
+                    [(backup/generate-config config)
+                     (backup/generate-secret config)
+                     (backup/generate-cron)
+                     (backup/generate-backup-restore-deployment config)]))))))
