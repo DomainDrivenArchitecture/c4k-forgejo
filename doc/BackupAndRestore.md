@@ -31,7 +31,11 @@
 
 1. apply backup-and-restore pod:   
   `kubectl scale deployment backup-restore --replicas=1`
-2. exec into pod and execute restore pod (press tab to get your exact pod name)   
+2. Scale down gitea deployment:
+   `kubectl scale deployment gitea --replicas=0`
+3. exec into pod and execute restore pod (press tab to get your exact pod name)   
    `kubectl exec -it backup-restore-... -- /usr/local/bin/restore.sh`
-1. remove backup-and-restore pod:   
+4. Start gitea again:
+   `kubectl scale deployment gitea --replicas=1`
+5. remove backup-and-restore pod:   
    `kubectl scale deployment backup-restore --replicas=0`

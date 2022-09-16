@@ -4,7 +4,7 @@ function main() {
     file_env AWS_ACCESS_KEY_ID
     file_env AWS_SECRET_ACCESS_KEY
 
-    init-role-repo
+    #init-role-repo
     init-database-repo
     init-file-repo
 }
