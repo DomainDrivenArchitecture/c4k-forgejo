@@ -23,12 +23,11 @@ function main() {
     # adjust file permissions for the git user
     chown -R 1000:1000 /var/backups
 
-    # TODO: Regenerate Git Hooks
+    # TODO: Regenerate Git Hooks? Do we need this?
     #/usr/local/bin/gitea -c '/data/gitea/conf/app.ini' admin regenerate hooks
 
     # Restore db
     drop-create-db
-    #restore-roles
     restore-db
 }
 
