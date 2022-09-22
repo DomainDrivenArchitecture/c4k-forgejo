@@ -102,7 +102,7 @@
 
 (defn-spec generate-ingress pred/map-or-seq?
   [config config?]
-  (let [{:keys [fqdn issuer]} config]
+  (let [{:keys [fqdn]} config]
     (->
      (yaml/load-as-edn "gitea/ingress.yaml")
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
