@@ -8,7 +8,6 @@ function main() {
     file_env RESTIC_DAYS_TO_KEEP 30
     file_env RESTIC_MONTHS_TO_KEEP 12
 
-    #backup-roles 'TODO'
     backup-db-dump
     backup-fs-from-directory '/var/backups/' 'gitea/' 'git/repositories/'
 }

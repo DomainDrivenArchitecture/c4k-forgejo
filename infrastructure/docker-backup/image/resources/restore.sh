@@ -15,20 +15,19 @@ function main() {
     rm -rf /var/backups/restore
     restore-directory '/var/backups/restore'
 
-    rm -rf /data/gitea/*
-    rm -rf /data/git/repositories/*
-    cp /var/backups/restore/gitea/* /data/gitea/
-    cp /var/backups/restore/git/repositories/* /data/git/repositories/
+    rm -rf /var/backups/gitea/*
+    rm -rf /var/backups/git/repositories/*
+    cp -r /var/backups/restore/gitea/* /var/backups/gitea/
+    cp -r /var/backups/restore/git/repositories/* /var/backups/git/repositories/
     
-    # adjust file permissions
-    chown -R git:git /data
+    # adjust file permissions for the git user
+    chown -R 1000:1000 /var/backups
 
-    # Regenerate Git Hooks
-    /usr/local/bin/gitea -c '/data/gitea/conf/app.ini' admin regenerate hooks
+    # TODO: Regenerate Git Hooks? Do we need this?
+    #/usr/local/bin/gitea -c '/data/gitea/conf/app.ini' admin regenerate hooks
 
     # Restore db
     drop-create-db
-    #restore-roles
     restore-db
 }
 
