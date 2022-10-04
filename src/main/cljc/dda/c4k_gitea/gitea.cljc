@@ -10,7 +10,8 @@
    [dda.c4k-common.yaml :as yaml]
    [dda.c4k-common.common :as cm]
    [dda.c4k-common.base64 :as b64]
-   [dda.c4k-common.predicate :as pred]))
+   [dda.c4k-common.predicate :as pred]
+   [dda.c4k-common.postgres :as postgres]))
 
 (defn domain-list?
   [input]
@@ -101,7 +102,7 @@
 
 (defn generate-ingress
   [config]
-  (let [{:keys [fqdn issuer]} config]
+  (let [{:keys [fqdn]} config]
     (->
      (yaml/load-as-edn "gitea/ingress.yaml")
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
