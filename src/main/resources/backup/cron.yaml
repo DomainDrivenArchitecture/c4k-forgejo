@@ -1,0 +1,47 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: gitea-backup
+  labels:
+    app.kubernetes.part-of: gitea
+spec:
+  schedule: "10 23 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup-app
+            image: domaindrivenarchitecture/c4k-gitea-backup
+            imagePullPolicy: IfNotPresent
+            command: ["/entrypoint.sh"]
+            env:
+            - name: AWS_DEFAULT_REGION
+              value: eu-central-1
+            - name: AWS_ACCESS_KEY_ID_FILE
+              value: /var/run/secrets/backup-secrets/aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY_FILE
+              value: /var/run/secrets/backup-secrets/aws-secret-access-key
+            - name: RESTIC_REPOSITORY
+              valueFrom:
+                configMapKeyRef:
+                  name: backup-config
+                  key: restic-repository
+            - name: RESTIC_PASSWORD_FILE
+              value: /var/run/secrets/backup-secrets/restic-password
+            volumeMounts:
+            - name: gitea-data-volume
+              mountPath: /var/backups
+            - name: backup-secret-volume
+              mountPath: /var/run/secrets/backup-secrets
+              readOnly: true
+          volumes:
+          - name: gitea-data-volume
+            persistentVolumeClaim:
+              claimName: gitea-data-pvc
+          - name: backup-secret-volume
+            secret:
+              secretName: backup-secret
+          restartPolicy: OnFailure

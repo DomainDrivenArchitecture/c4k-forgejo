@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backup-restore
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: backup-restore
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: backup-restore
+        app.kubernetes.io/name: backup-restore
+        app.kubernetes.io/part-of: gitea
+    spec:
+      containers:
+      - image: domaindrivenarchitecture/c4k-gitea-backup
+        name: backup-app
+        imagePullPolicy: IfNotPresent
+        command: ["/entrypoint-start-and-wait.sh"]
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-password
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: postgres-db
+        - name: POSTGRES_HOST
+          value: "postgresql-service:5432"
+        - name: POSTGRES_SERVICE
+          value: "postgresql-service"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: AWS_DEFAULT_REGION
+          value: eu-central-1
+        - name: AWS_ACCESS_KEY_ID_FILE
+          value: /var/run/secrets/backup-secrets/aws-access-key-id
+        - name: AWS_SECRET_ACCESS_KEY_FILE
+          value: /var/run/secrets/backup-secrets/aws-secret-access-key
+        - name: RESTIC_REPOSITORY
+          valueFrom:
+            configMapKeyRef:
+              name: backup-config
+              key: restic-repository
+        - name: RESTIC_PASSWORD_FILE
+          value: /var/run/secrets/backup-secrets/restic-password
+        - name: CERTIFICATE_FILE
+          value: ""
+        volumeMounts:
+        - name: gitea-data-volume
+          mountPath: /var/backups
+        - name: backup-secret-volume
+          mountPath: /var/run/secrets/backup-secrets
+          readOnly: true
+      volumes:
+      - name: gitea-data-volume
+        persistentVolumeClaim:
+          claimName: gitea-data-pvc
+      - name: backup-secret-volume
+        secret:
+          secretName: backup-secret

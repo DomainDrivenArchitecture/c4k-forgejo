@@ -66,8 +66,8 @@
    (defmethod yaml/load-as-edn :gitea [resource-name]
      (yaml/from-string (yaml/load-resource resource-name))))
 
-(defn-spec generate-appini-env pred/map-or-seq?  
-  [config config?]
+(defn generate-appini-env
+  [config]
   (let [{:keys [default-app-name
                 fqdn
                 mailer-from
@@ -87,8 +87,8 @@
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
      (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address))))
 
-(defn-spec generate-secrets pred/map-or-seq?
-  [auth auth?]
+(defn generate-secrets
+  [auth]
   (let [{:keys [postgres-db-user 
                 postgres-db-password 
                 mailer-user 
@@ -100,15 +100,15 @@
      (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode mailer-user))
      (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailer-pw)))))
 
-(defn-spec generate-ingress pred/map-or-seq?
-  [config config?]
+(defn generate-ingress
+  [config]
   (let [{:keys [fqdn]} config]
     (->
      (yaml/load-as-edn "gitea/ingress.yaml")
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
 
-(defn-spec generate-certificate pred/map-or-seq?
-  [config config?]
+(defn generate-certificate
+  [config]
   (let [{:keys [fqdn issuer]
          :or {issuer "staging"}} config
         letsencrypt-issuer (name issuer)]
@@ -125,14 +125,14 @@
      (yaml/load-as-edn "gitea/datavolume.yaml")
      (cm/replace-all-matching-values-by-new-value "DATASTORAGESIZE" (str (str data-storage-size) "Gi")))))
 
-(defn-spec generate-deployment pred/map-or-seq?
+(defn generate-deployment
   []
   (yaml/load-as-edn "gitea/deployment.yaml"))
 
-(defn-spec generate-service pred/map-or-seq?
+(defn generate-service
   []
   (yaml/load-as-edn "gitea/service.yaml"))
 
-(defn-spec generate-service-ssh pred/map-or-seq?
+(defn generate-service-ssh
   []
   (yaml/load-as-edn "gitea/service-ssh.yaml"))
