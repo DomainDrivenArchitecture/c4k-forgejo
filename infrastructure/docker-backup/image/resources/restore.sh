@@ -17,8 +17,8 @@ function main() {
 
     rm -rf /var/backups/gitea/*
     rm -rf /var/backups/git/repositories/*
-    cp -r /var/backups/restore/gitea/* /var/backups/gitea/
-    cp -r /var/backups/restore/git/repositories/* /var/backups/git/repositories/
+    cp -r /var/backups/restore/gitea /var/backups/
+    cp -r /var/backups/restore/git/repositories /var/backups/git/
     
     # adjust file permissions for the git user
     chown -R 1000:1000 /var/backups
