@@ -87,7 +87,7 @@
   (br/validate! "app-name" ::gitea/default-app-name :optional true)
   (br/validate! "domain-whitelist" ::gitea/service-domain-whitelist :optional true)  
   (br/validate! "volume-total-storage-size" ::gitea/volume-total-storage-size :deserializer js/parseInt)
-  (br/validate! "auth" core/auth? :deserializer edn/read-string)
+  (br/validate! "auth" gitea/auth? :deserializer edn/read-string)
   (br/set-form-validated!))
 
 (defn add-validate-listener [name]
