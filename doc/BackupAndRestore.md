@@ -21,7 +21,7 @@
 
 1. apply backup-and-restore pod:   
   `kubectl scale deployment backup-restore --replicas=1`
-2. exec into pod and execute restore pod (press tab to get your exact pod name)   
+2. exec into pod and execute backup pod (press tab to get your exact pod name)   
    `kubectl exec -it backup-restore-... -- /usr/local/bin/backup.sh`
 3. remove backup-and-restore pod:   
    `kubectl scale deployment backup-restore --replicas=0`
