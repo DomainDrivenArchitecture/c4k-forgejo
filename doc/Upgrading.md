@@ -1,21 +1,20 @@
-# Release process
+# Upgrading process
 
 ## adhoc (on kubernetes cluster)
 
 Make sure you've got your gitea admin credentials.
 
 ``` bash
-kubectl edit deployments [website-pod-deployment-name]
+kubectl edit configmap gitea-env
+# make sure INSTALL_LOCK under security is set to true to disable the installation screen
+# save and exit
+kubectl edit deployments gitea
 # search for your current gitea version, e.g. 1.17.0
 # replace with new version
 # save and exit
-kubectl scale deployment meissa-io-deployment --replicas=0
-kubectl scale deployment meissa-io-deployment --replicas=1
+kubectl scale deployment gitea --replicas=0
+kubectl scale deployment gitea --replicas=1
 ```
-
-Visit your gitea url.  
-The inital installation screen should be visible.  
-Enter your admin credentials.
 
 You now should be logged into the admin account with all repos visible.
 
