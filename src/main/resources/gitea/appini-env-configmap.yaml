@@ -62,7 +62,7 @@ data:
   GITEA__repository__TEMP_PATH: /data/gitea/uploads    
 
   #[security]
-  GITEA__security__INSTALL_LOCK: "false"
+  GITEA__security__INSTALL_LOCK: "true"
 
   #[server]
   GITEA__server__DOMAIN: FQDN
