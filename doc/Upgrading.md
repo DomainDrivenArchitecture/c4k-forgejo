@@ -2,7 +2,7 @@
 
 ## adhoc (on kubernetes cluster)
 
-Make sure you've got your gitea admin credentials.
+Ssh into your kubernetes cluster running the gitea instance.  
 
 ``` bash
 kubectl edit configmap gitea-env
@@ -16,6 +16,6 @@ kubectl scale deployment gitea --replicas=0
 kubectl scale deployment gitea --replicas=1
 ```
 
-You now should be logged into the admin account with all repos visible.
+Logging into the admin account should now show the new version.
 
 You may want to update your c4k-gitea resources to reflect the changes made on the cluster.
