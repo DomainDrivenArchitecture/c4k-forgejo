@@ -2,7 +2,7 @@
     "name": "c4k-gitea",
     "description": "Generate c4k yaml for a gitea deployment.",
     "author": "meissa GmbH",
-    "version": "0.1.1-SNAPSHOT",
+    "version": "1.0.1-SNAPSHOT",
     "homepage": "https://gitlab.com/domaindrivenarchitecture/c4k-gitea#readme",
     "repository": "https://www.npmjs.com/package/c4k-gitea",
     "license": "APACHE2",
