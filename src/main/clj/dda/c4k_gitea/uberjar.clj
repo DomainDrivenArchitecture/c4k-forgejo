@@ -2,7 +2,6 @@
   (:gen-class)
   (:require
    [dda.c4k-gitea.core :as core]
-   [dda.c4k-gitea.gitea :as gitea]
    [dda.c4k-common.uberjar :as uberjar]))
 
 (defn -main [& cmd-args]
