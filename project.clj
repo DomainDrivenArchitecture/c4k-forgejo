@@ -22,10 +22,10 @@
              :uberjar {:aot :all
                        :main dda.c4k-gitea.uberjar
                        :uberjar-name "c4k-gitea-standalone.jar"
-                       :dependencies [[org.clojure/tools.cli "1.0.206"]
-                                      [ch.qos.logback/logback-classic "1.3.0-alpha4"
+                       :dependencies [[org.clojure/tools.cli "1.0.214"]
+                                      [ch.qos.logback/logback-classic "1.4.5"
                                        :exclusions [com.sun.mail/javax.mail]]
-                                      [org.slf4j/jcl-over-slf4j "2.0.0-alpha1"]]}}
+                                      [org.slf4j/jcl-over-slf4j "2.0.6"]]}}
   :release-tasks [["test"]
                   ["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
