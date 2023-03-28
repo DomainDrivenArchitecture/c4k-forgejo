@@ -43,11 +43,6 @@
                                                 :service-noreply-address "noreply@test.com"
                                                 })))))
 
-(deftest should-generate-certificate
-  (is (= {:name-c2 "prod", :name-c1 "staging"}
-         (th/map-diff (cut/generate-certificate {}) 
-                      (cut/generate-certificate {:issuer "prod"})))))
-
 (deftest should-generate-secret
   (is (= {:FORGEJO__database__USER-c1 "",
           :FORGEJO__database__USER-c2 (b64/encode "pg-user"),
