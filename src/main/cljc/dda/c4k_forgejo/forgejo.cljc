@@ -62,10 +62,6 @@
        "forgejo/datavolume.yaml" (rc/inline "forgejo/datavolume.yaml")
        (throw (js/Error. "Undefined Resource!")))))
 
-#?(:cljs
-   (defmethod yaml/load-as-edn :forgejo [resource-name]
-     (yaml/from-string (yaml/load-resource resource-name))))
-
 (defn generate-appini-env
   [config]
   (let [{:keys [default-app-name
