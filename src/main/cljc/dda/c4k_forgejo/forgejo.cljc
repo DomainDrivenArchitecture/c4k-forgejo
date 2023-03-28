@@ -9,6 +9,7 @@
       :cljs [cljs.reader :as edn])
    [dda.c4k-common.yaml :as yaml]
    [dda.c4k-common.common :as cm]
+   [dda.c4k-common.ingress :as ing]
    [dda.c4k-common.base64 :as b64]
    [dda.c4k-common.predicate :as pred]
    [dda.c4k-common.postgres :as postgres]))
@@ -54,8 +55,6 @@
      (case resource-name
        "forgejo/appini-env-configmap.yaml" (rc/inline "forgejo/appini-env-configmap.yaml")
        "forgejo/deployment.yaml" (rc/inline "forgejo/deployment.yaml")
-       "forgejo/certificate.yaml" (rc/inline "forgejo/certificate.yaml")
-       "forgejo/ingress.yaml" (rc/inline "forgejo/ingress.yaml")
        "forgejo/secrets.yaml" (rc/inline "forgejo/secrets.yaml")
        "forgejo/service.yaml" (rc/inline "forgejo/service.yaml")
        "forgejo/service-ssh.yaml" (rc/inline "forgejo/service-ssh.yaml")       
@@ -96,22 +95,15 @@
      (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode mailer-user))
      (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailer-pw)))))
 
-(defn generate-ingress
+(defn generate-ingress-and-cert
   [config]
   (let [{:keys [fqdn]} config]
-    (->
-     (yaml/load-as-edn "forgejo/ingress.yaml")
-     (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
-
-(defn generate-certificate
-  [config]
-  (let [{:keys [fqdn issuer]
-         :or {issuer "staging"}} config
-        letsencrypt-issuer (name issuer)]
-    (->
-     (yaml/load-as-edn "forgejo/certificate.yaml")
-     (assoc-in [:spec :issuerRef :name] letsencrypt-issuer)
-     (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
+    (ing/generate-ingress-and-cert
+     (merge
+      {:service-name "forgejo"
+       :service-port 80
+       :fqdns [fqdn]}
+      config))))
 
 (defn-spec generate-data-volume pred/map-or-seq?
   [config vol?]

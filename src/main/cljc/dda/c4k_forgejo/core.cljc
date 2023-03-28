@@ -44,9 +44,8 @@
                    (forgejo/generate-service-ssh)                   
                    (forgejo/generate-data-volume config)
                    (forgejo/generate-appini-env config)
-                   (forgejo/generate-secrets config)
-                   (forgejo/generate-ingress config)
-                   (forgejo/generate-certificate config)]
+                   (forgejo/generate-secrets config)] 
+                  (forgejo/generate-ingress-and-cert config)
                   (when (contains? config :restic-repository)
                     [(backup/generate-config config)
                      (backup/generate-secret config)
