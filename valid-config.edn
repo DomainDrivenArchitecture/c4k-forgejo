@@ -6,4 +6,7 @@
  :service-whitelist-domains "test.de"
  :service-noreply-address "noreply@test.de"
  :volume-total-storage-size 6
- :restic-repository "repo-path"}
+ :restic-repository "repo-path"
+ :mon-cfg {:grafana-cloud-url "url-for-your-prom-remote-write-endpoint"
+           :k3s-cluster-name "jitsi"
+           :k3s-cluster-stage "test"}}

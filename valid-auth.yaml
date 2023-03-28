@@ -1,0 +1,10 @@
+postgres-db-user: "forgejo"
+postgres-db-password: "forgejo-db-password"
+mailer-user: ""
+mailer-pw: ""
+aws-access-key-id: "AWS_KEY_ID"
+aws-secret-access-key: "AWS_KEY_SECRET"
+restic-password: ""
+mon-auth: 
+  grafana-cloud-user: "user"
+  grafana-cloud-password: "password"

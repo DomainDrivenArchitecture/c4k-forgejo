@@ -4,4 +4,6 @@
  :mailer-pw ""
  :aws-access-key-id "AWS_KEY_ID"
  :aws-secret-access-key "AWS_KEY_SECRET"
- :restic-password ""}
+ :restic-password ""
+ :mon-auth {:grafana-cloud-user "user"
+            :grafana-cloud-password "password"}}

@@ -3,11 +3,15 @@
   [clojure.spec.alpha :as s]
   [dda.c4k-common.yaml :as yaml]
   [dda.c4k-common.common :as cm]
+  [dda.c4k-common.monitoring :as mon]
   [dda.c4k-forgejo.forgejo :as forgejo]
   [dda.c4k-forgejo.backup :as backup]
   [dda.c4k-common.postgres :as postgres]))
 
 (def config-defaults {:issuer "staging"})
+
+(s/def ::mon-cfg mon/config?)
+(s/def ::mon-auth mon/auth?)
 
 (def config? (s/keys :req-un [::forgejo/fqdn 
                               ::forgejo/mailer-from 
@@ -16,16 +20,18 @@
                      :opt-un [::forgejo/issuer 
                               ::forgejo/default-app-name 
                               ::forgejo/service-domain-whitelist
-                              ::backup/restic-repository]))
+                              ::backup/restic-repository
+                              ::mon-cfg]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password
                             ::forgejo/mailer-user ::forgejo/mailer-pw
                             ::backup/aws-access-key-id ::backup/aws-secret-access-key]
-                   :opt-un [::backup/restic-password])) ; TODO gec: Is restic password opt or req?
+                   :opt-un [::backup/restic-password ; TODO gec: Is restic password opt or req?
+                            ::mon-cfg])) 
 
 (def vol? (s/keys :req-un [::forgejo/volume-total-storage-size]))
 
-(defn k8s-objects [config]
+(defn k8s-objects [config auth]
   (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
     (map yaml/to-string
          (filter #(not (nil? %))
@@ -50,4 +56,6 @@
                     [(backup/generate-config config)
                      (backup/generate-secret config)
                      (backup/generate-cron)
-                     (backup/generate-backup-restore-deployment config)]))))))
+                     (backup/generate-backup-restore-deployment config)])
+                  (when (:contains? config :mon-cfg)
+                    (mon/generate (:mon-cfg config) (:mon-auth auth))))))))
