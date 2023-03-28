@@ -7,7 +7,7 @@
  :dependencies [[org.domaindrivenarchitecture/c4k-common-cljs "3.0.1"]
                 [hickory "0.7.1"]]
  :builds {:frontend {:target :browser
-                     :modules {:main {:init-fn dda.c4k-gitea.browser/init}}
+                     :modules {:main {:init-fn dda.c4k-forgejo.browser/init}}
                      :release {}
                      :compiler-options {:optimizations :advanced}}
           :test {:target :node-test

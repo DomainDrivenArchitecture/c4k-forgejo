@@ -1,5 +1,5 @@
-(defproject org.domaindrivenarchitecture/c4k-gitea "1.0.1-SNAPSHOT"
-  :description "gitea c4k-installation package"
+(defproject org.domaindrivenarchitecture/c4k-forgejo "1.0.1-SNAPSHOT"
+  :description "forgejo c4k-installation package"
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
@@ -20,8 +20,8 @@
                     :dependencies [[dda/data-test "0.1.1"]]}
              :dev {:plugins [[lein-shell "0.5.0"]]}
              :uberjar {:aot :all
-                       :main dda.c4k-gitea.uberjar
-                       :uberjar-name "c4k-gitea-standalone.jar"
+                       :main dda.c4k-forgejo.uberjar
+                       :uberjar-name "c4k-forgejo-standalone.jar"
                        :dependencies [[org.clojure/tools.cli "1.0.206"]
                                       [ch.qos.logback/logback-classic "1.3.0-alpha4"
                                        :exclusions [com.sun.mail/javax.mail]]
@@ -36,11 +36,11 @@
                       "native-image"
                       "--report-unsupported-elements-at-runtime"
                       "--initialize-at-build-time"
-                      "-jar" "target/uberjar/c4k-gitea-standalone.jar"
+                      "-jar" "target/uberjar/c4k-forgejo-standalone.jar"
                       "-H:ResourceConfigurationFiles=graalvm-resource-config.json"
                       "-H:Log=registerResource"
                       "-H:Name=target/graalvm/${:name}"]
             "inst" ["shell"
                     "sh"
                     "-c"
-                    "lein uberjar && sudo install -m=755 target/uberjar/c4k-gitea-standalone.jar /usr/local/bin/c4k-gitea-standalone.jar"]})
+                    "lein uberjar && sudo install -m=755 target/uberjar/c4k-forgejo-standalone.jar /usr/local/bin/c4k-forgejo-standalone.jar"]})

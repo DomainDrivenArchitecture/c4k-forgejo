@@ -1,9 +1,9 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: gitea-backup
+  name: forgejo-backup
   labels:
-    app.kubernetes.part-of: gitea
+    app.kubernetes.part-of: forgejo
 spec:
   schedule: "10 23 * * *"
   successfulJobsHistoryLimit: 1
@@ -14,7 +14,7 @@ spec:
         spec:
           containers:
           - name: backup-app
-            image: domaindrivenarchitecture/c4k-gitea-backup
+            image: domaindrivenarchitecture/c4k-forgejo-backup
             imagePullPolicy: IfNotPresent
             command: ["/entrypoint.sh"]
             env:
@@ -55,15 +55,15 @@ spec:
             - name: CERTIFICATE_FILE
               value: ""
             volumeMounts:
-            - name: gitea-data-volume
+            - name: forgejo-data-volume
               mountPath: /var/backups
             - name: backup-secret-volume
               mountPath: /var/run/secrets/backup-secrets
               readOnly: true
           volumes:
-          - name: gitea-data-volume
+          - name: forgejo-data-volume
             persistentVolumeClaim:
-              claimName: gitea-data-pvc
+              claimName: forgejo-data-pvc
           - name: backup-secret-volume
             secret:
               secretName: backup-secret

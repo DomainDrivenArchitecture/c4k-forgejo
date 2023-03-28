@@ -1,4 +1,4 @@
-{:default-app-name "Meissas awesome gitea"
+{:default-app-name "Meissas awesome forgejo"
  :fqdn "test.de"
  :issuer "staging"
  :mailer-from "test@test.de"

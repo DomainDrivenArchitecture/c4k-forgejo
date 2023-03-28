@@ -1,5 +1,5 @@
-{:postgres-db-user "gitea"
- :postgres-db-password "gitea-db-password"
+{:postgres-db-user "forgejo"
+ :postgres-db-password "forgejo-db-password"
  :mailer-user ""
  :mailer-pw ""
  :aws-access-key-id "AWS_KEY_ID"
