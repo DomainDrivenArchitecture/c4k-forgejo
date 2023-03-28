@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forgejo
+  namespace: default
+  labels:
+    app: forgejo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: forgejo
+  template:
+    metadata:
+      name: forgejo
+      labels:
+        app: forgejo
+    spec:
+      containers:
+        - name: forgejo
+          image: codeberg.org/forgejo/forgejo:1.18
+          imagePullPolicy: IfNotPresent
+          # config settings
+          envFrom:
+            - configMapRef:
+                name: forgejo-env
+            - secretRef:
+                name: forgejo-secrets
+          volumeMounts:
+            - name: forgejo-data-volume
+              mountPath: "/data"
+          ports:
+            - containerPort: 22
+              name: git-ssh
+            - containerPort: 3000
+              name: forgejo
+      volumes:
+        - name: forgejo-data-volume
+          persistentVolumeClaim:
+            claimName: forgejo-data-pvc
+          
