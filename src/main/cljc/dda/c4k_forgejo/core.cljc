@@ -10,9 +10,6 @@
 
 (def config-defaults {:issuer "staging"})
 
-(s/def ::mon-cfg mon/config?)
-(s/def ::mon-auth mon/auth?)
-
 (def config? (s/keys :req-un [::forgejo/fqdn 
                               ::forgejo/mailer-from 
                               ::forgejo/mailer-host-port 
@@ -21,13 +18,13 @@
                               ::forgejo/default-app-name 
                               ::forgejo/service-domain-whitelist
                               ::backup/restic-repository
-                              ::mon-cfg]))
+                              ::mon/mon-cfg]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password
                             ::forgejo/mailer-user ::forgejo/mailer-pw
                             ::backup/aws-access-key-id ::backup/aws-secret-access-key]
                    :opt-un [::backup/restic-password ; TODO gec: Is restic password opt or req?
-                            ::mon-cfg])) 
+                            ::mon/mon-cfg]))
 
 (def vol? (s/keys :req-un [::forgejo/volume-total-storage-size]))
 
