@@ -9,5 +9,5 @@ volume-total-storage-size: 6
 restic-repository: "repo-path"
 mon-cfg: 
   grafana-cloud-url: "url-for-your-prom-remote-write-endpoint"
-  cluster-name: "jitsi"
+  cluster-name: "forgejo"
   cluster-stage: "test"
