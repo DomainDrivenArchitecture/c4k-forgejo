@@ -34,7 +34,7 @@
          (filter #(not (nil? %))
                  (cm/concat-vec
                   [(postgres/generate-config {:postgres-size :2gb :db-name "forgejo"})
-                   (postgres/generate-secret config)
+                   (postgres/generate-secret auth)
                    (when (contains? config :postgres-data-volume-path)
                      (postgres/generate-persistent-volume (select-keys config [:postgres-data-volume-path :pv-storage-size-gb])))
                    (postgres/generate-pvc {:pv-storage-size-gb 5
@@ -47,11 +47,11 @@
                    (forgejo/generate-service-ssh)                   
                    (forgejo/generate-data-volume config)
                    (forgejo/generate-appini-env config)
-                   (forgejo/generate-secrets config)] 
+                   (forgejo/generate-secrets auth)] 
                   (forgejo/generate-ingress-and-cert config)
                   (when (contains? config :restic-repository)
                     [(backup/generate-config config)
-                     (backup/generate-secret config)
+                     (backup/generate-secret auth)
                      (backup/generate-cron)
                      (backup/generate-backup-restore-deployment config)])
                   (when (:contains? config :mon-cfg)
