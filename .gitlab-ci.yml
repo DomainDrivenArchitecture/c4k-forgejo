@@ -48,7 +48,7 @@ test-schema:
   stage: build_and_test
   script:
     - lein uberjar
-    - java -jar target/uberjar/c4k-forgejo-standalone.jar src/test/resources/forgejo_test/valid-config.yaml src/test/resources/forgejo_test/valid-auth.yaml | kubeconform --kubernetes-version 1.19.0 --strict --skip Certificate -
+    - java -jar target/uberjar/c4k-forgejo-standalone.jar src/test/resources/forgejo-test/valid-config.yaml src/test/resources/forgejo-test/valid-auth.yaml | kubeconform --kubernetes-version 1.19.0 --strict --skip Certificate -
   artifacts:
     paths:
       - target/uberjar
