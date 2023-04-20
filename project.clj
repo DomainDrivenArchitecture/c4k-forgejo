@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/c4k-forgejo "1.1.0-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/c4k-forgejo "2.0.0-SNAPSHOT"
   :description "forgejo c4k-installation package"
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
