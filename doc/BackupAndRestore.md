@@ -4,7 +4,7 @@
 
 * we use restic to produce small & encrypted backups
 * backup is scheduled at `schedule: "10 23 * * *"`
-* Gitea stores files in `/data/gitea` and `/data/git/repositories`, these files are backed up. 
+* Forgejo stores files in `/data/gitea` and `/data/git/repositories`, these files are backed up. 
 * The postgres db is also backed up
 
 ## Manual init the restic repository for the first time
