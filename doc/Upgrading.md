@@ -9,7 +9,7 @@ kubectl edit configmap forgejo-env
 # make sure INSTALL_LOCK under security is set to true to disable the installation screen
 # save and exit
 kubectl edit deployments forgejo
-# search for your current forgejo version, e.g. 1.17.0
+# search for your current forgejo version, e.g. 1.19
 # replace with new version
 # save and exit
 kubectl scale deployment forgejo --replicas=0
