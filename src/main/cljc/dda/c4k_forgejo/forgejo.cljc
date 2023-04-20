@@ -100,8 +100,8 @@
   (let [{:keys [fqdn]} config]
     (ing/generate-ingress-and-cert
      (merge
-      {:service-name "forgejo"
-       :service-port 80
+      {:service-name "forgejo-service"
+       :service-port 3000
        :fqdns [fqdn]}
       config))))
 
