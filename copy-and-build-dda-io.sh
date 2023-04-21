@@ -10,7 +10,7 @@ set -eo pipefail
 srcDir="/home/$USER/"
 srcName="main.js"
 targetDir="/home/$USER/"
-targetName="c4k-gitea.js"
+targetName="c4k-forgejo.js"
 
 echo "build"
 shadow-cljs compile frontend

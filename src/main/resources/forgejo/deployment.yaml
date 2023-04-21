@@ -1,41 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gitea
+  name: forgejo
   namespace: default
   labels:
-    app: gitea
+    app: forgejo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gitea
+      app: forgejo
   template:
     metadata:
-      name: gitea
+      name: forgejo
       labels:
-        app: gitea
+        app: forgejo
     spec:
       containers:
-        - name: gitea
-          image: gitea/gitea:1.17.3
+        - name: forgejo
+          image: codeberg.org/forgejo/forgejo:1.19
           imagePullPolicy: IfNotPresent
           # config settings
           envFrom:
             - configMapRef:
-                name: gitea-env
+                name: forgejo-env
             - secretRef:
-                name: gitea-secrets
+                name: forgejo-secrets
           volumeMounts:
-            - name: gitea-data-volume
+            - name: forgejo-data-volume
               mountPath: "/data"
           ports:
             - containerPort: 22
               name: git-ssh
             - containerPort: 3000
-              name: gitea
+              name: forgejo
       volumes:
-        - name: gitea-data-volume
+        - name: forgejo-data-volume
           persistentVolumeClaim:
-            claimName: gitea-data-pvc
+            claimName: forgejo-data-pvc
           

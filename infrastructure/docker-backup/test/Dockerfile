@@ -1,4 +1,4 @@
-FROM c4k-gitea-backup
+FROM c4k-forgejo-backup
 
 RUN apt update
 RUN apt -yqq --no-install-recommends --yes install curl default-jre-headless

@@ -1,18 +1,18 @@
 {
-    "name": "c4k-gitea",
-    "description": "Generate c4k yaml for a gitea deployment.",
+    "name": "c4k-forgejo",
+    "description": "Generate c4k yaml for a forgejo deployment.",
     "author": "meissa GmbH",
-    "version": "1.0.1-SNAPSHOT",
-    "homepage": "https://gitlab.com/domaindrivenarchitecture/c4k-gitea#readme",
-    "repository": "https://www.npmjs.com/package/c4k-gitea",
+    "version": "2.0.1-SNAPSHOT",
+    "homepage": "https://gitlab.com/domaindrivenarchitecture/c4k-forgejo#readme",
+    "repository": "https://www.npmjs.com/package/c4k-forgejo",
     "license": "APACHE2",
-    "main": "c4k-gitea.js",
+    "main": "c4k-forgejo.js",
     "bin": {
-        "c4k-gitea": "./c4k-gitea.js"
+        "c4k-forgejo": "./c4k-forgejo.js"
     },
     "keywords": [
         "cljs",
-        "gitea",
+        "forgejo",
         "k8s",
         "c4k",
         "deployment",
@@ -20,7 +20,7 @@
         "convention4kubernetes"
     ],
     "bugs": {
-        "url": "https://gitlab.com/domaindrivenarchitecture/c4k-gitea/issues"
+        "url": "https://gitlab.com/domaindrivenarchitecture/c4k-forgejo/issues"
     },
     "dependencies": {
         "js-base64": "^3.6.1",

@@ -1,12 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: gitea-service
+  name: forgejo-service
   namespace: default
 spec:
   selector:
-    app: gitea
+    app: forgejo
   ports:
-    - name: gitea-http
+    - name: forgejo-http
       port: 3000
 

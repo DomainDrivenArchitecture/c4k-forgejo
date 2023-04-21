@@ -4,6 +4,6 @@ metadata:
   name: backup-config
   labels:
     app.kubernetes.io/name: backup
-    app.kubernetes.io/part-of: gitea
+    app.kubernetes.io/part-of: forgejo
 data:
   restic-repository: restic-repository

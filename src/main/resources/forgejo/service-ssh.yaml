@@ -1,7 +1,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: gitea-ssh-service
+  name: forgejo-ssh-service
   namespace: default
   annotations: 
     metallb.universe.tf/allow-shared-ip: "shared-ip-service-group"
@@ -9,7 +9,7 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: gitea
+    app: forgejo
   ports:
     - port: 2222
       targetPort: 22
