@@ -1,9 +1,9 @@
-(ns dda.c4k-gitea.browser
+(ns dda.c4k-forgejo.browser
   (:require
    [clojure.string :as st]
    [clojure.tools.reader.edn :as edn]
-   [dda.c4k-gitea.core :as core]
-   [dda.c4k-gitea.gitea :as gitea]
+   [dda.c4k-forgejo.core :as core]
+   [dda.c4k-forgejo.forgejo :as forgejo]
    [dda.c4k-common.browser :as br]   
    [dda.c4k-common.common :as cm]))
 
@@ -39,19 +39,19 @@
       (generate-group
        "provider"
        (cm/concat-vec
-        (br/generate-input-field "volume-total-storage-size" "Your gitea volume-total-storage-size:" "20")))
+        (br/generate-input-field "volume-total-storage-size" "Your forgejo volume-total-storage-size:" "20")))
       (generate-group
        "credentials"
        (br/generate-text-area
         "auth" "Your auth.edn:"
-        "{:postgres-db-user \"gitea\"
-         :postgres-db-password \"gitea-db-password\"
+        "{:postgres-db-user \"forgejo\"
+         :postgres-db-password \"forgejo-db-password\"
          :mailer-user \"test@test.de\"
          :mailer-pw \"mail-test-password\"}"
         "5"))
       [(br/generate-br)]
       (br/generate-button "generate-button" "Generate c4k yaml")))]
-   (br/generate-output "c4k-gitea-output" "Your c4k deployment.yaml:" "25")))
+   (br/generate-output "c4k-forgejo-output" "Your c4k deployment.yaml:" "25")))
 
 (defn generate-content-div
   []
@@ -79,15 +79,15 @@
      )))
 
 (defn validate-all! []
-  (br/validate! "fqdn" ::gitea/fqdn)
-  (br/validate! "mailer-from" ::gitea/mailer-from)
-  (br/validate! "mailer-host-port" ::gitea/mailer-host-port)
-  (br/validate! "service-noreply-address" ::gitea/service-noreply-address)
-  (br/validate! "issuer" ::gitea/issuer :optional true)
-  (br/validate! "app-name" ::gitea/default-app-name :optional true)
-  (br/validate! "domain-whitelist" ::gitea/service-domain-whitelist :optional true)  
-  (br/validate! "volume-total-storage-size" ::gitea/volume-total-storage-size :deserializer js/parseInt)
-  (br/validate! "auth" gitea/auth? :deserializer edn/read-string)
+  (br/validate! "fqdn" ::forgejo/fqdn)
+  (br/validate! "mailer-from" ::forgejo/mailer-from)
+  (br/validate! "mailer-host-port" ::forgejo/mailer-host-port)
+  (br/validate! "service-noreply-address" ::forgejo/service-noreply-address)
+  (br/validate! "issuer" ::forgejo/issuer :optional true)
+  (br/validate! "app-name" ::forgejo/default-app-name :optional true)
+  (br/validate! "domain-whitelist" ::forgejo/service-domain-whitelist :optional true)  
+  (br/validate! "volume-total-storage-size" ::forgejo/volume-total-storage-size :deserializer js/parseInt)
+  (br/validate! "auth" forgejo/auth? :deserializer edn/read-string)
   (br/set-form-validated!))
 
 (defn add-validate-listener [name]
@@ -104,7 +104,7 @@
                               (-> (cm/generate-common
                                    (config-from-document)
                                    (br/get-content-from-element "auth" :deserializer edn/read-string)
-                                   gitea/config-defaults
+                                   forgejo/config-defaults
                                    core/k8s-objects)
                                (br/set-output!)))))
   (add-validate-listener "fqdn")

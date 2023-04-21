@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forgejo-env
+  namespace: default
+data:
+  #[admin]
+  FORGEJO__admin__DEFAULT_EMAIL_NOTIFICATIONS: "enabled" # Default configuration for email notifications for users (user configurable). Options: enabled, onmention, disabled
+
+  #[attachments]
+  FORGEJO__attachments__PATH: /data/gitea/attachments
+
+  #[database]
+  FORGEJO__database__DB_TYPE: "postgres"
+  FORGEJO__database__HOST: "postgresql-service:5432"
+  FORGEJO__database__NAME: forgejo
+  FORGEJO__database__LOG_SQL: "false"
+  FORGEJO__database__SSL_MODE: disable
+  FORGEJO__database__CHARSET: utf8
+
+  #[DEFAULT]
+  APP_NAME: APPNAME
+  RUN_MODE: prod
+  RUN_USER: git
+
+  #[federation]
+  FORGEJO__federation__ENABLED: "true"
+  
+  #[indexer]
+  FORGEJO__indexer__ISSUE_INDEXER_PATH: /data/gitea/indexers/issues.bleve
+
+  #[log]
+  FORGEJO__log__MODE: "console, file"
+  FORGEJO__log__LEVEL: Info
+  FORGEJO__log__ROOT_PATH: /data/gitea/log
+
+  #[mailer]
+  FORGEJO__mailer__ENABLED: "true"
+  FORGEJO__mailer__FROM: FROM
+  FORGEJO__mailer__MAILER_TYPE: smtp+startls
+  # TODO: jem 2022-08-02: outdated with v1.18, use SMTP_ADDR & SMTP_PORT instead
+  FORGEJO__mailer__HOST: HOSTANDPORT  
+
+  #[oauth2]
+  FORGEJO__oauth2__ENABLE: "true"
+
+  #[openid]
+  FORGEJO__openid__ENABLE_OPENID: "true"
+  FORGEJO__openid__ENABLE_OPENID_SIGNIN: "true"
+  FORGEJO__openid__ENABLE_OPENID_SIGNUP: "true"
+
+  #[picture]
+  FORGEJO__picture__AVATAR_UPLOAD_PATH: /data/gitea/avatars
+  FORGEJO__picture__REPOSITORY_AVATAR_UPLOAD_PATH: /data/gitea/repo-avatars
+  FORGEJO__picture__DISABLE_GRAVATAR: "false"
+  FORGEJO__picture__ENABLE_FEDERATED_AVATAR: "true" # Enable support for federated avatars (see http://www.libravatar.org).
+
+  #[repository]
+  FORGEJO__repository__ROOT: /data/git/repositories
+  FORGEJO__repository__DEFAULT_PRIVATE: last
+  FORGEJO__repository__LOCAL_COPY_PATH: /data/gitea/tmp/local-repo
+  FORGEJO__repository__TEMP_PATH: /data/gitea/uploads    
+
+  #[security]
+  FORGEJO__security__INSTALL_LOCK: "true"
+
+  #[server]
+  FORGEJO__server__DOMAIN: FQDN
+  FORGEJO__server__SSH_DOMAIN: FQDN
+  FORGEJO__server__ROOT_URL: URL
+  FORGEJO__server__HTTP_PORT: "3000"    # HTTP listen port of the server (in the pod)
+  FORGEJO__server__SSH_PORT: "2222"     # SSH port displayed in clone URL
+
+  #[service]
+  FORGEJO__service__DISABLE_REGISTRATION: "false"  
+  FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
+  FORGEJO__service__REGISTER_EMAIL_CONFIRM: "true"
+  FORGEJO__service__ENABLE_NOTIFY_MAIL: "true"
+  FORGEJO__service__EMAIL_DOMAIN_WHITELIST: WHITELISTDOMAINS 
+  FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "false"
+  FORGEJO__service__ENABLE_BASIC_AUTHENTICATION: "true"
+  FORGEJO__service__ENABLE_CAPTCHA: "false"
+  FORGEJO__service__DEFAULT_KEEP_EMAIL_PRIVATE: "true"
+  FORGEJO__service__DEFAULT_ALLOW_CREATE_ORGANIZATION: "true"
+  FORGEJO__service__DEFAULT_ENABLE_TIMETRACKING: "true"
+  FORGEJO__service__NO_REPLY_ADDRESS: NOREPLY  
+
+  #[session]
+  FORGEJO__session__PROVIDER_CONFIG: /data/gitea/sessions
+  FORGEJO__session__PROVIDER: file

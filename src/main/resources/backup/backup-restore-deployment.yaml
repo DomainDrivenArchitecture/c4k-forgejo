@@ -14,10 +14,10 @@ spec:
       labels:
         app: backup-restore
         app.kubernetes.io/name: backup-restore
-        app.kubernetes.io/part-of: gitea
+        app.kubernetes.io/part-of: forgejo
     spec:
       containers:
-      - image: domaindrivenarchitecture/c4k-gitea-backup
+      - image: domaindrivenarchitecture/c4k-forgejo-backup
         name: backup-app
         imagePullPolicy: IfNotPresent
         command: ["/entrypoint-start-and-wait.sh"]
@@ -59,15 +59,15 @@ spec:
         - name: CERTIFICATE_FILE
           value: ""
         volumeMounts:
-        - name: gitea-data-volume
+        - name: forgejo-data-volume
           mountPath: /var/backups
         - name: backup-secret-volume
           mountPath: /var/run/secrets/backup-secrets
           readOnly: true
       volumes:
-      - name: gitea-data-volume
+      - name: forgejo-data-volume
         persistentVolumeClaim:
-          claimName: gitea-data-pvc
+          claimName: forgejo-data-pvc
       - name: backup-secret-volume
         secret:
           secretName: backup-secret
