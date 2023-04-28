@@ -16,8 +16,10 @@
           :APP_NAME-c2 "test forgejo",
           :FORGEJO__mailer__FROM-c1 "",
           :FORGEJO__mailer__FROM-c2 "test@test.com",
-          :FORGEJO__mailer__HOST-c1 "m.t.de:123",
-          :FORGEJO__mailer__HOST-c2 "mail.test.com:123",
+          :FORGEJO__mailer__SMTP_ADDR-c1 "m.t.de",
+          :FORGEJO__mailer__SMTP_ADDR-c2 "mail.test.com",
+          :FORGEJO__mailer__SMTP_PORT-c1 "123",
+          :FORGEJO__mailer__SMTP_PORT-c2 "456",
           :FORGEJO__server__DOMAIN-c1 "test.de",
           :FORGEJO__server__DOMAIN-c2 "test.com",
           :FORGEJO__server__ROOT_URL-c1 "https://test.de",
@@ -31,14 +33,16 @@
          (th/map-diff (cut/generate-appini-env {:default-app-name ""
                                                 :fqdn "test.de"                                                
                                                 :mailer-from ""
-                                                :mailer-host-port "m.t.de:123"                                                
+                                                :mailer-host "m.t.de"
+                                                :mailer-port "123"
                                                 :service-domain-whitelist "adb.de"
                                                 :service-noreply-address ""
                                                 })
                       (cut/generate-appini-env {:default-app-name "test forgejo"
                                                 :fqdn "test.com"                                                 
                                                 :mailer-from "test@test.com"
-                                                :mailer-host-port "mail.test.com:123"                                                
+                                                :mailer-host "mail.test.com"
+                                                :mailer-port "456"
                                                 :service-domain-whitelist "test.com,test.net"
                                                 :service-noreply-address "noreply@test.com"
                                                 })))))

@@ -12,7 +12,8 @@
 
 (def config? (s/keys :req-un [::forgejo/fqdn 
                               ::forgejo/mailer-from 
-                              ::forgejo/mailer-host-port 
+                              ::forgejo/mailer-host 
+                              ::forgejo/mailer-port
                               ::forgejo/service-noreply-address]
                      :opt-un [::forgejo/issuer 
                               ::forgejo/default-app-name 

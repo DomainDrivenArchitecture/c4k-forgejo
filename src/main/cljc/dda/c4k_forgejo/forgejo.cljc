@@ -23,7 +23,8 @@
 (s/def ::default-app-name string?)
 (s/def ::fqdn pred/fqdn-string?)
 (s/def ::mailer-from pred/bash-env-string?)
-(s/def ::mailer-host-port pred/host-and-port-string?)
+(s/def ::mailer-host pred/bash-env-string?)
+(s/def ::mailer-port pred/bash-env-string?)
 (s/def ::service-domain-whitelist domain-list?)
 (s/def ::service-noreply-address string?)
 (s/def ::mailer-user pred/bash-env-string?)
@@ -35,7 +36,8 @@
 
 (def config? (s/keys :req-un [::fqdn 
                               ::mailer-from 
-                              ::mailer-host-port 
+                              ::mailer-host
+                              ::mailer-port
                               ::service-noreply-address]
                      :opt-un [::issuer 
                               ::default-app-name 
@@ -66,7 +68,8 @@
   (let [{:keys [default-app-name
                 fqdn
                 mailer-from
-                mailer-host-port
+                mailer-host
+                mailer-port
                 service-domain-whitelist
                 service-noreply-address]
          :or {default-app-name "forgejo instance"
@@ -78,7 +81,8 @@
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn)
      (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
      (cm/replace-all-matching-values-by-new-value "FROM" mailer-from)
-     (cm/replace-all-matching-values-by-new-value "HOSTANDPORT" mailer-host-port)
+     (cm/replace-all-matching-values-by-new-value "MAILERHOST" mailer-host)
+     (cm/replace-all-matching-values-by-new-value "MAILERPORT" mailer-port)
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
      (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address))))
 

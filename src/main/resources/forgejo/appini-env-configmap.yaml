@@ -38,8 +38,8 @@ data:
   FORGEJO__mailer__ENABLED: "true"
   FORGEJO__mailer__FROM: FROM
   FORGEJO__mailer__MAILER_TYPE: smtp+startls
-  # TODO: jem 2022-08-02: outdated with v1.18, use SMTP_ADDR & SMTP_PORT instead
-  FORGEJO__mailer__HOST: HOSTANDPORT  
+  FORGEJO__mailer__SMTP_ADDR: MAILERHOST
+  FORGEJO__mailer__SMTP_PORT: MAILERPORT
 
   #[oauth2]
   FORGEJO__oauth2__ENABLE: "true"
