@@ -53,7 +53,6 @@
   [total]
   total)
 
-
 #?(:cljs
    (defmethod yaml/load-resource :forgejo [resource-name]
      (case resource-name
@@ -121,10 +120,13 @@
 
 (defn-spec generate-deployment pred/map-or-seq?
   [config config?]
-  (let [{:key [deploy-federated]} config
-        deploy-federated-bool (boolean (Boolean/valueOf deploy-federated))])
-  (->
-   (yaml/load-as-edn "forgejo/deployment.yaml")))
+  (let [{:keys [deploy-federated]} config
+        deploy-federated-bool (boolean (Boolean/valueOf deploy-federated))]
+    (->
+     (yaml/load-as-edn "forgejo/deployment.yaml")
+     #(if deploy-federated-bool
+       (cm/replace-all-matching-values-by-new-value % "IMAGE_NAME" federated-image-name)
+       (cm/replace-all-matching-values-by-new-value %"IMAGE_NAME" default-name)))))
 
 (defn generate-service
   []
