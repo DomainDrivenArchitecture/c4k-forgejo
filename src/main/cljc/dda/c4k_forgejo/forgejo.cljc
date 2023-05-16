@@ -21,6 +21,7 @@
    (pred/string-of-separated-by? pred/fqdn-string? #"," input)))
 
 (s/def ::default-app-name string?)
+(s/def ::forgejo-image-name string?)
 (s/def ::fqdn pred/fqdn-string?)
 (s/def ::mailer-from pred/bash-env-string?)
 (s/def ::mailer-host pred/bash-env-string?)
@@ -34,11 +35,12 @@
 
 (def config-defaults {:issuer "staging"})
 
-(def config? (s/keys :req-un [::fqdn 
-                              ::mailer-from 
+(def config? (s/keys :req-un [::fqdn
+                              ::mailer-from
                               ::mailer-host
                               ::mailer-port
-                              ::service-noreply-address]
+                              ::service-noreply-address
+                              ::deploy-federated]
                      :opt-un [::issuer 
                               ::default-app-name 
                               ::service-domain-whitelist]))
@@ -117,8 +119,10 @@
      (yaml/load-as-edn "forgejo/datavolume.yaml")
      (cm/replace-all-matching-values-by-new-value "DATASTORAGESIZE" (str (str data-storage-size) "Gi")))))
 
-(defn generate-deployment
-  []
+(defn-spec generate-deployment pred/map-or-seq?
+  [config config?]
+  (let [{:key [deploy-federated]} config
+        deploy-federated-bool ()])
   (yaml/load-as-edn "forgejo/deployment.yaml"))
 
 (defn generate-service
