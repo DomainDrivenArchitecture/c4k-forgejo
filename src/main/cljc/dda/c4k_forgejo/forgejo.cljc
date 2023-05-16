@@ -122,8 +122,9 @@
 (defn-spec generate-deployment pred/map-or-seq?
   [config config?]
   (let [{:key [deploy-federated]} config
-        deploy-federated-bool ()])
-  (yaml/load-as-edn "forgejo/deployment.yaml"))
+        deploy-federated-bool (boolean (Boolean/valueOf deploy-federated))])
+  (->
+   (yaml/load-as-edn "forgejo/deployment.yaml")))
 
 (defn generate-service
   []
