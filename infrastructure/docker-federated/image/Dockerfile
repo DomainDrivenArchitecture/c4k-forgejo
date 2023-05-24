@@ -9,11 +9,16 @@ ARG TAGS="sqlite sqlite_unlock_notify"
 ENV TAGS "bindata timetzdata $TAGS"
 ARG CGO_EXTRA_CFLAGS
 
+ARG FORGEJO_GIT_URL="https://codeberg.org/forgejo/forgejo.git"
+ARG FORGEJO_BRANCH="forgejo-federation"
+ARG FORGEJO_FOLDER="forgejo-fed"
+
 #Build deps
 RUN apk --no-cache add build-base git nodejs npm
 
 #Setup repo
-COPY . ${GOPATH}/src/code.gitea.io/gitea
+RUN git clone --single-branch --branch FORGEJO_BRANCH FORGEJO_GIT_URL FORGEJO_FOLDER
+COPY FORGEJO_FOLDER/* ${GOPATH}/src/code.gitea.io/gitea
 WORKDIR ${GOPATH}/src/code.gitea.io/gitea
 
 #Checkout version if set
