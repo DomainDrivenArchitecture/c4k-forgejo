@@ -114,3 +114,11 @@ release:
         --assets-link "{\"name\":\"c4k-forgejo.js\",\"url\":\"https://gitlab.com/domaindrivenarchitecture/c4k-forgejo/-/jobs/${CI_JOB_ID}/artifacts/file/target/frontend-build/c4k-forgejo.js\"}" \
         --assets-link "{\"name\":\"c4k-forgejo.js.sha256\",\"url\":\"https://gitlab.com/domaindrivenarchitecture/c4k-forgejo/-/jobs/${CI_JOB_ID}/artifacts/file/target/frontend-build/c4k-forgejo.js.sha256\"}" \
         --assets-link "{\"name\":\"c4k-forgejo.js.sha512\",\"url\":\"https://gitlab.com/domaindrivenarchitecture/c4k-forgejo/-/jobs/${CI_JOB_ID}/artifacts/file/target/frontend-build/c4k-forgejo.js.sha512\"}" \
+
+forgejo-image-test-publish:
+  image: domaindrivenarchitecture/devops-build:latest
+  stage: image
+  rules:
+    - if: '$CI_COMMIT_TAG != null'
+  script:
+    - cd infrastructure/docker-federated && pyb image test publish
