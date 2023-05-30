@@ -29,7 +29,9 @@
           :FORGEJO__service__EMAIL_DOMAIN_WHITELIST-c1 "adb.de",
           :FORGEJO__service__EMAIL_DOMAIN_WHITELIST-c2 "test.com,test.net",
           :FORGEJO__service__NO_REPLY_ADDRESS-c1 "",
-          :FORGEJO__service__NO_REPLY_ADDRESS-c2 "noreply@test.com"}
+          :FORGEJO__service__NO_REPLY_ADDRESS-c2 "noreply@test.com"
+          :FORGEJO__federation__ENABLED-c1 "true"
+          :FORGEJO__federation__ENABLED-c2 "false"}
          (th/map-diff (cut/generate-appini-env {:default-app-name ""
                                                 :fqdn "test.de"                                                
                                                 :mailer-from ""
@@ -37,6 +39,7 @@
                                                 :mailer-port "123"
                                                 :service-domain-whitelist "adb.de"
                                                 :service-noreply-address ""
+                                                :federated true
                                                 })
                       (cut/generate-appini-env {:default-app-name "test forgejo"
                                                 :fqdn "test.com"                                                 
@@ -45,6 +48,7 @@
                                                 :mailer-port "456"
                                                 :service-domain-whitelist "test.com,test.net"
                                                 :service-noreply-address "noreply@test.com"
+                                                :federated false
                                                 })))))
 
 (deftest should-generate-secret
@@ -70,3 +74,9 @@
           :storage-c2 "15Gi"}
          (th/map-diff (cut/generate-data-volume {:volume-total-storage-size 1})
                       (cut/generate-data-volume {:volume-total-storage-size 15})))))
+
+(deftest should-generate-deployment
+  (is (= {:image-c1 "codeberg.org/forgejo/forgejo:1.19",
+          :image-c2 "domaindrivenarchitecture/c4k-forgejo-fed"}
+         (th/map-diff (cut/generate-deployment {:federated false})
+                      (cut/generate-deployment {:federated true})))))

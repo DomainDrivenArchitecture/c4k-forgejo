@@ -21,7 +21,7 @@
    (pred/string-of-separated-by? pred/fqdn-string? #"," input)))
 
 (s/def ::default-app-name string?)
-(s/def ::forgejo-image-name string?)
+(s/def ::federated boolean?)
 (s/def ::fqdn pred/fqdn-string?)
 (s/def ::mailer-from pred/bash-env-string?)
 (s/def ::mailer-host pred/bash-env-string?)
@@ -39,11 +39,11 @@
                               ::mailer-from
                               ::mailer-host
                               ::mailer-port
-                              ::service-noreply-address
-                              ::deploy-federated]
+                              ::service-noreply-address]
                      :opt-un [::issuer 
                               ::default-app-name 
-                              ::service-domain-whitelist]))
+                              ::service-domain-whitelist
+                              ::federated]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
 
@@ -121,13 +121,7 @@
 ; ToDo: Need to add  default image-name to config? Or hardcode?
 (defn-spec generate-deployment pred/map-or-seq?
   [config config?]
-  (let [{:keys [deploy-federated]} config
-        deploy-federated-bool (boolean (Boolean/valueOf deploy-federated))]
-    (->
-     (yaml/load-as-edn "forgejo/deployment.yaml")
-     #(if deploy-federated-bool
-       (cm/replace-all-matching-values-by-new-value % "IMAGE_NAME" federated-image-name)
-       (cm/replace-all-matching-values-by-new-value %"IMAGE_NAME" default-name)))))
+  (yaml/load-as-edn "forgejo/deployment.yaml"))
 
 (defn generate-service
   []

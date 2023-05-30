@@ -8,7 +8,7 @@ service-whitelist-domains: "test.de"
 service-noreply-address: "noreply@test.de"
 volume-total-storage-size: 6
 restic-repository: "repo-path"
-deploy-federated: "false"
+federated: false
 mon-cfg: 
   grafana-cloud-url: "url-for-your-prom-remote-write-endpoint"
   cluster-name: "forgejo"

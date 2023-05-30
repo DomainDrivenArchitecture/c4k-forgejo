@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: forgejo
-          image: codeberg.org/meissa/forgejo:federated-latest #codeberg.org/forgejo/forgejo:1.19
+          image: codeberg.org/forgejo/forgejo:1.19
           imagePullPolicy: IfNotPresent
           # config settings
           envFrom:
