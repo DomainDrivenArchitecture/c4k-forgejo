@@ -72,9 +72,11 @@
                 mailer-host
                 mailer-port
                 service-domain-whitelist
-                service-noreply-address]
+                service-noreply-address
+                federated]
          :or {default-app-name "forgejo instance"
-              service-domain-whitelist fqdn}}
+              service-domain-whitelist fqdn
+              federated false}}
         config]
     (->
      (yaml/load-as-edn "forgejo/appini-env-configmap.yaml")
@@ -85,7 +87,8 @@
      (cm/replace-all-matching-values-by-new-value "MAILERHOST" mailer-host)
      (cm/replace-all-matching-values-by-new-value "MAILERPORT" mailer-port)
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
-     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address))))
+     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address)
+     (cm/replace-all-matching-values-by-new-value "FEDERATED" (str federated)))))
 
 (defn generate-secrets
   [auth]
@@ -120,8 +123,14 @@
 ; ToDo: Need to add  federated-image-name to config? Or hardcode?
 ; ToDo: Need to add  default image-name to config? Or hardcode?
 (defn-spec generate-deployment pred/map-or-seq?
-  [config config?]
-  (yaml/load-as-edn "forgejo/deployment.yaml"))
+  [config]
+   (let [{:keys [federated]} config]
+
+         ; TODO: if 
+     if (= federated true)
+     (->
+      (yaml/load-as-edn "forgejo/deployment.yaml")
+      (cm/replace-all-matching-values-by-new-value "codeberg.org/forgejo/forgejo:1.19" "domaindrivenarchitecture/c4k-forgejo-fed"))))
 
 (defn generate-service
   []
