@@ -49,4 +49,3 @@ def publish(project):
 def test(project):
     build = get_devops_build(project)
     build.test()
-

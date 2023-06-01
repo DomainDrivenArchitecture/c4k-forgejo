@@ -11,26 +11,23 @@ ARG CGO_EXTRA_CFLAGS
 
 ENV FORGEJO_GIT_URL "https://codeberg.org/forgejo/forgejo.git"
 ENV FORGEJO_BRANCH "forgejo-federation"
-#ENV FORGEJO_FOLDER "forgejo-fed"
 
 #Build deps
 RUN apk --no-cache add build-base git nodejs npm
 
 #Setup repo
 RUN git clone --single-branch --branch ${FORGEJO_BRANCH} ${FORGEJO_GIT_URL} ${GOPATH}/src/code.gitea.io/gitea 
-#${FORGEJO_FOLDER}
-#COPY ${FORGEJO_FOLDER} ${GOPATH}/src/code.gitea.io/gitea
+
 WORKDIR ${GOPATH}/src/code.gitea.io/gitea
 
 #Checkout version if set
-#RUN if [ -n "${GITEA_VERSION}" ]; then git checkout "${GITEA_VERSION}"; fi \
 RUN make clean-all build
 
 # Begin env-to-ini build
 RUN go build contrib/environment-to-ini/environment-to-ini.go
 
 # Run stage
-FROM docker.io/library/alpine:3.17
+FROM docker.io/library/alpine:3.18
 LABEL maintainer="contact@forgejo.org"
 
 EXPOSE 22 3000
