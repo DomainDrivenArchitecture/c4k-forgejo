@@ -30,8 +30,10 @@
        "domain"
        (cm/concat-vec
         (br/generate-input-field "fqdn" "Your fqdn:" "repo.test.de")
+        (br/generate-input-field "deploy-federated" "Deploy a federated version of forgejo:" "false")
         (br/generate-input-field "mailer-from" "Your mailer email address:" "test@test.de")
-        (br/generate-input-field "mailer-host-port" "Your mailer host with port:" "test.de:123")
+        (br/generate-input-field "mailer-host" "Your mailer host:" "test.de")
+        (br/generate-input-field "mailer-port" "Your mailer port:" "123")
         (br/generate-input-field "service-noreply-address" "Your noreply domain:" "test.de")
         (br/generate-input-field "issuer" "(Optional) Your issuer prod/staging:" "")
         (br/generate-input-field "app-name" "(Optional) Your app name:" "")
@@ -66,8 +68,10 @@
         domain-whitelist (br/get-content-from-element "domain-whitelist" :optional true)]
     (merge
      {:fqdn (br/get-content-from-element "fqdn")
+      :deploy-federated (br/get-content-from-element "deploy-federated")
       :mailer-from (br/get-content-from-element "mailer-from")
-      :mailer-host-port (br/get-content-from-element "mailer-host-port")
+      :mailer-host (br/get-content-from-element "mailer-host")
+      :mailer-port (br/get-content-from-element "mailer-port")
       :service-noreply-address (br/get-content-from-element "service-noreply-address")
       :volume-total-storage-size (br/get-content-from-element "volume-total-storage-size" :deserializer js/parseInt)}     
      (when (not (st/blank? issuer))
@@ -80,8 +84,10 @@
 
 (defn validate-all! []
   (br/validate! "fqdn" ::forgejo/fqdn)
+  (br/validate! "deploy-federated" ::forgejo/deploy-federated)
   (br/validate! "mailer-from" ::forgejo/mailer-from)
-  (br/validate! "mailer-host-port" ::forgejo/mailer-host-port)
+  (br/validate! "mailer-host" ::forgejo/mailer-host)
+  (br/validate! "mailer-port" ::forgejo/mailer-port)
   (br/validate! "service-noreply-address" ::forgejo/service-noreply-address)
   (br/validate! "issuer" ::forgejo/issuer :optional true)
   (br/validate! "app-name" ::forgejo/default-app-name :optional true)
@@ -108,8 +114,10 @@
                                    core/k8s-objects)
                                (br/set-output!)))))
   (add-validate-listener "fqdn")
+  (add-validate-listener "deploy-federated")
   (add-validate-listener "mailer-from")
-  (add-validate-listener "mailer-host-port")
+  (add-validate-listener "mailer-host")
+  (add-validate-listener "mailer-port")
   (add-validate-listener "service-noreply-address")
   (add-validate-listener "app-name")
   (add-validate-listener "domain-whitelist")  
