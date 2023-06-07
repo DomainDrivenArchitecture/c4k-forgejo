@@ -7,6 +7,7 @@
    [dda.c4k-common.base64 :as b64]
    [dda.c4k-forgejo.forgejo :as cut]))
 
+(st/instrument `cut/generate-deployment)
 (st/instrument `cut/generate-appini-env)
 (st/instrument `cut/generate-ingress)
 (st/instrument `cut/generate-secrets)
@@ -14,6 +15,8 @@
 (deftest should-generate-appini-env
   (is (= {:APP_NAME-c1 "",
           :APP_NAME-c2 "test forgejo",
+          :FORGEJO__federation__ENABLED-c1 "false",
+          :FORGEJO__federation__ENABLED-c2 "true",
           :FORGEJO__mailer__FROM-c1 "",
           :FORGEJO__mailer__FROM-c2 "test@test.com",
           :FORGEJO__mailer__SMTP_ADDR-c1 "m.t.de",
@@ -31,6 +34,7 @@
           :FORGEJO__service__NO_REPLY_ADDRESS-c1 "",
           :FORGEJO__service__NO_REPLY_ADDRESS-c2 "noreply@test.com"}
          (th/map-diff (cut/generate-appini-env {:default-app-name ""
+                                                :deploy-federated "false"
                                                 :fqdn "test.de"                                                
                                                 :mailer-from ""
                                                 :mailer-host "m.t.de"
@@ -39,6 +43,7 @@
                                                 :service-noreply-address ""
                                                 })
                       (cut/generate-appini-env {:default-app-name "test forgejo"
+                                                :deploy-federated "true"
                                                 :fqdn "test.com"                                                 
                                                 :mailer-from "test@test.com"
                                                 :mailer-host "mail.test.com"
@@ -46,6 +51,63 @@
                                                 :service-domain-whitelist "test.com,test.net"
                                                 :service-noreply-address "noreply@test.com"
                                                 })))))
+
+(deftest should-generate-non-federated-deployment
+  (is (= {:apiVersion "apps/v1",
+          :kind "Deployment",
+          :metadata {:name "forgejo", :namespace "default", :labels {:app "forgejo"}},
+          :spec
+          {:replicas 1,
+           :selector {:matchLabels {:app "forgejo"}},
+           :template
+           {:metadata {:name "forgejo", :labels {:app "forgejo"}},
+            :spec
+            {:containers
+             [{:name "forgejo",
+               :image "codeberg.org/forgejo/forgejo:1.19",
+               :imagePullPolicy "IfNotPresent",
+               :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
+               :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
+               :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
+             :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
+       (cut/generate-deployment 
+        {:default-app-name ""
+         :deploy-federated "false"
+         :fqdn "test.de"
+         :mailer-from ""
+         :mailer-host "m.t.de"
+         :mailer-port "123"
+         :service-domain-whitelist "adb.de"
+         :service-noreply-address ""}
+        ))))
+
+(deftest should-generate-federated-deployment
+  (is (= {:apiVersion "apps/v1",
+          :kind "Deployment",
+          :metadata {:name "forgejo", :namespace "default", :labels {:app "forgejo"}},
+          :spec
+          {:replicas 1,
+           :selector {:matchLabels {:app "forgejo"}},
+           :template
+           {:metadata {:name "forgejo", :labels {:app "forgejo"}},
+            :spec
+            {:containers
+             [{:name "forgejo",
+               :image "codeberg.org/meissa/forgejo:federated-latest",
+               :imagePullPolicy "IfNotPresent",
+               :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
+               :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
+               :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
+             :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
+         (cut/generate-deployment
+          {:default-app-name ""
+           :deploy-federated "true"
+           :fqdn "test.de"
+           :mailer-from ""
+           :mailer-host "m.t.de"
+           :mailer-port "123"
+           :service-domain-whitelist "adb.de"
+           :service-noreply-address ""}))))
 
 (deftest should-generate-secret
   (is (= {:FORGEJO__database__USER-c1 "",
