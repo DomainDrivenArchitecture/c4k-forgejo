@@ -20,11 +20,17 @@
    (st/blank? input)
    (pred/string-of-separated-by? pred/fqdn-string? #"," input)))
 
+(defn boolean-from-string [input]
+  (cond
+    (= input "true") true
+    (= input "false") false
+    :else nil))
+
 (defn boolean-string?
   [input]
   (and
    (string? input)
-   (boolean? (Boolean/valueOf input))))
+   (boolean? (boolean-from-string input))))
 
 (s/def ::default-app-name string?)
 (s/def ::fqdn pred/fqdn-string?)
@@ -85,7 +91,7 @@
                 service-noreply-address]
          :or {default-app-name "forgejo instance"
               service-domain-whitelist fqdn}} config
-        deploy-federated-bool (boolean (Boolean/valueOf deploy-federated))]
+        deploy-federated-bool (boolean-from-string deploy-federated)]
     (->
      (yaml/load-as-edn "forgejo/appini-env-configmap.yaml")
      (cm/replace-all-matching-values-by-new-value "APPNAME" default-app-name)
@@ -135,7 +141,7 @@
 (defn-spec generate-deployment pred/map-or-seq?
   [config config?]
   (let [{:keys [deploy-federated]} config
-        deploy-federated-bool (boolean (Boolean/valueOf deploy-federated))]
+        deploy-federated-bool (boolean-from-string deploy-federated)]
     (->
      (yaml/load-as-edn "forgejo/deployment.yaml")
      (cm/replace-all-matching-values-by-new-value "IMAGE_NAME" 
