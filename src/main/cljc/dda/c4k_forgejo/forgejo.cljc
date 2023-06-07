@@ -36,6 +36,7 @@
 (def config-defaults {:issuer "staging"})
 
 (def config? (s/keys :req-un [::fqdn
+                              ::forgejo-image-name
                               ::mailer-from
                               ::mailer-host
                               ::mailer-port
