@@ -7,10 +7,16 @@ set -o errexit
 set -eo pipefail
 
 # dirs
-srcDir="/home/$USER/"
+srcDir="/home/$USER/repo/c4k/c4k-forgejo/public/js/"
 srcName="main.js"
-targetDir="/home/$USER/"
+targetDir="/home/$USER/repo/website/dda-io/content/templates/js/"
 targetName="c4k-forgejo.js"
+
+echo "build test"
+shadow-cljs compile test
+
+echo "test"
+node target/node-tests.js
 
 echo "build"
 shadow-cljs compile frontend
