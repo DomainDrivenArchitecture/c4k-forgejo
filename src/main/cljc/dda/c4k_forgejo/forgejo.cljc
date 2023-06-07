@@ -91,9 +91,10 @@
      (cm/replace-all-matching-values-by-new-value "MAILERPORT" mailer-port)
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
      (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address)
-     #(if deploy-federated-bool
-        (cm/replace-all-matching-values-by-new-value % "IS_FEDERATED" "true")
-        (cm/replace-all-matching-values-by-new-value % "IS_FEDERATED" "false")))))
+     (cm/replace-all-matching-values-by-new-value "IS_FEDERATED" 
+                                                  (if deploy-federated-bool
+                                                    "true"
+                                                    "false")))))
 
 (defn generate-secrets
   [auth]
@@ -132,9 +133,10 @@
         deploy-federated-bool (boolean (Boolean/valueOf deploy-federated))]
     (->
      (yaml/load-as-edn "forgejo/deployment.yaml")
-     #(if deploy-federated-bool
-       (cm/replace-all-matching-values-by-new-value % "IMAGE_NAME" federated-image-name)
-       (cm/replace-all-matching-values-by-new-value % "IMAGE_NAME" non-federated-image-name)))))
+     (cm/replace-all-matching-values-by-new-value "IMAGE_NAME" 
+                                                  (if deploy-federated-bool
+                                                    federated-image-name
+                                                    non-federated-image-name)))))
 
 (defn generate-service
   []
