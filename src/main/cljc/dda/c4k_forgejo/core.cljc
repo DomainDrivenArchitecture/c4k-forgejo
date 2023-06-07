@@ -11,6 +11,7 @@
 (def config-defaults {:issuer "staging"})
 
 (def config? (s/keys :req-un [::forgejo/fqdn 
+                              ::forgejo/deploy-federated
                               ::forgejo/mailer-from 
                               ::forgejo/mailer-host 
                               ::forgejo/mailer-port
@@ -43,7 +44,7 @@
                    (postgres/generate-deployment {:postgres-image "postgres:14"
                                                   :postgres-size :2gb})
                    (postgres/generate-service)
-                   (forgejo/generate-deployment)
+                   (forgejo/generate-deployment config)
                    (forgejo/generate-service)
                    (forgejo/generate-service-ssh)                   
                    (forgejo/generate-data-volume config)
