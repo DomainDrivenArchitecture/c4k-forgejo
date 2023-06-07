@@ -125,8 +125,7 @@
     (->     
      (yaml/load-as-edn "forgejo/datavolume.yaml")
      (cm/replace-all-matching-values-by-new-value "DATASTORAGESIZE" (str (str data-storage-size) "Gi")))))
-; ToDo: Need to add  federated-image-name to config? Or hardcode?
-; ToDo: Need to add  default image-name to config? Or hardcode?
+
 (defn-spec generate-deployment pred/map-or-seq?
   [config config?]
   (let [{:keys [deploy-federated]} config
@@ -135,7 +134,7 @@
      (yaml/load-as-edn "forgejo/deployment.yaml")
      #(if deploy-federated-bool
        (cm/replace-all-matching-values-by-new-value % "IMAGE_NAME" federated-image-name)
-       (cm/replace-all-matching-values-by-new-value %"IMAGE_NAME" default-name)))))
+       (cm/replace-all-matching-values-by-new-value % "IMAGE_NAME" non-federated-image-name)))))
 
 (defn generate-service
   []
