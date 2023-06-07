@@ -20,9 +20,15 @@
    (st/blank? input)
    (pred/string-of-separated-by? pred/fqdn-string? #"," input)))
 
+(defn boolean-string?
+  [input]
+  (and
+   (string? input)
+   (boolean? (Boolean/valueOf input))))
+
 (s/def ::default-app-name string?)
-(s/def ::forgejo-image-name string?)
 (s/def ::fqdn pred/fqdn-string?)
+(s/def ::deploy-federated boolean-string?)
 (s/def ::mailer-from pred/bash-env-string?)
 (s/def ::mailer-host pred/bash-env-string?)
 (s/def ::mailer-port pred/bash-env-string?)
@@ -35,8 +41,7 @@
 
 (def config-defaults {:issuer "staging"})
 
-(def config? (s/keys :req-un [::fqdn
-                              ::forgejo-image-name
+(def config? (s/keys :req-un [::fqdn                              
                               ::mailer-from
                               ::mailer-host
                               ::mailer-port
