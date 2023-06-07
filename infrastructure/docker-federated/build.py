@@ -12,7 +12,7 @@ class MyBuild(DevopsDockerBuild):
 
 @init
 def initialize(project):
-    project.build_depends_on('ddadevops>=0.12.4')
+    project.build_depends_on('ddadevops>=0.15.5')
     stage = 'prod'
     dockerhub_user = environ.get('DOCKERHUB_USER')
     if not dockerhub_user:
@@ -49,4 +49,3 @@ def publish(project):
 def test(project):
     build = get_devops_build(project)
     build.test()
-

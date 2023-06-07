@@ -1,35 +1,33 @@
 #Build stage
-FROM docker.io/library/golang:1.20-alpine3.17 AS build-env
+FROM docker.io/library/golang:1.20.4-alpine3.18 AS build-env
 
 ARG GOPROXY
 ENV GOPROXY ${GOPROXY:-direct}
 
-ARG GITEA_VERSION
+#ARG GITEA_VERSION
 ARG TAGS="sqlite sqlite_unlock_notify"
 ENV TAGS "bindata timetzdata $TAGS"
 ARG CGO_EXTRA_CFLAGS
 
-ARG FORGEJO_GIT_URL="https://codeberg.org/forgejo/forgejo.git"
-ARG FORGEJO_BRANCH="forgejo-federation"
-ARG FORGEJO_FOLDER="forgejo-fed"
+ENV FORGEJO_GIT_URL "https://codeberg.org/forgejo/forgejo.git"
+ENV FORGEJO_BRANCH "forgejo-federation"
 
 #Build deps
 RUN apk --no-cache add build-base git nodejs npm
 
 #Setup repo
-RUN git clone --single-branch --branch FORGEJO_BRANCH FORGEJO_GIT_URL FORGEJO_FOLDER
-COPY FORGEJO_FOLDER/* ${GOPATH}/src/code.gitea.io/gitea
+RUN git clone --single-branch --branch ${FORGEJO_BRANCH} ${FORGEJO_GIT_URL} ${GOPATH}/src/code.gitea.io/gitea 
+
 WORKDIR ${GOPATH}/src/code.gitea.io/gitea
 
 #Checkout version if set
-RUN if [ -n "${GITEA_VERSION}" ]; then git checkout "${GITEA_VERSION}"; fi \
- && make clean-all build
+RUN make clean-all build
 
 # Begin env-to-ini build
 RUN go build contrib/environment-to-ini/environment-to-ini.go
 
 # Run stage
-FROM docker.io/library/alpine:3.17
+FROM docker.io/library/alpine:3.18
 LABEL maintainer="contact@forgejo.org"
 
 EXPOSE 22 3000
@@ -67,7 +65,7 @@ VOLUME ["/data"]
 ENTRYPOINT ["/usr/bin/entrypoint"]
 CMD ["/bin/s6-svscan", "/etc/s6"]
 
-COPY docker/root /
+COPY --from=build-env /go/src/code.gitea.io/gitea/docker/root /
 COPY --from=build-env /go/src/code.gitea.io/gitea/gitea /app/gitea/gitea
 COPY --from=build-env /go/src/code.gitea.io/gitea/environment-to-ini /usr/local/bin/environment-to-ini
 COPY --from=build-env /go/src/code.gitea.io/gitea/contrib/autocompletion/bash_autocomplete /etc/profile.d/gitea_bash_autocomplete.sh

@@ -44,13 +44,12 @@
                                                 })
                       (cut/generate-appini-env {:default-app-name "test forgejo"
                                                 :deploy-federated "true"
-                                                :fqdn "test.com"                                                 
+                                                :fqdn "test.com"
                                                 :mailer-from "test@test.com"
                                                 :mailer-host "mail.test.com"
                                                 :mailer-port "456"
                                                 :service-domain-whitelist "test.com,test.net"
-                                                :service-noreply-address "noreply@test.com"
-                                                })))))
+                                                :service-noreply-address "noreply@test.com"})))))
 
 (deftest should-generate-non-federated-deployment
   (is (= {:apiVersion "apps/v1",

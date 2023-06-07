@@ -47,14 +47,14 @@
 
 (def config-defaults {:issuer "staging"})
 
-(def config? (s/keys :req-un [::fqdn                              
+(def config? (s/keys :req-un [::fqdn
+                              ::deploy-federated
                               ::mailer-from
                               ::mailer-host
                               ::mailer-port
-                              ::service-noreply-address
-                              ::deploy-federated]
-                     :opt-un [::issuer 
-                              ::default-app-name 
+                              ::service-noreply-address]
+                     :opt-un [::issuer
+                              ::default-app-name
                               ::service-domain-whitelist]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
