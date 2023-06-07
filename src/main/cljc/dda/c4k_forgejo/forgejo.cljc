@@ -54,6 +54,9 @@
   [total]
   total)
 
+(def federated-image-name "codeberg.org/meissa/forgejo:federated-latest")
+(def non-federated-image-name "codeberg.org/forgejo/forgejo:1.19")
+
 #?(:cljs
    (defmethod yaml/load-resource :forgejo [resource-name]
      (case resource-name
