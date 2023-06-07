@@ -71,6 +71,7 @@
 (defn generate-appini-env
   [config]
   (let [{:keys [default-app-name
+                deploy-federated
                 fqdn
                 mailer-from
                 mailer-host
@@ -78,8 +79,8 @@
                 service-domain-whitelist
                 service-noreply-address]
          :or {default-app-name "forgejo instance"
-              service-domain-whitelist fqdn}}
-        config]
+              service-domain-whitelist fqdn}} config
+        deploy-federated-bool (boolean (Boolean/valueOf deploy-federated))]
     (->
      (yaml/load-as-edn "forgejo/appini-env-configmap.yaml")
      (cm/replace-all-matching-values-by-new-value "APPNAME" default-app-name)
@@ -89,7 +90,10 @@
      (cm/replace-all-matching-values-by-new-value "MAILERHOST" mailer-host)
      (cm/replace-all-matching-values-by-new-value "MAILERPORT" mailer-port)
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
-     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address))))
+     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address)
+     #(if deploy-federated-bool
+        (cm/replace-all-matching-values-by-new-value % "IS_FEDERATED" "true")
+        (cm/replace-all-matching-values-by-new-value % "IS_FEDERATED" "false")))))
 
 (defn generate-secrets
   [auth]
