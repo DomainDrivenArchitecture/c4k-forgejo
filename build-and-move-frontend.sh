@@ -10,7 +10,7 @@ set -eo pipefail
 srcDir="/home/$USER/repo/c4k/c4k-forgejo/public/js/"
 srcName="main.js"
 targetDir="/home/$USER/repo/website/dda-io/content/templates/js/"
-targetName="c4k-gitea.js"
+targetName="c4k-forgejo.js"
 
 echo "build test"
 shadow-cljs compile test
