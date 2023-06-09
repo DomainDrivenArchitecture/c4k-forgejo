@@ -20,8 +20,21 @@
    (st/blank? input)
    (pred/string-of-separated-by? pred/fqdn-string? #"," input)))
 
+(defn boolean-from-string [input]
+  (cond
+    (= input "true") true
+    (= input "false") false
+    :else nil))
+
+(defn boolean-string?
+  [input]
+  (and
+   (string? input)
+   (boolean? (boolean-from-string input))))
+
 (s/def ::default-app-name string?)
 (s/def ::fqdn pred/fqdn-string?)
+(s/def ::deploy-federated boolean-string?)
 (s/def ::mailer-from pred/bash-env-string?)
 (s/def ::mailer-host pred/bash-env-string?)
 (s/def ::mailer-port pred/bash-env-string?)
@@ -34,13 +47,14 @@
 
 (def config-defaults {:issuer "staging"})
 
-(def config? (s/keys :req-un [::fqdn 
-                              ::mailer-from 
+(def config? (s/keys :req-un [::fqdn
+                              ::deploy-federated
+                              ::mailer-from
                               ::mailer-host
                               ::mailer-port
                               ::service-noreply-address]
-                     :opt-un [::issuer 
-                              ::default-app-name 
+                     :opt-un [::issuer
+                              ::default-app-name
                               ::service-domain-whitelist]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
@@ -51,6 +65,8 @@
   [total]
   total)
 
+(def federated-image-name "codeberg.org/meissa/forgejo:federated-latest")
+(def non-federated-image-name "codeberg.org/forgejo/forgejo:1.19")
 
 #?(:cljs
    (defmethod yaml/load-resource :forgejo [resource-name]
@@ -66,6 +82,7 @@
 (defn generate-appini-env
   [config]
   (let [{:keys [default-app-name
+                deploy-federated
                 fqdn
                 mailer-from
                 mailer-host
@@ -73,8 +90,8 @@
                 service-domain-whitelist
                 service-noreply-address]
          :or {default-app-name "forgejo instance"
-              service-domain-whitelist fqdn}}
-        config]
+              service-domain-whitelist fqdn}} config
+        deploy-federated-bool (boolean-from-string deploy-federated)]
     (->
      (yaml/load-as-edn "forgejo/appini-env-configmap.yaml")
      (cm/replace-all-matching-values-by-new-value "APPNAME" default-app-name)
@@ -84,7 +101,11 @@
      (cm/replace-all-matching-values-by-new-value "MAILERHOST" mailer-host)
      (cm/replace-all-matching-values-by-new-value "MAILERPORT" mailer-port)
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
-     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address))))
+     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address)
+     (cm/replace-all-matching-values-by-new-value "IS_FEDERATED" 
+                                                  (if deploy-federated-bool
+                                                    "true"
+                                                    "false")))))
 
 (defn generate-secrets
   [auth]
@@ -117,9 +138,16 @@
      (yaml/load-as-edn "forgejo/datavolume.yaml")
      (cm/replace-all-matching-values-by-new-value "DATASTORAGESIZE" (str (str data-storage-size) "Gi")))))
 
-(defn generate-deployment
-  []
-  (yaml/load-as-edn "forgejo/deployment.yaml"))
+(defn-spec generate-deployment pred/map-or-seq?
+  [config config?]
+  (let [{:keys [deploy-federated]} config
+        deploy-federated-bool (boolean-from-string deploy-federated)]
+    (->
+     (yaml/load-as-edn "forgejo/deployment.yaml")
+     (cm/replace-all-matching-values-by-new-value "IMAGE_NAME" 
+                                                  (if deploy-federated-bool
+                                                    federated-image-name
+                                                    non-federated-image-name)))))
 
 (defn generate-service
   []

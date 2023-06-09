@@ -24,7 +24,7 @@ data:
   RUN_USER: git
 
   #[federation]
-  FORGEJO__federation__ENABLED: "false"
+  FORGEJO__federation__ENABLED: IS_FEDERATED
   
   #[indexer]
   FORGEJO__indexer__ISSUE_INDEXER_PATH: /data/gitea/indexers/issues.bleve
