@@ -8,15 +8,15 @@
   [dda.c4k-forgejo.backup :as backup]
   [dda.c4k-common.postgres :as postgres]))
 
-(def config-defaults {:issuer "staging"})
+(def config-defaults {:issuer "staging", :deploy-federated "false"})
 
 (def config? (s/keys :req-un [::forgejo/fqdn 
-                              ::forgejo/deploy-federated
                               ::forgejo/mailer-from 
                               ::forgejo/mailer-host 
                               ::forgejo/mailer-port
                               ::forgejo/service-noreply-address]
                      :opt-un [::forgejo/issuer 
+                              ::forgejo/deploy-federated
                               ::forgejo/default-app-name 
                               ::forgejo/service-domain-whitelist
                               ::backup/restic-repository

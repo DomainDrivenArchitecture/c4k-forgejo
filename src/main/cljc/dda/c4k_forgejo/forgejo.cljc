@@ -45,15 +45,13 @@
 (s/def ::issuer pred/letsencrypt-issuer?)
 (s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
 
-(def config-defaults {:issuer "staging"})
-
 (def config? (s/keys :req-un [::fqdn
-                              ::deploy-federated
                               ::mailer-from
                               ::mailer-host
                               ::mailer-port
                               ::service-noreply-address]
                      :opt-un [::issuer
+                              ::deploy-federated
                               ::default-app-name
                               ::service-domain-whitelist]))
 

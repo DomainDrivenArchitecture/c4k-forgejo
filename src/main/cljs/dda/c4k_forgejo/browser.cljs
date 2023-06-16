@@ -110,7 +110,7 @@
                               (-> (cm/generate-common
                                    (config-from-document)
                                    (br/get-content-from-element "auth" :deserializer edn/read-string)
-                                   forgejo/config-defaults
+                                   core/config-defaults
                                    core/k8s-objects)
                                (br/set-output!)))))
   (add-validate-listener "fqdn")
