@@ -63,7 +63,7 @@
   [total]
   total)
 
-(def federated-image-name "codeberg.org/meissa/forgejo:federated-latest")
+(def federated-image-name "domaindrivenarchitecture/c4k-forgejo-federated:latest")
 (def non-federated-image-name "codeberg.org/forgejo/forgejo:1.19")
 
 #?(:cljs
