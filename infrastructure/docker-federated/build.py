@@ -2,7 +2,7 @@ from os import environ
 from pybuilder.core import task, init
 from ddadevops import *
 
-name = 'c4k-forgejo-fed'
+name = 'c4k-forgejo-federated'
 MODULE = 'docker'
 PROJECT_ROOT_PATH = '../..'
 
@@ -18,7 +18,7 @@ def initialize(project):
     }
 
     project.build_depends_on('ddadevops>=4.0.0-dev')
-    
+
     build = DevopsImageBuild(project, input)
     build.initialize_build_dir()
 
