@@ -1,4 +1,4 @@
-FROM c4k-forgejo-fed
+FROM c4k-forgejo-federated
 
 RUN apk --no-cache add openjdk11-jre-headless
 
