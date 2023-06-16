@@ -92,7 +92,7 @@
             :spec
             {:containers
              [{:name "forgejo",
-               :image "codeberg.org/meissa/forgejo:federated-latest",
+               :image "domaindrivenarchitecture/c4k-forgejo-federated:latest",
                :imagePullPolicy "IfNotPresent",
                :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
                :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
