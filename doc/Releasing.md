@@ -24,20 +24,18 @@ git add .
 git commit 
 ```
 
-Open package.json, find ":version" keyword and remove "-SNAPSHOT" from version number.
+Execute tests
 
 ``` bash
-git add .
-git commit -m "Release [version]"
-lein release
-git push --follow-tags
+shadow-cljs compile test
+node target/node-tests.js
+lein test
 ```
 
-Open package.json again, increase version increment by one and add "-SNAPSHOT".
-
+Release with type (NONE, PATCH, MINOR, MAJOR):
 ``` bash
-git commit -am "version bump"
-git push
+RELEASE_TYPE=[TYPE] pyb prepare_release after_publish
+
 ```
 
 Done.
