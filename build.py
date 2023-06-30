@@ -1,9 +1,10 @@
 from os import environ
+from subprocess import run
 from pybuilder.core import task, init
 from ddadevops import *
 
-name = 'forgejo'
-MODULE = 'c4k'
+name = 'c4k'
+MODULE = 'forgejo'
 PROJECT_ROOT_PATH = '..'
 
 @init
@@ -31,6 +32,43 @@ def prepare_release(project):
     build.prepare_release()
 
 @task
-def after_publish(project):
+def tag_bump_and_push_release(project):
     build = get_devops_build(project)
     build.tag_bump_and_push_release()
+
+@task
+def patch(project):
+    build_all(project, "PATCH")
+
+@task
+def minor(project):
+    build_all(project, "MINOR")
+
+@task
+def major(project):
+    build_all(project, "MAJOR")
+    
+@task
+def dev(project):
+    build_all(project, "NONE")
+
+@task
+def test(project):
+    run("lein test", shell=True)
+
+@task
+def build_it(project):
+    run("lein uberjar", shell=True)
+
+@task
+def publish(project):
+    run("lein deploy", shell=True)
+
+def build_all(project, release_type):
+    build = get_devops_build(project)
+    build.update_release_type(release_type)
+    test(project)
+    prepare_release(project)
+    build_it(project)
+    tag_bump_and_push_release(project)
+
