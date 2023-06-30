@@ -8,6 +8,7 @@
 c4k-forgejo provides a k8s deployment file for forgejo containing:
 
 * forgejo
+* test federated forgejo
 * ingress having a letsencrypt managed certificate
 * postgres database
 * encrypted backup on S3 & restore
