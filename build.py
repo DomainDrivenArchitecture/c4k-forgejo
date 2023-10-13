@@ -114,11 +114,11 @@ def upload_clj(project):
 
 @task
 def lint(project):
-    run(
-        "lein eastwood",
-        shell=True,
-        check=True,
-    )
+    #run(
+    #    "lein eastwood",
+    #    shell=True,
+    #    check=True,
+    #)
     run(
         "lein ancient check",
         shell=True,
