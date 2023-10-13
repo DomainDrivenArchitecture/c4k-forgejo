@@ -6,7 +6,7 @@ from ddadevops import *
 name = 'c4k-forgejo'
 MODULE = 'federated'
 PROJECT_ROOT_PATH = '../..'
-version = "3.0.4"
+version = "3.0.5-SNAPSHOT"
 
 @init
 def initialize(project):
