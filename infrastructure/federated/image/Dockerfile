@@ -34,6 +34,8 @@ LABEL maintainer="contact@forgejo.org"
 
 EXPOSE 22 3000
 
+RUN apk -U upgrade
+RUN apk cache clean
 RUN apk --no-cache add \
     bash \
     ca-certificates \
