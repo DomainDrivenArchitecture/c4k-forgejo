@@ -9,9 +9,9 @@ ARG TAGS="sqlite sqlite_unlock_notify"
 ENV TAGS "bindata timetzdata $TAGS"
 ARG CGO_EXTRA_CFLAGS
 
-ENV FORGEJO_GIT_URL "https://codeberg.org/forgejo/forgejo.git"
+ENV FORGEJO_GIT_URL "https://codeberg.org/meissa/forgejo.git"
 #ENV FORGEJO_GIT_URL "https://git.exozy.me/a/gitea.git"
-ENV FORGEJO_BRANCH "forgejo-development"
+ENV FORGEJO_BRANCH "forgejo-federated-star"
 #ENV FORGEJO_BRANCH "libreplanet-federation-demo"
 
 #Build deps
