@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eux pipefail
+
 apt-get update > /dev/null;
 
 install -m 0700 /tmp/entrypoint.sh /
