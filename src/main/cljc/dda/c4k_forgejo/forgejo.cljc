@@ -2,17 +2,15 @@
   (:require
    [clojure.spec.alpha :as s]
    [clojure.string :as st]
-   #?(:cljs [shadow.resource :as rc])
    #?(:clj [orchestra.core :refer [defn-spec]]
       :cljs [orchestra.core :refer-macros [defn-spec]])
-   #?(:clj [clojure.edn :as edn]
-      :cljs [cljs.reader :as edn])
    [dda.c4k-common.yaml :as yaml]
    [dda.c4k-common.common :as cm]
    [dda.c4k-common.ingress :as ing]
    [dda.c4k-common.base64 :as b64]
    [dda.c4k-common.predicate :as pred]
-   [dda.c4k-common.postgres :as postgres]))
+   [dda.c4k-common.postgres :as postgres]
+   #?(:cljs [dda.c4k-common.macros :refer-macros [inline-resources]])))
 
 (defn domain-list?
   [input]
@@ -68,14 +66,7 @@
 
 #?(:cljs
    (defmethod yaml/load-resource :forgejo [resource-name]
-     (case resource-name
-       "forgejo/appini-env-configmap.yaml" (rc/inline "forgejo/appini-env-configmap.yaml")
-       "forgejo/deployment.yaml" (rc/inline "forgejo/deployment.yaml")
-       "forgejo/secrets.yaml" (rc/inline "forgejo/secrets.yaml")
-       "forgejo/service.yaml" (rc/inline "forgejo/service.yaml")
-       "forgejo/service-ssh.yaml" (rc/inline "forgejo/service-ssh.yaml")       
-       "forgejo/datavolume.yaml" (rc/inline "forgejo/datavolume.yaml")
-       (throw (js/Error. "Undefined Resource!")))))
+     (get (inline-resources "forgejo") resource-name)))
 
 (defn generate-appini-env
   [config]
