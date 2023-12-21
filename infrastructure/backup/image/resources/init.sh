@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -Eexo pipefail
+
 function main() {
     file_env AWS_ACCESS_KEY_ID
     file_env AWS_SECRET_ACCESS_KEY

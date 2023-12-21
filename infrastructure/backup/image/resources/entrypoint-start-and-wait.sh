@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -Eexo pipefail
+
 function main() {
     create-pg-pass
 

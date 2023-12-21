@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -o pipefail
+set -Eexo pipefail
 
 function main() {
     file_env AWS_ACCESS_KEY_ID

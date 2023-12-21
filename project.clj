@@ -4,8 +4,8 @@
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
   :dependencies [[org.clojure/clojure "1.11.1" :scope "provided"]
-                 [org.clojure/tools.reader "1.3.6"]
-                 [org.domaindrivenarchitecture/c4k-common-clj "6.0.3"]
+                 [org.clojure/tools.reader "1.3.7"]
+                 [org.domaindrivenarchitecture/c4k-common-clj "6.1.0"]
                  [hickory "0.7.1"]]
   :target-path "target/%s/"
   :source-paths ["src/main/cljc"
@@ -23,7 +23,7 @@
                        :main dda.c4k-forgejo.uberjar
                        :uberjar-name "c4k-forgejo-standalone.jar"
                        :dependencies [[org.clojure/tools.cli "1.0.219"]
-                                      [ch.qos.logback/logback-classic "1.4.11"
+                                      [ch.qos.logback/logback-classic "1.4.14"
                                        :exclusions [com.sun.mail/javax.mail]]
                                       [org.slf4j/jcl-over-slf4j "2.0.9"]]}}
   :release-tasks [["test"]
