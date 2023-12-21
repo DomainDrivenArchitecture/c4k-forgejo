@@ -4,7 +4,7 @@
                 "src/test/cljc"
                 "src/test/cljs"
                 "src/test/resources"]
- :dependencies [[org.domaindrivenarchitecture/c4k-common-cljs "6.0.1"]
+ :dependencies [[org.domaindrivenarchitecture/c4k-common-cljs "6.1.0"]
                 [hickory "0.7.1"]]
  :builds {:frontend {:target :browser
                      :modules {:main {:init-fn dda.c4k-forgejo.browser/init}}

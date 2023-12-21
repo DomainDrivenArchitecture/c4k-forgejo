@@ -51,62 +51,61 @@
                                                 :service-domain-whitelist "test.com,test.net"
                                                 :service-noreply-address "noreply@test.com"})))))
 
-(deftest should-generate-non-federated-deployment
-  (is (= {:apiVersion "apps/v1",
-          :kind "Deployment",
-          :metadata {:name "forgejo", :namespace "default", :labels {:app "forgejo"}},
-          :spec
-          {:replicas 1,
-           :selector {:matchLabels {:app "forgejo"}},
-           :template
-           {:metadata {:name "forgejo", :labels {:app "forgejo"}},
+(deftest should-generate-deployment
+  (testing "non-federated"
+    (is (= {:apiVersion "apps/v1",
+            :kind "Deployment",
+            :metadata {:name "forgejo", :namespace "default", :labels {:app "forgejo"}},
             :spec
-            {:containers
-             [{:name "forgejo",
-               :image "codeberg.org/forgejo/forgejo:1.19",
-               :imagePullPolicy "IfNotPresent",
-               :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
-               :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
-               :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
-             :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
-       (cut/generate-deployment 
-        {:default-app-name ""
-         :deploy-federated "false"
-         :fqdn "test.de"
-         :mailer-from ""
-         :mailer-host "m.t.de"
-         :mailer-port "123"
-         :service-domain-whitelist "adb.de"
-         :service-noreply-address ""}
-        ))))
-
-(deftest should-generate-federated-deployment
-  (is (= {:apiVersion "apps/v1",
-          :kind "Deployment",
-          :metadata {:name "forgejo", :namespace "default", :labels {:app "forgejo"}},
-          :spec
-          {:replicas 1,
-           :selector {:matchLabels {:app "forgejo"}},
-           :template
-           {:metadata {:name "forgejo", :labels {:app "forgejo"}},
+            {:replicas 1,
+             :selector {:matchLabels {:app "forgejo"}},
+             :template
+             {:metadata {:name "forgejo", :labels {:app "forgejo"}},
+              :spec
+              {:containers
+               [{:name "forgejo",
+                 :image "codeberg.org/forgejo/forgejo:1.19",
+                 :imagePullPolicy "IfNotPresent",
+                 :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
+                 :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
+                 :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
+               :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
+           (cut/generate-deployment
+            {:default-app-name ""
+             :deploy-federated "false"
+             :fqdn "test.de"
+             :mailer-from ""
+             :mailer-host "m.t.de"
+             :mailer-port "123"
+             :service-domain-whitelist "adb.de"
+             :service-noreply-address ""}))))
+  (testing "federated-deployment"
+    (is (= {:apiVersion "apps/v1",
+            :kind "Deployment",
+            :metadata {:name "forgejo", :namespace "default", :labels {:app "forgejo"}},
             :spec
-            {:containers
-             [{:name "forgejo",
-               :image "domaindrivenarchitecture/c4k-forgejo-federated:latest",
-               :imagePullPolicy "IfNotPresent",
-               :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
-               :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
-               :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
-             :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
-         (cut/generate-deployment
-          {:default-app-name ""
-           :deploy-federated "true"
-           :fqdn "test.de"
-           :mailer-from ""
-           :mailer-host "m.t.de"
-           :mailer-port "123"
-           :service-domain-whitelist "adb.de"
-           :service-noreply-address ""}))))
+            {:replicas 1,
+             :selector {:matchLabels {:app "forgejo"}},
+             :template
+             {:metadata {:name "forgejo", :labels {:app "forgejo"}},
+              :spec
+              {:containers
+               [{:name "forgejo",
+                 :image "domaindrivenarchitecture/c4k-forgejo-federated:latest",
+                 :imagePullPolicy "IfNotPresent",
+                 :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
+                 :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
+                 :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
+               :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
+           (cut/generate-deployment
+            {:default-app-name ""
+             :deploy-federated "true"
+             :fqdn "test.de"
+             :mailer-from ""
+             :mailer-host "m.t.de"
+             :mailer-port "123"
+             :service-domain-whitelist "adb.de"
+             :service-noreply-address ""})))))
 
 (deftest should-generate-secret
   (is (= {:FORGEJO__database__USER-c1 "",

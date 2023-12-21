@@ -12,13 +12,12 @@ function main() {
     file_env POSTGRES_USER
 
     # Restore latest snapshot into /var/backups/restore
-    rm -rf /var/backups/restore
     restore-directory '/var/backups/restore'
 
     rm -rf /var/backups/gitea/*
     rm -rf /var/backups/git/repositories/*
-    cp -r /var/backups/restore/gitea /var/backups/
-    cp -r /var/backups/restore/git/repositories /var/backups/git/
+    cp -r /var/backups/restore/gitea /var/backups/ #ToDo: mv instead of cp or rm -rf after
+    cp -r /var/backups/restore/git/repositories /var/backups/git/ #ToDo: mv instead of cp or rm -rf after
     
     # adjust file permissions for the git user
     chown -R 1000:1000 /var/backups
