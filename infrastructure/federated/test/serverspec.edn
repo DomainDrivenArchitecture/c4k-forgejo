@@ -1,8 +1,0 @@
-{:file [{:path "/usr/bin/entrypoint" :mod "755"}
-        {:path "/app/gitea/gitea" :mod "755"}
-        {:path "/usr/local/bin/gitea" :mod "755"}
-        {:path "/usr/local/bin/environment-to-ini" :mod "755"}
-        {:path "/etc/s6/gitea/" :mod "755"}
-        {:path "/etc/s6/openssh/" :mod "755"}
-        {:path "/etc/s6/.s6-svscan/" :mod "755"}
-        {:path "/etc/profile.d/gitea_bash_autocomplete.sh" :mod "644"}]}
