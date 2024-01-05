@@ -6,7 +6,7 @@ stages:
   - image
 
 .img: &img
-  image: "domaindrivenarchitecture/ddadevops-dind:4.10.5"
+  image: "domaindrivenarchitecture/ddadevops-dind:4.10.7"
   services:
     - docker:dind
   before_script:
@@ -16,7 +16,7 @@ stages:
   - export IMAGE_TAG=$CI_COMMIT_TAG
 
 .cljs-job: &cljs
-  image: "domaindrivenarchitecture/ddadevops-clj-cljs:4.10.5"
+  image: "domaindrivenarchitecture/ddadevops-clj-cljs:4.10.7"
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
@@ -29,7 +29,7 @@ stages:
   - npm install
 
 .clj-job: &clj
-  image: "domaindrivenarchitecture/ddadevops-clj-cljs:4.10.5"
+  image: "domaindrivenarchitecture/ddadevops-clj-cljs:4.10.7"
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
