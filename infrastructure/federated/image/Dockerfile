@@ -1,5 +1,5 @@
 #Build stage
-FROM docker.io/library/golang:1.21-alpine3.18 AS build-env
+FROM docker.io/library/golang:1.21-alpine3.19 as build-env
 
 ARG GOPROXY
 ENV GOPROXY ${GOPROXY:-direct}
@@ -11,7 +11,7 @@ ARG CGO_EXTRA_CFLAGS
 
 ENV FORGEJO_GIT_URL "https://codeberg.org/meissa/forgejo.git"
 #ENV FORGEJO_GIT_URL "https://git.exozy.me/a/gitea.git"
-ENV FORGEJO_BRANCH "forgejo-federated-star"
+ENV FORGEJO_BRANCH "test-release"
 #ENV FORGEJO_BRANCH "libreplanet-federation-demo"
 
 #Build deps
