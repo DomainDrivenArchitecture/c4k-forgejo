@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.11.1" :scope "provided"]
                  [org.clojure/tools.reader "1.3.7"]
                  [org.domaindrivenarchitecture/c4k-common-clj "6.1.0"]
-                 [hickory "0.7.1"]]
+                 [hickory "0.7.1" :exclusions [viebel/codox-klipse-theme]]]
   :target-path "target/%s/"
   :source-paths ["src/main/cljc"
                  "src/main/clj"]
