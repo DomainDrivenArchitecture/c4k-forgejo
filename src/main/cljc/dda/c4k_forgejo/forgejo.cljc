@@ -119,6 +119,18 @@
        :fqdns [fqdn]}
       config))))
 
+(defn-spec generate-rate-limit-ingress-and-cert pred/map-or-seq?
+  [config config?]
+  (let [{:keys [fqdn average burst period]} config]
+    (-> 
+     (generate-ingress-and-cert config)
+     (#(cm/replace-key-value %
+      :traefik.ingress.kubernetes.io/router.middlewares 
+      (str 
+       (:traefik.ingress.kubernetes.io/router.middlewares 
+        (:annotations (:metadata %))) 
+       ", default-ratelimit@kubernetescrd"))))))
+
 (defn-spec generate-data-volume pred/map-or-seq?
   [config vol?]
   (let [{:keys [volume-total-storage-size]} config        
