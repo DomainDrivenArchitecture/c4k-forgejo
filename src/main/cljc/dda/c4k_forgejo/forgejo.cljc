@@ -129,7 +129,7 @@
       (str 
        (:traefik.ingress.kubernetes.io/router.middlewares 
         (:annotations (:metadata %))) 
-       ", default-ratelimit@kubernetescrd"))))))
+       ", default-ratelimit@kubernetescrd")))))) ; ToDo: Rate Limit Konfig Optionen
 
 (defn-spec generate-data-volume pred/map-or-seq?
   [config vol?]
