@@ -51,8 +51,9 @@
                    (forgejo/generate-appini-env config)
                    (forgejo/generate-secrets auth)]
                   (when (contains? config :average)
-                    (forgejo/generate-rate-limit-ingress-and-cert config) ; this function has a vector as output
-                    [(forgejo/generate-rate-limit-middleware config)]) ; this does not
+                    (forgejo/generate-rate-limit-ingress-and-cert config)) ; this function has a vector as output
+                  (when (contains? config :average)
+                   [(forgejo/generate-rate-limit-middleware config)]) ; this does not
                   (when (not (contains? config :average))
                     (forgejo/generate-ingress-and-cert config))
                   (when (contains? config :restic-repository)
