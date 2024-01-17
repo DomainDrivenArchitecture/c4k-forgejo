@@ -42,6 +42,8 @@
 (s/def ::mailer-pw pred/bash-env-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
 (s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
+(s/def ::average int?)
+(s/def ::burst int?)
 
 (def config? (s/keys :req-un [::fqdn
                               ::mailer-from
@@ -51,7 +53,9 @@
                      :opt-un [::issuer
                               ::deploy-federated
                               ::default-app-name
-                              ::service-domain-whitelist]))
+                              ::service-domain-whitelist
+                              ::average
+                              ::burst]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
 
