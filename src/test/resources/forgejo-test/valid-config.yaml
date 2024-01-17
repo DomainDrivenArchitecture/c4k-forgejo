@@ -9,6 +9,8 @@ service-noreply-address: "noreply@test.de"
 volume-total-storage-size: 6
 restic-repository: "repo-path"
 deploy-federated: "false"
+average: 10
+burst: 4
 mon-cfg: 
   grafana-cloud-url: "url-for-your-prom-remote-write-endpoint"
   cluster-name: "forgejo"
