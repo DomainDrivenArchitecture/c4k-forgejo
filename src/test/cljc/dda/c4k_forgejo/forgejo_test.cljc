@@ -132,7 +132,7 @@
                       (cut/generate-data-volume {:volume-total-storage-size 15})))))
 
 (deftest should-generate-middleware-ratelimit
-  (is (= {:apiVersion "traefik.io/v1alpha1",
+  (is (= {:apiVersion "traefik.containo.us/v1alpha1",
           :kind "Middleware",
           :metadata {:name "ratelimit"},
           :spec {:rateLimit {:average 10, :burst 5}}}
