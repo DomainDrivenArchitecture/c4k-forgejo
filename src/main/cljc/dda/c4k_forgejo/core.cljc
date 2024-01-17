@@ -46,14 +46,15 @@
                    (postgres/generate-service)
                    (forgejo/generate-deployment config)
                    (forgejo/generate-service)
-                   (forgejo/generate-service-ssh)                   
+                   (forgejo/generate-service-ssh)
                    (forgejo/generate-data-volume config)
                    (forgejo/generate-appini-env config)
                    (forgejo/generate-secrets auth)]
-                  (if (contains? config :average)
-                      (do (forgejo/generate-rate-limit-ingress-and-cert config)
-                          (forgejo/generate-rate-limit-middleware config))
-                      (forgejo/generate-ingress-and-cert config))
+                  (when (contains? config :average)
+                    (forgejo/generate-rate-limit-ingress-and-cert config) ; this function has a vector as output
+                    [(forgejo/generate-rate-limit-middleware config)]) ; this does not
+                  (when (not (contains? config :average))
+                    (forgejo/generate-ingress-and-cert config))
                   (when (contains? config :restic-repository)
                     [(backup/generate-config config)
                      (backup/generate-secret auth)
