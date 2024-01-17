@@ -133,6 +133,17 @@
                 (-> (second %) :metadata :annotations :traefik.ingress.kubernetes.io/router.middlewares)
                 ", default-ratelimit@kubernetescrd")))))
 
+
+; using :average and :burst seems sensible, :period may be interesting for fine tuning later on
+(defn-spec generate-rate-limit-middleware pred/map-or-seq?
+  [config config?]
+  (let [{:keys [average burst]} config]
+  (->
+   (yaml/load-as-edn "forgejo/middleware-ratelimit.yaml")
+   (cm/replace-key-value :average average)
+   (cm/replace-key-value :burst burst)
+   )))
+
 (defn-spec generate-data-volume pred/map-or-seq?
   [config vol?]
   (let [{:keys [volume-total-storage-size]} config        
