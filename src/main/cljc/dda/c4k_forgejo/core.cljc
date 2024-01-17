@@ -49,8 +49,11 @@
                    (forgejo/generate-service-ssh)                   
                    (forgejo/generate-data-volume config)
                    (forgejo/generate-appini-env config)
-                   (forgejo/generate-secrets auth)] 
-                  (forgejo/generate-ingress-and-cert config)
+                   (forgejo/generate-secrets auth)]
+                  (if (contains? config :average)
+                      (do (forgejo/generate-rate-limit-ingress-and-cert config)
+                          (forgejo/generate-rate-limit-middleware config))
+                      (forgejo/generate-ingress-and-cert config))
                   (when (contains? config :restic-repository)
                     [(backup/generate-config config)
                      (backup/generate-secret auth)
