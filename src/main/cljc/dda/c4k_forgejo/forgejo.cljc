@@ -141,8 +141,7 @@
   (->
    (yaml/load-as-edn "forgejo/middleware-ratelimit.yaml")
    (cm/replace-key-value :average average)
-   (cm/replace-key-value :burst burst)
-   )))
+   (cm/replace-key-value :burst burst))))
 
 (defn-spec generate-data-volume pred/map-or-seq?
   [config vol?]
