@@ -130,3 +130,32 @@
           :storage-c2 "15Gi"}
          (th/map-diff (cut/generate-data-volume {:volume-total-storage-size 1})
                       (cut/generate-data-volume {:volume-total-storage-size 15})))))
+
+(deftest should-generate-middleware-ratelimit
+  (is (= {:apiVersion "traefik.io/v1alpha1",
+          :kind "Middleware",
+          :metadata {:name "ratelimit"},
+          :spec {:rateLimit {:average 10, :burst 5}}}
+         (cut/generate-rate-limit-middleware {:fqdn "test.de"
+                                              :mailer-from ""
+                                              :mailer-host "m.t.de"
+                                              :mailer-port "123"
+                                              :service-noreply-address ""
+                                              :average 10
+                                              :burst 5}))))
+
+(deftest should-generate-middleware-ratelimit-ingress-and-cert
+  (is (= {:traefik.ingress.kubernetes.io/router.entrypoints "web, websecure",
+          :traefik.ingress.kubernetes.io/router.middlewares
+          "default-redirect-https@kubernetescrd, default-ratelimit@kubernetescrd",
+          :metallb.universe.tf/address-pool "public"}
+         (-> (second
+              (cut/generate-rate-limit-ingress-and-cert
+               {:fqdn "test.de"
+                :mailer-from ""
+                :mailer-host "m.t.de"
+                :mailer-port "123"
+                :service-noreply-address ""
+                :average 10
+                :burst 5}))
+             :metadata :annotations))))
