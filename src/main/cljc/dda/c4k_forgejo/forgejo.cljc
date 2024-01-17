@@ -125,15 +125,13 @@
 
 (defn-spec generate-rate-limit-ingress-and-cert pred/map-or-seq?
   [config config?]
-  (let [{:keys [fqdn average burst period]} config]
-    (-> 
-     (generate-ingress-and-cert config)
-     (#(cm/replace-key-value %
-      :traefik.ingress.kubernetes.io/router.middlewares 
-      (str 
-       (:traefik.ingress.kubernetes.io/router.middlewares 
-        (:annotations (:metadata %))) 
-       ", default-ratelimit@kubernetescrd")))))) ; ToDo: Rate Limit Konfig Optionen
+  (->
+   (generate-ingress-and-cert config) ; returns a vector
+   (#(assoc-in % ; Attention: heavily relying on the output order of ing/generate-ingress-and-cert
+               [1 :metadata :annotations :traefik.ingress.kubernetes.io/router.middlewares]
+               (str
+                (-> (second %) :metadata :annotations :traefik.ingress.kubernetes.io/router.middlewares)
+                ", default-ratelimit@kubernetescrd")))))
 
 (defn-spec generate-data-volume pred/map-or-seq?
   [config vol?]
