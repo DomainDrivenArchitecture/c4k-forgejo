@@ -42,8 +42,8 @@
 (s/def ::mailer-pw pred/bash-env-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
 (s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
-(s/def ::average int?) 
-(s/def ::burst int?)
+(s/def ::max-rate int?) 
+(s/def ::max-concurrent-requests int?)
 
 (def config? (s/keys :req-un [::fqdn
                               ::mailer-from
@@ -53,9 +53,10 @@
                      :opt-un [::issuer
                               ::deploy-federated
                               ::default-app-name
-                              ::service-domain-whitelist
-                              ::average
-                              ::burst]))
+                              ::service-domain-whitelist]))
+
+(def rate-limit-config? (s/keys :req-un [::max-rate
+                                         ::max-concurrent-requests]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
 
@@ -136,12 +137,12 @@
 
 ; using :average and :burst seems sensible, :period may be interesting for fine tuning later on
 (defn-spec generate-rate-limit-middleware pred/map-or-seq?
-  [config config?]
-  (let [{:keys [average burst]} config] ; ToDo: Set defaults, don't read config ; refactor ":average" KW to smth more speaking
+  [config rate-limit-config?]
+  (let [{:keys [max-rate max-concurrent-requests]} config] ; ToDo: Set defaults, don't read config ; refactor ":average" KW to smth more speaking
   (->
    (yaml/load-as-edn "forgejo/middleware-ratelimit.yaml")
-   (cm/replace-key-value :average average)
-   (cm/replace-key-value :burst burst))))
+   (cm/replace-key-value :average max-rate)
+   (cm/replace-key-value :burst max-concurrent-requests))))
 
 (defn-spec generate-data-volume pred/map-or-seq?
   [config vol?]
