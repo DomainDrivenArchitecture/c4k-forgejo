@@ -50,7 +50,7 @@
                    (forgejo/generate-data-volume config)
                    (forgejo/generate-appini-env config)
                    (forgejo/generate-secrets auth)]
-                  (when (contains? config :average)
+                  (when (contains? config :average) ; ToDo: just leave this out and make sensible defaults
                     (forgejo/generate-rate-limit-ingress-and-cert config)) ; this function has a vector as output
                   (when (contains? config :average)
                    [(forgejo/generate-rate-limit-middleware config)]) ; this does not

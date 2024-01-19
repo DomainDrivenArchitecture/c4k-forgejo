@@ -42,7 +42,7 @@
 (s/def ::mailer-pw pred/bash-env-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
 (s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
-(s/def ::average int?)
+(s/def ::average int?) 
 (s/def ::burst int?)
 
 (def config? (s/keys :req-un [::fqdn
@@ -137,7 +137,7 @@
 ; using :average and :burst seems sensible, :period may be interesting for fine tuning later on
 (defn-spec generate-rate-limit-middleware pred/map-or-seq?
   [config config?]
-  (let [{:keys [average burst]} config]
+  (let [{:keys [average burst]} config] ; ToDo: Set defaults, don't read config ; refactor ":average" KW to smth more speaking
   (->
    (yaml/load-as-edn "forgejo/middleware-ratelimit.yaml")
    (cm/replace-key-value :average average)
