@@ -136,13 +136,7 @@
           :kind "Middleware",
           :metadata {:name "ratelimit"},
           :spec {:rateLimit {:average 10, :burst 5}}}
-         (cut/generate-rate-limit-middleware {:fqdn "test.de"
-                                              :mailer-from ""
-                                              :mailer-host "m.t.de"
-                                              :mailer-port "123"
-                                              :service-noreply-address ""
-                                              :average 10
-                                              :burst 5}))))
+         (cut/generate-rate-limit-middleware {:max-rate 10, :max-concurrent-requests 5}))))
 
 (deftest should-generate-middleware-ratelimit-ingress-and-cert
   (is (= {:traefik.ingress.kubernetes.io/router.entrypoints "web, websecure",
