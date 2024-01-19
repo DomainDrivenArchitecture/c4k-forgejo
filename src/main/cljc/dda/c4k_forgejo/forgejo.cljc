@@ -138,7 +138,7 @@
 ; using :average and :burst seems sensible, :period may be interesting for fine tuning later on
 (defn-spec generate-rate-limit-middleware pred/map-or-seq?
   [config rate-limit-config?]
-  (let [{:keys [max-rate max-concurrent-requests]} config] ; ToDo: Set defaults, don't read config ; refactor ":average" KW to smth more speaking
+  (let [{:keys [max-rate max-concurrent-requests]} config]
   (->
    (yaml/load-as-edn "forgejo/middleware-ratelimit.yaml")
    (cm/replace-key-value :average max-rate)
