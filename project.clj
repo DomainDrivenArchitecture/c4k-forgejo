@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/c4k-forgejo "3.1.3-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/c4k-forgejo "3.1.5-SNAPSHOT"
   :description "forgejo c4k-installation package"
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
@@ -25,7 +25,7 @@
                        :dependencies [[org.clojure/tools.cli "1.0.219"]
                                       [ch.qos.logback/logback-classic "1.4.14"
                                        :exclusions [com.sun.mail/javax.mail]]
-                                      [org.slf4j/jcl-over-slf4j "2.0.10"]]}}
+                                      [org.slf4j/jcl-over-slf4j "2.0.11"]]}}
   :release-tasks [["test"]
                   ["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
