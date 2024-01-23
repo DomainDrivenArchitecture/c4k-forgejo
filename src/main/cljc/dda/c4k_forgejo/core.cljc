@@ -9,6 +9,7 @@
   [dda.c4k-common.postgres :as postgres]))
 
 (def config-defaults {:issuer "staging", :deploy-federated "false"})
+(def rate-limit-defaults {:max-rate 10, :max-concurrent-requests 5})
 
 (def config? (s/keys :req-un [::forgejo/fqdn 
                               ::forgejo/mailer-from 
@@ -30,7 +31,7 @@
 
 (def vol? (s/keys :req-un [::forgejo/volume-total-storage-size]))
 
-(defn k8s-objects [config auth]
+(defn k8s-objects [config auth] ; ToDo: ADR for generate functions - vector or no vector?
   (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
     (map yaml/to-string
          (filter #(not (nil? %))
@@ -46,11 +47,12 @@
                    (postgres/generate-service)
                    (forgejo/generate-deployment config)
                    (forgejo/generate-service)
-                   (forgejo/generate-service-ssh)                   
+                   (forgejo/generate-service-ssh)
                    (forgejo/generate-data-volume config)
                    (forgejo/generate-appini-env config)
-                   (forgejo/generate-secrets auth)] 
-                  (forgejo/generate-ingress-and-cert config)
+                   (forgejo/generate-secrets auth)
+                   (forgejo/generate-rate-limit-middleware rate-limit-defaults)] ; this does not have a vector as output
+                  (forgejo/generate-rate-limit-ingress-and-cert config) ; this function has a vector as output
                   (when (contains? config :restic-repository)
                     [(backup/generate-config config)
                      (backup/generate-secret auth)

@@ -42,6 +42,8 @@
 (s/def ::mailer-pw pred/bash-env-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
 (s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
+(s/def ::max-rate int?) 
+(s/def ::max-concurrent-requests int?)
 
 (def config? (s/keys :req-un [::fqdn
                               ::mailer-from
@@ -52,6 +54,9 @@
                               ::deploy-federated
                               ::default-app-name
                               ::service-domain-whitelist]))
+
+(def rate-limit-config? (s/keys :req-un [::max-rate
+                                         ::max-concurrent-requests]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
 
@@ -118,6 +123,26 @@
        :service-port 3000
        :fqdns [fqdn]}
       config))))
+
+(defn-spec generate-rate-limit-ingress-and-cert pred/map-or-seq?
+  [config config?]
+  (->
+   (generate-ingress-and-cert config) ; returns a vector
+   (#(assoc-in % ; Attention: heavily relying on the output order of ing/generate-ingress-and-cert
+               [1 :metadata :annotations :traefik.ingress.kubernetes.io/router.middlewares]
+               (str
+                (-> (second %) :metadata :annotations :traefik.ingress.kubernetes.io/router.middlewares)
+                ", default-ratelimit@kubernetescrd")))))
+
+
+; using :average and :burst seems sensible, :period may be interesting for fine tuning later on
+(defn-spec generate-rate-limit-middleware pred/map-or-seq?
+  [config rate-limit-config?]
+  (let [{:keys [max-rate max-concurrent-requests]} config]
+  (->
+   (yaml/load-as-edn "forgejo/middleware-ratelimit.yaml")
+   (cm/replace-key-value :average max-rate)
+   (cm/replace-key-value :burst max-concurrent-requests))))
 
 (defn-spec generate-data-volume pred/map-or-seq?
   [config vol?]
