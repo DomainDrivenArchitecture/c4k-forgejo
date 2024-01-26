@@ -39,9 +39,9 @@ Development happens at: https://repo.prod.meissa.de/meissa/c4k-forgejo
 
 Mirrors are:
 
-    https://gitlab.com/domaindrivenarchitecture/c4k-forgejo (issues and PR, CI)
-    https://codeberg.org/meissa/c4k-forgejo
-    https://github.com/DomainDrivenArchitecture/c4k-forgejo
+* https://gitlab.com/domaindrivenarchitecture/c4k-forgejo (CI)
+* https://codeberg.org/meissa/c4k-forgejo (issues and PR)
+* https://github.com/DomainDrivenArchitecture/c4k-forgejo
 
 For more details about our repository model see: https://repo.prod.meissa.de/meissa/federate-your-repos
 
