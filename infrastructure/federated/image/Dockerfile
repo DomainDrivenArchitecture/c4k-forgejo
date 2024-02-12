@@ -10,9 +10,7 @@ ENV TAGS "bindata timetzdata $TAGS"
 ARG CGO_EXTRA_CFLAGS
 
 ENV FORGEJO_GIT_URL "https://codeberg.org/meissa/forgejo.git"
-#ENV FORGEJO_GIT_URL "https://git.exozy.me/a/gitea.git"
-ENV FORGEJO_BRANCH "test-release"
-#ENV FORGEJO_BRANCH "libreplanet-federation-demo"
+ENV FORGEJO_BRANCH "forgejo-federated-star"
 
 #Build deps
 RUN apk -U upgrade
