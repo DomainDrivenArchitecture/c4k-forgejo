@@ -106,6 +106,47 @@ def package_uberjar(project):
         check=True,
     )
 
+@task
+def package_native(project):
+    run(
+        "mkdir -p target/graalvm",
+        shell=True,
+        check=True,
+    )
+    run(
+        "lein native",
+        shell=True,
+        check=True,
+    )
+
+@task
+def inst(project):
+    run(
+        "lein uberjar",
+        shell=True,
+        check=True,
+    )
+    run(
+        "mkdir -p target/graalvm",
+        shell=True,
+        check=True,
+    )
+    run(
+        "lein native",
+        shell=True,
+        check=True,
+    )
+    run(
+        "sudo install -m=755 target/uberjar/c4k-forgejo-standalone.jar /usr/local/bin/c4k-forgejo-standalone.jar",
+        shell=True,
+        check=True,
+    )
+    run(
+        "sudo install -m=755 target/graalvm/c4k-forgejo /usr/local/bin/c4k-forgejo",
+        shell=True,
+        check=True,
+    )
+
 
 @task
 def upload_clj(project):

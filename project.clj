@@ -26,7 +26,7 @@
                                       [ch.qos.logback/logback-classic "1.4.14"
                                        :exclusions [com.sun.mail/javax.mail]]
                                       [org.slf4j/jcl-over-slf4j "2.0.12"]
-                                      [com.github.clj-easy/graal-build-time "0.1.5"]]}}
+                                      [com.github.clj-easy/graal-build-time "1.0.5"]]}}
   :release-tasks [["test"]
                   ["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
@@ -40,10 +40,10 @@
                       "--report-unsupported-elements-at-runtime"
                       "--no-server"
                       "--no-fallback"
+                      "-jar" "target/uberjar/c4k-forgejo-standalone.jar"
                       "-H:IncludeResources=.*.yaml"
                       "-H:Log=registerResource:verbose"
-                      "-H:Name=target/graalvm/${:name}"
-                      "-jar" "target/uberjar/c4k-forgejo-standalone.jar"
+                      "-H:Name=target/graalvm/${:name}"                      
                       ]
             "inst" ["shell"
                     "sh"
