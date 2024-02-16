@@ -25,7 +25,8 @@
                        :dependencies [[org.clojure/tools.cli "1.0.219"]
                                       [ch.qos.logback/logback-classic "1.4.14"
                                        :exclusions [com.sun.mail/javax.mail]]
-                                      [org.slf4j/jcl-over-slf4j "2.0.12"]]}}
+                                      [org.slf4j/jcl-over-slf4j "2.0.12"]
+                                      [com.github.clj-easy/graal-build-time "0.1.5"]]}}
   :release-tasks [["test"]
                   ["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
@@ -34,12 +35,16 @@
                   ["change" "version" "leiningen.release/bump-version"]]
   :aliases {"native" ["shell"
                       "native-image"
+                      ;"--verbose"
+                      "--native-image-info"
                       "--report-unsupported-elements-at-runtime"
-                      "--initialize-at-build-time"
+                      "--no-server"
+                      "--no-fallback"
+                      "-H:IncludeResources=.*.yaml"
+                      "-H:Log=registerResource:verbose"
+                      "-H:Name=target/graalvm/${:name}"
                       "-jar" "target/uberjar/c4k-forgejo-standalone.jar"
-                      "-H:ResourceConfigurationFiles=graalvm-resource-config.json"
-                      "-H:Log=registerResource"
-                      "-H:Name=target/graalvm/${:name}"]
+                      ]
             "inst" ["shell"
                     "sh"
                     "-c"

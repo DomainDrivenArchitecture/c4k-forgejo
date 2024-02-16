@@ -10,6 +10,7 @@ target/
 .lein-repl-history
 .lein-failures
 pom.*
+reports/*
 
 # cljs
 .shadow-cljs
@@ -28,3 +29,4 @@ auth.edn
 config.edn
 
 .eastwood
+
