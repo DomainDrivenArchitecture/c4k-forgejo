@@ -40,6 +40,7 @@
                       "--report-unsupported-elements-at-runtime"
                       "--no-server"
                       "--no-fallback"
+                      "--features=clj_easy.graal_build_time.InitClojureClasses"
                       "-jar" "target/uberjar/c4k-forgejo-standalone.jar"
                       "-H:IncludeResources=.*.yaml"
                       "-H:Log=registerResource:verbose"
