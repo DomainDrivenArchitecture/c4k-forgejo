@@ -4,6 +4,8 @@
    [dda.c4k-forgejo.core :as core]
    [dda.c4k-common.uberjar :as uberjar]))
 
+(set! *warn-on-reflection* true)
+
 (defn -main [& cmd-args]
   (uberjar/main-common 
    "c4k-forgejo"
