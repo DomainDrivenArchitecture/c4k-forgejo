@@ -97,7 +97,6 @@ package-native:
   <<: *clj
   stage: package
   script:
-    - native-image --help
     - pyb package_native
   artifacts:
     paths:
