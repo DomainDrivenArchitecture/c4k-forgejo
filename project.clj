@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/c4k-forgejo "3.1.11-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/c4k-forgejo "3.2.0"
   :description "forgejo c4k-installation package"
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
@@ -23,7 +23,7 @@
                        :main dda.c4k-forgejo.uberjar
                        :uberjar-name "c4k-forgejo-standalone.jar"
                        :dependencies [[org.clojure/tools.cli "1.0.219"]
-                                      [ch.qos.logback/logback-classic "1.4.14"
+                                      [ch.qos.logback/logback-classic "1.5.0"
                                        :exclusions [com.sun.mail/javax.mail]]
                                       [org.slf4j/jcl-over-slf4j "2.0.12"]
                                       [com.github.clj-easy/graal-build-time "1.0.5"]]}}
