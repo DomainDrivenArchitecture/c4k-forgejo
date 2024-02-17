@@ -29,7 +29,7 @@ stages:
   - npm install
 
 .clj-job: &clj
-  image: "domaindrivenarchitecture/ddadevops-clj-cljs:4.11.3"
+  image: "domaindrivenarchitecture/ddadevops-clj:4.11.3"
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
