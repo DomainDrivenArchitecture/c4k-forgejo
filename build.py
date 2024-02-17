@@ -78,17 +78,17 @@ def package_frontend(project):
     run("mkdir -p target/frontend-build", shell=True, check=True)
     run("shadow-cljs release frontend", shell=True, check=True)
     run(
-        "cp public/js/main.js target/frontend-build/c4k-forgejo.js",
+        "cp public/js/main.js target/frontend-build/" + project.name + ".js",
         shell=True,
         check=True,
     )
     run(
-        "sha256sum target/frontend-build/c4k-forgejo.js > target/frontend-build/c4k-forgejo.js.sha256",
+        "sha256sum target/frontend-build/c4k-forgejo.js > target/frontend-build/" + project.name + ".js.sha256",
         shell=True,
         check=True,
     )
     run(
-        "sha512sum target/frontend-build/c4k-forgejo.js > target/frontend-build/c4k-forgejo.js.sha512",
+        "sha512sum target/frontend-build/c4k-forgejo.js > target/frontend-build/" + project.name + ".js.sha512",
         shell=True,
         check=True,
     )
@@ -97,12 +97,12 @@ def package_frontend(project):
 @task
 def package_uberjar(project):
     run(
-        "sha256sum target/uberjar/c4k-forgejo-standalone.jar > target/uberjar/c4k-forgejo-standalone.jar.sha256",
+        "sha256sum target/uberjar/c4k-forgejo-standalone.jar > target/uberjar/" + project.name + "-standalone.jar.sha256",
         shell=True,
         check=True,
     )
     run(
-        "sha512sum target/uberjar/c4k-forgejo-standalone.jar > target/uberjar/c4k-forgejo-standalone.jar.sha512",
+        "sha512sum target/uberjar/c4k-forgejo-standalone.jar > target/uberjar/" + project.name + "-standalone.jar.sha512",
         shell=True,
         check=True,
     )
@@ -122,20 +122,20 @@ def package_native(project):
         "--no-server " +
         "--no-fallback " +
         "--features=clj_easy.graal_build_time.InitClojureClasses " +
-        "-jar" "target/uberjar/c4k-forgejo-standalone.jar " +
+        "-jar target/uberjar/" + project.name + "-standalone.jar " +
         "-H:IncludeResources=.*.yaml " +
         "-H:Log=registerResource:verbose " +
-        "-H:Name=target/graalvm/${:name}",
+        "-H:Name=target/graalvm/" + project.name + "",
         shell=True,
         check=True,
     )
     run(
-        "sha256sum target/graalvm/c4k-forgejo > target/graalvm/c4k-forgejo.sha256",
+        "sha256sum target/graalvm/c4k-forgejo > target/graalvm/" + project.name + ".sha256",
         shell=True,
         check=True,
     )
     run(
-        "sha512sum target/graalvm/c4k-forgejo > target/graalvm/c4k-forgejo.sha512",
+        "sha512sum target/graalvm/c4k-forgejo > target/graalvm/" + project.name + ".sha512",
         shell=True,
         check=True,
     )
@@ -148,32 +148,14 @@ def inst(project):
         shell=True,
         check=True,
     )
+    package_native(project)
     run(
-        "mkdir -p target/graalvm",
+        "sudo install -m=755 target/uberjar/" + project.name + "-standalone.jar /usr/local/bin/" + project.name + "-standalone.jar",
         shell=True,
         check=True,
     )
     run(
-        "native-image " +
-        "--native-image-info " +
-        "--report-unsupported-elements-at-runtime " +
-        "--no-server " +
-        "--no-fallback " +
-        "--features=clj_easy.graal_build_time.InitClojureClasses " +
-        "-jar" "target/uberjar/c4k-forgejo-standalone.jar " +
-        "-H:IncludeResources=.*.yaml " +
-        "-H:Log=registerResource:verbose " +
-        "-H:Name=target/graalvm/${:name}",
-        shell=True,
-        check=True,
-    )
-    run(
-        "sudo install -m=755 target/uberjar/c4k-forgejo-standalone.jar /usr/local/bin/c4k-forgejo-standalone.jar",
-        shell=True,
-        check=True,
-    )
-    run(
-        "sudo install -m=755 target/graalvm/c4k-forgejo /usr/local/bin/c4k-forgejo",
+        "sudo install -m=755 target/graalvm/" + project.name + " /usr/local/bin/" + project.name + "",
         shell=True,
         check=True,
     )
