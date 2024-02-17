@@ -29,6 +29,7 @@ def initialize(project):
         "release_organisation": "meissa",
         "release_repository_name": name,
         "release_artifacts": [
+            "target/graalvm/c4k-forgejo",
             "target/uberjar/c4k-forgejo-standalone.jar",
             "target/frontend-build/c4k-forgejo.js",
         ],
@@ -106,6 +107,7 @@ def package_uberjar(project):
         check=True,
     )
 
+
 @task
 def package_native(project):
     run(
@@ -118,6 +120,17 @@ def package_native(project):
         shell=True,
         check=True,
     )
+    run(
+        "sha256sum target/graalvm/c4k-forgejo > target/graalvm/c4k-forgejo.sha256",
+        shell=True,
+        check=True,
+    )
+    run(
+        "sha512sum target/graalvm/c4k-forgejo > target/graalvm/c4k-forgejo.sha512",
+        shell=True,
+        check=True,
+    )
+
 
 @task
 def inst(project):
