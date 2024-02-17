@@ -116,7 +116,16 @@ def package_native(project):
         check=True,
     )
     run(
-        "lein native",
+        "native-image " +
+        "--native-image-info " +
+        "--report-unsupported-elements-at-runtime " +
+        "--no-server " +
+        "--no-fallback " +
+        "--features=clj_easy.graal_build_time.InitClojureClasses " +
+        "-jar" "target/uberjar/c4k-forgejo-standalone.jar " +
+        "-H:IncludeResources=.*.yaml " +
+        "-H:Log=registerResource:verbose " +
+        "-H:Name=target/graalvm/${:name}",
         shell=True,
         check=True,
     )
@@ -145,7 +154,16 @@ def inst(project):
         check=True,
     )
     run(
-        "lein native",
+        "native-image " +
+        "--native-image-info " +
+        "--report-unsupported-elements-at-runtime " +
+        "--no-server " +
+        "--no-fallback " +
+        "--features=clj_easy.graal_build_time.InitClojureClasses " +
+        "-jar" "target/uberjar/c4k-forgejo-standalone.jar " +
+        "-H:IncludeResources=.*.yaml " +
+        "-H:Log=registerResource:verbose " +
+        "-H:Name=target/graalvm/${:name}",
         shell=True,
         check=True,
     )

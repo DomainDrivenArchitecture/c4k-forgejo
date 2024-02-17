@@ -32,21 +32,4 @@
                   ["change" "version" "leiningen.release/bump-version" "release"]
                   ["vcs" "commit"]
                   ["vcs" "tag" "v" "--no-sign"]
-                  ["change" "version" "leiningen.release/bump-version"]]
-  :aliases {"native" ["shell"
-                      "native-image"
-                      ;"--verbose"
-                      "--native-image-info"
-                      "--report-unsupported-elements-at-runtime"
-                      "--no-server"
-                      "--no-fallback"
-                      "--features=clj_easy.graal_build_time.InitClojureClasses"
-                      "-jar" "target/uberjar/c4k-forgejo-standalone.jar"
-                      "-H:IncludeResources=.*.yaml"
-                      "-H:Log=registerResource:verbose"
-                      "-H:Name=target/graalvm/${:name}"                      
-                      ]
-            "inst" ["shell"
-                    "sh"
-                    "-c"
-                    "lein uberjar && sudo install -m=755 target/uberjar/c4k-forgejo-standalone.jar /usr/local/bin/c4k-forgejo-standalone.jar"]})
+                  ["change" "version" "leiningen.release/bump-version"]])
