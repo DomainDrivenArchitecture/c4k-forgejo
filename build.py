@@ -124,6 +124,7 @@ def package_native(project):
         "--features=clj_easy.graal_build_time.InitClojureClasses " +
         "-jar target/uberjar/" + project.name + "-standalone.jar " +
         "-H:IncludeResources=.*.yaml " +
+        "-H:IncludeResources=.*.xml " +
         "-H:Log=registerResource:verbose " +
         "-H:Name=target/graalvm/" + project.name + "",
         shell=True,
