@@ -29,9 +29,9 @@ def initialize(project):
         "release_organisation": "meissa",
         "release_repository_name": name,
         "release_artifacts": [
-            "target/graalvm/c4k-forgejo",
-            "target/uberjar/c4k-forgejo-standalone.jar",
-            "target/frontend-build/c4k-forgejo.js",
+            "target/graalvm/" + name,
+            "target/uberjar/" + name + "-standalone.jar",
+            "target/frontend-build/" + name + ".js",
         ],
     }
     
