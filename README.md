@@ -14,6 +14,8 @@ c4k-forgejo provides a k8s deployment file for forgejo containing:
 * encrypted backup on S3 & restore
 * monitoring on graphana-cloud
 
+c4k-forgejo is an example how to create efficient k8s one shot deployments with https://repo.prod.meissa.de/meissa/c4k-common.
+
 ## Try out
 
 Click on the image to try out live in your browser:
