@@ -52,7 +52,7 @@ sudo update-alternatives --config java
 sudo ln -s /usr/lib/jvm/graalvm-21/bin/native-image /usr/local/bin
 
 # deps
-sudo apt-get install build-essential libz-dev zlib1g-dev
+sudo apt-get install build-essential zlib1g-dev
 
 # build
 cd ~/repo/c4k/c4k-forgejo
