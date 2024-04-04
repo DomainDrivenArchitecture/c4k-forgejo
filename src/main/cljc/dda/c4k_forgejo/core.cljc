@@ -44,7 +44,7 @@
                                            :pvc-storage-class-name storage-class})
                    (postgres/generate-deployment {:postgres-image "postgres:14"
                                                   :postgres-size :2gb})
-                   (postgres/generate-service)
+                   (postgres/generate-service config)
                    (forgejo/generate-deployment config)
                    (forgejo/generate-service)
                    (forgejo/generate-service-ssh)
