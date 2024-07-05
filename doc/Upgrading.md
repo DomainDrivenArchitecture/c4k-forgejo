@@ -120,69 +120,74 @@ You may want to update your c4k-forgejo resources to reflect the changes made on
 
 ### Vor dem Upgrade
 
-- host cert used for auth? - nein
-- benutzen wir webhooks? - nein
-- benutzen wir:
-	- [/repos/{owner}/{repo}/releases](https://code.forgejo.org/api/swagger/#/repository/repoListReleases) - ja
-	- [`/repos/{owner}/{repo}/push_mirrors`](https://code.forgejo.org/api/swagger/#/repository/repoListPushMirrors) - nein
-	- Application profiling - nein
-- do we have repo descriptions?
-	- https://codeberg.org/forgejo/forgejo/commit/1075ff74b5050f671c5f9824ae39390230b3c85d - ja
+- host cert used for auth? - no
+- do we use webhooks? - no
+- do we use:
+	- [/repos/{owner}/{repo}/releases - repoListReleases](https://code.forgejo.org/api/swagger/#/repository/repoListReleases) - no
+		- In the ListReleases, the `per_page` parameter has been decoupled from the `limit` parameter, we do not use the repoListReleases endpoint
+		- In the `ArtifactDeploymentApi` in dda-devops-build we only use the `POST` method
+			- The respective endpoint is [repoCreateRelease](https://code.forgejo.org/api/swagger/#/repository/repoCreateRelease)
+	- [`/repos/{owner}/{repo}/push_mirrors`](https://code.forgejo.org/api/swagger/#/repository/repoListPushMirrors) - no
+	- Application profiling - no
+- do we have repo descriptions? - yes
+	- There is now a sanitizer that only allows links, emphasis, code and emojis
+		- See: https://codeberg.org/forgejo/forgejo/commit/1075ff74b5050f671c5f9824ae39390230b3c85d
+	- Our repository descriptions are mostly plaintext and links
 
 ### Upgrade plan
 
-TEST kennzeichnet Aktionen die nur für den Testserver gelten und in PROD ignoriert werden.
-PROD kennzeichnet Aktionen die nur für den Testserver gelten und in TEST ignoriert werden.
-Generelle Übersicht zu Upgrades: https://forgejo.org/docs/latest/admin/upgrade/
+TEST indicates actions that only apply to the test server and are ignored in PROD.
+PROD indicates actions that only apply to the test server and are ignored in TEST.
+See also the overview for upgrading: https://forgejo.org/docs/latest/admin/upgrade/
 
-- Forgejo Server aufsetzen mit c4k-forgejo v3.2.2
-	- Enthält Forgejo v1.19
+- Set up Forgejo server with c4k-forgejo v3.2.2
+	- Has Forgejo v1.19
 - TEST
-	- Alte remote id löschen
+	- Delete old remote ids
 		- `ssh-keygen -f "/home/${USER}/.ssh/known_hosts" -R "repo.test.meissa.de"`
-- Auf server ssh'en
-- Forgejo pod runterfahren
+- Ssh to server
+- Forgejo pod downscale
 	- `k scale deployment forgejo --replicas=0`
-- Install lock aus
+- Install lock off
 	- `k edit cm forgejo-env`
 	- Set to `FORGEJO__security__INSTALL_LOCK: "false"`
-- Forgejo pod hochfahren
+- Forgejo pod upscale
 	- `k scale deployment forgejo --replicas=1`
-- Admin test oder prod admin anlegen und forgejo installieren
+- Create admin test or prod admin and install forgejo
 	- `gopass show server/meissa/forgejo-test` bzw `-prod`
-- Forgejo pod runterfahren
-- Install lock an
+- Forgejo pod downscale
+- Install lock on
 	- Set to `FORGEJO__security__INSTALL_LOCK: "true"`
 - TEST
-	- Forgejo pod hochfahren
-	- Einloggen
-	- Ssh keys anlegen
+	- Forgejo pod upscale
+	- Log in
+	- Make Ssh keys
 		- ed_xyz
 		- rsa mit 2048
 		- rsa mit 4096
-	- Repos anlegen
-	- Forgejo pod runterfahren
+	- Create repos
+	- Forgejo pod downscale
 - PROD
-	- Backup pod hochfahren
+	- Backup pod upscale
 		- `k scale deployment backup-restore --replicas=1`
-	- Backups zurückspielen
-	- Im backup pod vorhandene app.ini's löschen bzw umbenennen
-	- Backup pod runterfahren
+	- Restore backups
+	- Delete or rename app.ini's in the pod
+	- Backup pod downscale
 		- `k scale deployment backup-restore --replicas=0`
-- Im Forgejo Deployment die Image Ver auf 7.0.4 setzen
+- Set image version to 7.0.4 in forgejo deployment
 	- `k edit deployment.apps forgejo`
-- Configmap updaten:
-	- Double check ob install lock an
+- Update configmap:
+	- Double check install lock enabled
 	- `FORGEJO__oauth2__ENABLED: "true"`  
 	- `FORGEJO__log_0x2E_logger_0x2E_router__MODE: console, file`  
 	- `FORGEJO__service__EMAIL_DOMAIN_ALLOWLIST:`  
 	- `FORGEJO__mailer__PROTOCOL: smtp+starttls`  
+	- `FORGEJO__federation__ENABLED: true`  
 - TEST
-	- Backup pod hochfahren
-	- Im backup pod vorhandene app.ini's löschen bzw umbenennen
-	- Backup pod runterfahren
-		- `k scale deployment backup-restore --replicas=0`
-- Forgejo pod hochscalen
+	- Backup pod upscale
+	- Delete or rename app.ini's in the pod
+	- Backup pod downscale
+- Forgejo pod upscale
 - Migrations happen automatically
 - `/admin` page and click run Sync missed branches from git data to databases
 	- and **Sync missed tags ...*
