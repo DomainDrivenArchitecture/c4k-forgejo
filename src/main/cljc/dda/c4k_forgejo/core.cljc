@@ -20,6 +20,7 @@
                               ::forgejo/deploy-federated
                               ::forgejo/default-app-name 
                               ::forgejo/service-domain-whitelist
+                              ::forgejo/forgejo-image-version-overwrite
                               ::backup/restic-repository
                               ::mon/mon-cfg]))
 

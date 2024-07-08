@@ -38,6 +38,7 @@
 (s/def ::mailer-port pred/bash-env-string?)
 (s/def ::service-domain-whitelist domain-list?)
 (s/def ::service-noreply-address string?)
+(s/def ::forgejo-image-version-overwrite string?)
 (s/def ::mailer-user pred/bash-env-string?)
 (s/def ::mailer-pw pred/bash-env-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
@@ -53,7 +54,8 @@
                      :opt-un [::issuer
                               ::deploy-federated
                               ::default-app-name
-                              ::service-domain-whitelist]))
+                              ::service-domain-whitelist
+                              ::forgejo-image-version-overwrite]))
 
 (def rate-limit-config? (s/keys :req-un [::max-rate
                                          ::max-concurrent-requests]))
@@ -66,8 +68,18 @@
   [total]
   total)
 
-(def federated-image-name "domaindrivenarchitecture/c4k-forgejo-federated:latest")
-(def non-federated-image-name "codeberg.org/forgejo/forgejo:1.19")
+(def federated-image-name "domaindrivenarchitecture/c4k-forgejo-federated")
+(def federated-image-version "latest")
+(def non-federated-image-name "codeberg.org/forgejo/forgejo")
+(def non-federated-image-version "1.19")
+
+(defn-spec generate-image-str string?
+  [config config?]
+  (let [{:keys [deploy-federated forgejo-image-version-overwrite]} config
+        deploy-federated-bool (boolean-from-string deploy-federated)]
+    (if deploy-federated-bool
+      (str federated-image-name ":" (or forgejo-image-version-overwrite federated-image-version))
+      (str non-federated-image-name ":" (or forgejo-image-version-overwrite non-federated-image-version)))))
 
 #?(:cljs
    (defmethod yaml/load-resource :forgejo [resource-name]
@@ -158,10 +170,7 @@
         deploy-federated-bool (boolean-from-string deploy-federated)]
     (->
      (yaml/load-as-edn "forgejo/deployment.yaml")
-     (cm/replace-all-matching-values-by-new-value "IMAGE_NAME" 
-                                                  (if deploy-federated-bool
-                                                    federated-image-name
-                                                    non-federated-image-name)))))
+     (cm/replace-all-matching-values-by-new-value "IMAGE_NAME" (generate-image-str config)))))
 
 (defn generate-service
   []
