@@ -9,22 +9,22 @@
 
 ## Preparations
 
-1. Stop Forgejo Prod: TODO
-1. Disable Backup Cron: TODO
-1. Scale up Backup-Restore Deployment: TODO
-1. Execute Manual Backup: TODO
+1. Stop Forgejo Prod: `k scale deployment forgejo --replicas=0`
+1. Disable Backup Cron: `k patch cronjobs forgejo-backup -p '{"spec" : {"suspend" : true }}'`
+1. Scale up Backup-Restore Deployment: `kubectl scale deployment backup-restore --replicas=1`
+1. Execute Manual Backup: `kubectl exec -it backup-restore-... -- /usr/local/bin/backup.sh`
 
 ### Create 2nd Repo Prod Server
 
 1. Terraform Preparations for 2nd Server: TODO
 1. Install c4k-forgejo Version TODO   
    with config `"forgejo-image-version-overwrite": "1.19.3-0"`
-1. Stop Forgejo Deployment: TODO
-1. Disable Backup Cron: TODO
-1. Scale up Backup-Restore Deployment: TODO
+1. Stop Forgejo Deployment: `k scale deployment forgejo --replicas=0`
+1. Disable Backup Cron: `k patch cronjobs forgejo-backup -p '{"spec" : {"suspend" : true }}'`
+1. Scale up Backup-Restore Deployment: `kubectl scale deployment backup-restore --replicas=1`
 1. Restore Forgejo Backup: See [BackupAndRestore.md](BackupAndRestore.md)
 1. Check for `..._INSTALL_LOCK: true` in ConfigMap `forgejo-env`
-1. Scale up Forgejo Deployment and check for (startup) problems: TODO
+1. Scale up Forgejo Deployment and check for (startup) problems: `k scale deployment forgejo --replicas=1`
 
 ## Upgrade to 1.20.1-0
 
@@ -68,8 +68,9 @@
 ## Post Work
 
 1. Switch DNS to new server
-1. Reenable Backup Cron: TODO
-1. Execute manual Backup: TODO
+1. Reenable Backup Cron on new server: `k patch cronjobs forgejo-backup -p '{"spec" : {"suspend" : false }}'`
+1. Execute manual Backup on new server: `kubectl exec -it backup-restore-... -- /usr/local/bin/backup.sh`
+1. Scale down Backup-Restore Deployment: `kubectl scale deployment backup-restore --replicas=1`
 1. The scope of all access tokens might (invisibly) have changed (in v1.20). Thus, rotate all tokens!
 1. Users should check their ssh keys: if they use rsa keys the minimum length should be 3072 bits! However, shorter keys should still work.
 
