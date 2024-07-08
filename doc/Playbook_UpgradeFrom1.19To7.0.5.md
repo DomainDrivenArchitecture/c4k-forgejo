@@ -57,6 +57,14 @@
 1. Scale up Forgejo Deployment: `k scale deployment forgejo --replicas=1`
 1. Check for errors
 
+## Upgrade to 7.0.5 (no breaking changes)
+
+1. Scale down Forgejo Deployment: `k scale deployment forgejo --replicas=0`
+1. Delete app.ini: `k exec -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
+1. Set version to `7.0.5` with `k edit deployment forgejo`
+1. Scale up Forgejo Deployment: `k scale deployment forgejo --replicas=1`
+1. Check for errors
+
 ## Post Work
 
 1. Switch DNS to new server
@@ -74,3 +82,7 @@ In the logs the following error can be found. This will be resolved automaticall
 ```
 2024/07/08 08:31:30 ...g/config_provider.go:321:deprecatedSetting() [E] Deprecated fallback `[log]` `ROUTER` present. Use `[log]` `logger.router.MODE` instead. This fallback will be/has been removed in 1.21
 ```
+
+# TODO: Upgrade from 7.0.5 to 7.0.5-federated
+
+TODO
