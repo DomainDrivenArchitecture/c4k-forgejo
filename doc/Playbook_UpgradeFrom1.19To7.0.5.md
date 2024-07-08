@@ -20,6 +20,7 @@
 1. Install c4k-forgejo Version TODO   
    with config `"forgejo-image-version-overwrite": "1.19.3-0"`
 1. Stop Forgejo Deployment: TODO
+1. Disable Backup Cron: TODO
 1. Scale up Backup-Restore Deployment: TODO
 1. Restore Forgejo Backup: See [BackupAndRestore.md](BackupAndRestore.md)
 1. Check for `..._INSTALL_LOCK: true` in ConfigMap `forgejo-env`
@@ -48,12 +49,21 @@
 
 ## Upgrade to 7.0.0
 
-TODO
+1. Scale down Forgejo Deployment: `k scale deployment forgejo --replicas=0`
+1. Adjust configmap: `k edit cm forgejo-env`
+    1. Change `FORGEJO__oauth2__ENABLE: "true"` TO `FORGEJO__oauth2__ENABLED: "true"`
+1. Delete app.ini: `k exec -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
+1. Set version to `7.0.0` with `k edit deployment forgejo`
+1. Scale up Forgejo Deployment: `k scale deployment forgejo --replicas=1`
+1. Check for errors
 
 ## Post Work
 
+1. Switch DNS to new server
+1. Reenable Backup Cron: TODO
+1. Execute manual Backup: TODO
 1. The scope of all access tokens might (invisibly) have changed (in v1.20). Thus, rotate all tokens!
-2. Users should check their ssh keys: if they use rsa keys the minimum length should be 3072 bits! However, shorter keys should still work.
+1. Users should check their ssh keys: if they use rsa keys the minimum length should be 3072 bits! However, shorter keys should still work.
 
 # Known Errors
 
