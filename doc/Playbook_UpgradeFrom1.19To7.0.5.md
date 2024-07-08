@@ -29,18 +29,38 @@
 
 1. Scale down Forgejo Deployment: `k scale deployment forgejo --replicas=0`
 1. Adjust configmap: `k edit cm forgejo-env`
+    1. Remove `FORGEJO__database__CHARSET: utf8` (This was a misconfiguration, since this option only had effect for mysql dbs)
     1. Change `FORGEJO__mailer__MAILER_TYPE: smtp+startls` TO `FORGEJO__mailer__PROTOCOL: smtp+starttls` (Missed deprecation from 1.19)
+    1. Change `FORGEJO__service__EMAIL_DOMAIN_WHITELIST: repo.test.meissa.de` TO `FORGEJO__service__EMAIL_DOMAIN_ALLOWLIST: repo.test.meissa.de` (Fallback deprecation in 1.21)
 1. Delete app.ini: `k exec -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
 1. Set version to `1.20.1-0` with `k edit deployment forgejo`
 1. Scale up Forgejo Deployment: `k scale deployment forgejo --replicas=1`
 1. Check for errors
 
-## Upgrade to 1.21...
+## Upgrade to 1.21.1-0
 
-TODO:
-2024/07/08 08:31:30 ...g/config_provider.go:321:deprecatedSetting() [E] Deprecated fallback `[log]` `ROUTER` present. Use `[log]` `logger.router.MODE` instead. This fallback will be/has been removed in 1.21
-2024/07/08 08:31:30 ...g/config_provider.go:321:deprecatedSetting() [E] Deprecated fallback `[service]` `EMAIL_DOMAIN_WHITELIST` present. Use `[service]` `EMAIL_DOMAIN_ALLOWLIST` instead. This fallback will be/has been removed in 1.21
+1. Scale down Forgejo Deployment: `k scale deployment forgejo --replicas=0`
+1. Delete app.ini: `k exec -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
+1. Set version to `1.21.1-0` with `k edit deployment forgejo`
+1. Scale up Forgejo Deployment: `k scale deployment forgejo --replicas=1`
+1. Check for errors
+1. After upgrading, login as an admin, go to the `/admin` page and click run `Sync missed branches from git data to databases` (`Fehlende Branches aus den Git-Daten in die Datenbank synchronisieren`). If this is not done there will be messages such as `LoadBranches: branch does not exist in the logs`.
+
+## Upgrade to 7.0.0
+
+TODO
 
 ## Post Work
 
 1. The scope of all access tokens might (invisibly) have changed (in v1.20). Thus, rotate all tokens!
+2. Users should check their ssh keys: if they use rsa keys the minimum length should be 3072 bits! However, shorter keys should still work.
+
+# Known Errors
+
+## Error in v1.20.1-0
+
+In the logs the following error can be found. This will be resolved automatically with the next upgrade (v1.21).
+
+```
+2024/07/08 08:31:30 ...g/config_provider.go:321:deprecatedSetting() [E] Deprecated fallback `[log]` `ROUTER` present. Use `[log]` `logger.router.MODE` instead. This fallback will be/has been removed in 1.21
+```
