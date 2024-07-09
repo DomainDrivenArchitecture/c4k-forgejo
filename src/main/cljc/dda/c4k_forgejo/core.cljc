@@ -55,7 +55,7 @@
                    (forgejo/generate-appini-env config)
                    (forgejo/generate-secrets auth)
                    (forgejo/generate-rate-limit-middleware rate-limit-defaults)] ; this does not have a vector as output
-                  (forgejo/generate-rate-limit-ingress-and-cert (merge {:namespace "keycloak"} config)) ; this function has a vector as output
+                  (forgejo/generate-rate-limit-ingress-and-cert (merge {:namespace "forgejo"} config)) ; this function has a vector as output
                   (when (contains? config :restic-repository)
                     [(backup/generate-config config)
                      (backup/generate-secret auth)
