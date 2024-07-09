@@ -33,35 +33,38 @@
 
 (def vol? (s/keys :req-un [::forgejo/volume-total-storage-size]))
 
+(def postgres-config {:db-name "forgejo"
+                      :pv-storage-size-gb 5
+                      :pvc-storage-class-name ""
+                      :postgres-image "postgres:14"
+                      :postgres-size :2gb})
+
 (defn k8s-objects [config auth] ; ToDo: ADR for generate functions - vector or no vector?
-  (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
+  (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)
+        resolved-config (merge {:namespace "forgejo"} postgres-config config)]
     (map yaml/to-string
          (filter #(not (nil? %))
                  (cm/concat-vec
-                  (ns/generate (merge {:namespace "forgejo"} config))
-                  [(postgres/generate-config {:postgres-size :2gb 
-                                              :db-name "forgejo"
-                                              :namespace "forgejo"})
-                   (postgres/generate-secret auth)
-                   (when (contains? config :postgres-data-volume-path)
-                     (postgres/generate-persistent-volume (select-keys config [:postgres-data-volume-path :pv-storage-size-gb])))
-                   (postgres/generate-pvc {:pv-storage-size-gb 5
-                                           :pvc-storage-class-name storage-class})
-                   (postgres/generate-deployment {:postgres-image "postgres:14"
-                                                  :postgres-size :2gb})
-                   (postgres/generate-service config)
-                   (forgejo/generate-deployment config)
+                  (ns/generate resolved-config)
+                  [(postgres/generate-config resolved-config)
+                   (postgres/generate-secret {:namespace "forgejo"} auth)
+                   (when (contains? resolved-config :postgres-data-volume-path)
+                     (postgres/generate-persistent-volume (select-keys resolved-config [:postgres-data-volume-path :pv-storage-size-gb])))
+                   (postgres/generate-pvc (merge resolved-config {:pvc-storage-class-name storage-class}))
+                   (postgres/generate-deployment resolved-config)
+                   (postgres/generate-service resolved-config)
+                   (forgejo/generate-deployment resolved-config)
                    (forgejo/generate-service)
                    (forgejo/generate-service-ssh)
-                   (forgejo/generate-data-volume config)
-                   (forgejo/generate-appini-env config)
+                   (forgejo/generate-data-volume resolved-config)
+                   (forgejo/generate-appini-env resolved-config)
                    (forgejo/generate-secrets auth)
                    (forgejo/generate-rate-limit-middleware rate-limit-defaults)] ; this does not have a vector as output
-                  (forgejo/generate-rate-limit-ingress-and-cert (merge {:namespace "forgejo"} config)) ; this function has a vector as output
-                  (when (contains? config :restic-repository)
-                    [(backup/generate-config config)
+                  (forgejo/generate-rate-limit-ingress-and-cert resolved-config) ; this function has a vector as output
+                  (when (contains? resolved-config :restic-repository)
+                    [(backup/generate-config resolved-config)
                      (backup/generate-secret auth)
                      (backup/generate-cron)
-                     (backup/generate-backup-restore-deployment config)])
-                  (when (:contains? config :mon-cfg)
-                    (mon/generate (:mon-cfg config) (:mon-auth auth))))))))
+                     (backup/generate-backup-restore-deployment resolved-config)])
+                  (when (:contains? resolved-config :mon-cfg)
+                    (mon/generate (:mon-cfg resolved-config) (:mon-auth auth))))))))
