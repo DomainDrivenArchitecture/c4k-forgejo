@@ -6,7 +6,7 @@ from ddadevops import *
 name = "c4k-forgejo"
 MODULE = "backup"
 PROJECT_ROOT_PATH = "../.."
-version = "3.4.2"
+version = "3.4.3-dev"
 
 
 @init
