@@ -16,7 +16,6 @@ data:
   FORGEJO__database__NAME: forgejo
   FORGEJO__database__LOG_SQL: "false"
   FORGEJO__database__SSL_MODE: disable
-  FORGEJO__database__CHARSET: utf8
 
   #[DEFAULT]
   APP_NAME: APPNAME
@@ -37,12 +36,12 @@ data:
   #[mailer]
   FORGEJO__mailer__ENABLED: "true"
   FORGEJO__mailer__FROM: FROM
-  FORGEJO__mailer__MAILER_TYPE: smtp+startls
+  FORGEJO__mailer__PROTOCOL: smtp+starttls
   FORGEJO__mailer__SMTP_ADDR: MAILERHOST
   FORGEJO__mailer__SMTP_PORT: MAILERPORT
 
   #[oauth2]
-  FORGEJO__oauth2__ENABLE: "true"
+  FORGEJO__oauth2__ENABLED: "true"
 
   #[openid]
   FORGEJO__openid__ENABLE_OPENID: "true"
@@ -76,7 +75,7 @@ data:
   FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
   FORGEJO__service__REGISTER_EMAIL_CONFIRM: "true"
   FORGEJO__service__ENABLE_NOTIFY_MAIL: "true"
-  FORGEJO__service__EMAIL_DOMAIN_WHITELIST: WHITELISTDOMAINS 
+  FORGEJO__service__EMAIL_DOMAIN_ALLOWLIST: WHITELISTDOMAINS 
   FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "false"
   FORGEJO__service__ENABLE_BASIC_AUTHENTICATION: "true"
   FORGEJO__service__ENABLE_CAPTCHA: "false"
