@@ -59,6 +59,8 @@
                    (forgejo/generate-data-volume resolved-config)
                    (forgejo/generate-appini-env resolved-config)
                    (forgejo/generate-secrets auth)
+                   ; TODO: generate-rate-limit-middleware does not use c4k-common -> refactor this
+                   ; TODO: generate-rate-limit-ingress-and-cert should probably use cm/generate-simple-ingress
                    (forgejo/generate-rate-limit-middleware rate-limit-defaults)] ; this does not have a vector as output
                   (forgejo/generate-rate-limit-ingress-and-cert resolved-config) ; this function has a vector as output
                   (when (contains? resolved-config :restic-repository)
