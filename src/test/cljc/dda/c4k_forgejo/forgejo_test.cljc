@@ -14,7 +14,7 @@
 
 (deftest should-generate-image-str
   (testing "non-federated-image"
-    (is (= "codeberg.org/forgejo/forgejo:1.19"
+    (is (= "codeberg.org/forgejo/forgejo:7.0"
            (cut/generate-image-str {:fqdn "test.de"
                                     :mailer-from ""
                                     :mailer-host "m.t.de"
@@ -63,12 +63,12 @@
           :FORGEJO__server__ROOT_URL-c2 "https://test.com",
           :FORGEJO__server__SSH_DOMAIN-c1 "test.de",
           :FORGEJO__server__SSH_DOMAIN-c2 "test.com",
-          :FORGEJO__service__EMAIL_DOMAIN_WHITELIST-c1 "adb.de",
-          :FORGEJO__service__EMAIL_DOMAIN_WHITELIST-c2 "test.com,test.net",
+          :FORGEJO__service__EMAIL_DOMAIN_ALLOWLIST-c1 "adb.de",
+          :FORGEJO__service__EMAIL_DOMAIN_ALLOWLIST-c2 "test.com,test.net",
           :FORGEJO__service__NO_REPLY_ADDRESS-c1 "",
           :FORGEJO__service__NO_REPLY_ADDRESS-c2 "noreply@test.com"}
          (th/map-diff (cut/generate-appini-env {:default-app-name ""
-                                                :deploy-federated "false"
+                                                :federation-enabled "false"
                                                 :fqdn "test.de"
                                                 :mailer-from ""
                                                 :mailer-host "m.t.de"
@@ -76,7 +76,7 @@
                                                 :service-domain-whitelist "adb.de"
                                                 :service-noreply-address ""})
                       (cut/generate-appini-env {:default-app-name "test forgejo"
-                                                :deploy-federated "true"
+                                                :federation-enabled "true"
                                                 :fqdn "test.com"
                                                 :mailer-from "test@test.com"
                                                 :mailer-host "mail.test.com"
@@ -97,7 +97,7 @@
               :spec
               {:containers
                [{:name "forgejo",
-                 :image "codeberg.org/forgejo/forgejo:1.19",
+                 :image "codeberg.org/forgejo/forgejo:7.0",
                  :imagePullPolicy "IfNotPresent",
                  :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
                  :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
