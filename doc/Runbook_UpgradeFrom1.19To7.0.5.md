@@ -85,7 +85,3 @@ In the logs the following error can be found. This will be resolved automaticall
 ```
 2024/07/08 08:31:30 ...g/config_provider.go:321:deprecatedSetting() [E] Deprecated fallback `[log]` `ROUTER` present. Use `[log]` `logger.router.MODE` instead. This fallback will be/has been removed in 1.21
 ```
-
-# TODO: Upgrade from 7.0.5 to 7.0.5-federated
-
-TODO
