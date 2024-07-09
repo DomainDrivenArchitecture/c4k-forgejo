@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: forgejo-env
-  namespace: default
+  namespace: forgejo
 data:
   #[admin]
   FORGEJO__admin__DEFAULT_EMAIL_NOTIFICATIONS: "enabled" # Default configuration for email notifications for users (user configurable). Options: enabled, onmention, disabled

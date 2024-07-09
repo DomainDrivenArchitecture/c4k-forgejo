@@ -55,7 +55,7 @@
   (testing "non-federated"
     (is (= {:apiVersion "apps/v1",
             :kind "Deployment",
-            :metadata {:name "forgejo", :namespace "default", :labels {:app "forgejo"}},
+            :metadata {:name "forgejo", :namespace "forgejo", :labels {:app "forgejo"}},
             :spec
             {:replicas 1,
              :selector {:matchLabels {:app "forgejo"}},
@@ -82,7 +82,7 @@
   (testing "federated-deployment"
     (is (= {:apiVersion "apps/v1",
             :kind "Deployment",
-            :metadata {:name "forgejo", :namespace "default", :labels {:app "forgejo"}},
+            :metadata {:name "forgejo", :namespace "forgejo", :labels {:app "forgejo"}},
             :spec
             {:replicas 1,
              :selector {:matchLabels {:app "forgejo"}},
@@ -134,7 +134,7 @@
 (deftest should-generate-middleware-ratelimit
   (is (= {:apiVersion "traefik.containo.us/v1alpha1",
           :kind "Middleware",
-          :metadata {:name "ratelimit"},
+          :metadata {:name "ratelimit", :namespace "forgejo"},
           :spec {:rateLimit {:average 10, :burst 5}}}
          (cut/generate-rate-limit-middleware {:max-rate 10, :max-concurrent-requests 5}))))
 

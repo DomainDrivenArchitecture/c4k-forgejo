@@ -13,6 +13,7 @@
             :kind "ConfigMap",
             :metadata
             {:name "backup-config",
+             :namespace "forgejo",
              :labels
              #:app.kubernetes.io{:name "backup", :part-of "forgejo"}},
             :data {:restic-repository "s3:s3.amazonaws.com/backup/federated-repo"}}
@@ -23,6 +24,7 @@
             :kind "ConfigMap",
             :metadata
             {:name "backup-config",
+             :namespace "forgejo",
              :labels
              #:app.kubernetes.io{:name "backup", :part-of "forgejo"}},
             :data {:restic-repository "s3:s3.amazonaws.com/backup/repo"}}

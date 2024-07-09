@@ -6,7 +6,8 @@
   [dda.c4k-common.monitoring :as mon]
   [dda.c4k-forgejo.forgejo :as forgejo]
   [dda.c4k-forgejo.backup :as backup]
-  [dda.c4k-common.postgres :as postgres]))
+  [dda.c4k-common.postgres :as postgres]
+  [dda.c4k-common.namespace :as ns]))
 
 (def config-defaults {:issuer "staging", :deploy-federated "false"})
 (def rate-limit-defaults {:max-rate 10, :max-concurrent-requests 5})
@@ -36,6 +37,7 @@
     (map yaml/to-string
          (filter #(not (nil? %))
                  (cm/concat-vec
+                  (ns/generate (merge {:namespace "forgejo"} config))
                   [(postgres/generate-config {:postgres-size :2gb :db-name "forgejo"})
                    (postgres/generate-secret auth)
                    (when (contains? config :postgres-data-volume-path)
@@ -52,7 +54,7 @@
                    (forgejo/generate-appini-env config)
                    (forgejo/generate-secrets auth)
                    (forgejo/generate-rate-limit-middleware rate-limit-defaults)] ; this does not have a vector as output
-                  (forgejo/generate-rate-limit-ingress-and-cert config) ; this function has a vector as output
+                  (forgejo/generate-rate-limit-ingress-and-cert (merge {:namespace "keycloak"} config)) ; this function has a vector as output
                   (when (contains? config :restic-repository)
                     [(backup/generate-config config)
                      (backup/generate-secret auth)

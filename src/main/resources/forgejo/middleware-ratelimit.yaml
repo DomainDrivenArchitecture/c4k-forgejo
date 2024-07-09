@@ -2,6 +2,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: ratelimit
+  namespace: forgejo
 spec:
   rateLimit: # Config options for rate limiting: https://doc.traefik.io/traefik/middlewares/http/ratelimit/
     average: AVG
