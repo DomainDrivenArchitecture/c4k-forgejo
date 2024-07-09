@@ -39,7 +39,9 @@
          (filter #(not (nil? %))
                  (cm/concat-vec
                   (ns/generate (merge {:namespace "forgejo"} config))
-                  [(postgres/generate-config {:postgres-size :2gb :db-name "forgejo"})
+                  [(postgres/generate-config {:postgres-size :2gb 
+                                              :db-name "forgejo"
+                                              :namespace "forgejo"})
                    (postgres/generate-secret auth)
                    (when (contains? config :postgres-data-volume-path)
                      (postgres/generate-persistent-volume (select-keys config [:postgres-data-volume-path :pv-storage-size-gb])))
