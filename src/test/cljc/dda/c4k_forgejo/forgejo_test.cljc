@@ -12,6 +12,40 @@
 (st/instrument `cut/generate-ingress)
 (st/instrument `cut/generate-secrets)
 
+(deftest should-generate-image-str
+  (testing "non-federated-image"
+    (is (= "codeberg.org/forgejo/forgejo:1.19"
+           (cut/generate-image-str {:fqdn "test.de"
+                                    :mailer-from ""
+                                    :mailer-host "m.t.de"
+                                    :mailer-port "123"
+                                    :service-noreply-address ""
+                                    :deploy-federated "false"})))
+    (is (= "codeberg.org/forgejo/forgejo:1.19.3-0"
+           (cut/generate-image-str {:fqdn "test.de"
+                                    :mailer-from ""
+                                    :mailer-host "m.t.de"
+                                    :mailer-port "123"
+                                    :service-noreply-address ""
+                                    :deploy-federated "false"
+                                    :forgejo-image-version-overwrite "1.19.3-0"}))))
+  (testing "federated-image"
+    (is (= "domaindrivenarchitecture/c4k-forgejo-federated:latest"
+           (cut/generate-image-str {:fqdn "test.de"
+                                    :mailer-from ""
+                                    :mailer-host "m.t.de"
+                                    :mailer-port "123"
+                                    :service-noreply-address ""
+                                    :deploy-federated "true"})))
+    (is (= "domaindrivenarchitecture/c4k-forgejo-federated:3.2.0"
+           (cut/generate-image-str {:fqdn "test.de"
+                                    :mailer-from ""
+                                    :mailer-host "m.t.de"
+                                    :mailer-port "123"
+                                    :service-noreply-address ""
+                                    :deploy-federated "true"
+                                    :forgejo-image-version-overwrite "3.2.0"})))))
+
 (deftest should-generate-appini-env
   (is (= {:APP_NAME-c1 "",
           :APP_NAME-c2 "test forgejo",
@@ -35,13 +69,12 @@
           :FORGEJO__service__NO_REPLY_ADDRESS-c2 "noreply@test.com"}
          (th/map-diff (cut/generate-appini-env {:default-app-name ""
                                                 :deploy-federated "false"
-                                                :fqdn "test.de"                                                
+                                                :fqdn "test.de"
                                                 :mailer-from ""
                                                 :mailer-host "m.t.de"
                                                 :mailer-port "123"
                                                 :service-domain-whitelist "adb.de"
-                                                :service-noreply-address ""
-                                                })
+                                                :service-noreply-address ""})
                       (cut/generate-appini-env {:default-app-name "test forgejo"
                                                 :deploy-federated "true"
                                                 :fqdn "test.com"
