@@ -71,7 +71,7 @@
 (def federated-image-name "domaindrivenarchitecture/c4k-forgejo-federated")
 (def federated-image-version "latest")
 (def non-federated-image-name "codeberg.org/forgejo/forgejo")
-(def non-federated-image-version "1.19")
+(def non-federated-image-version "7.0")
 
 (defn-spec generate-image-str string?
   [config config?]
