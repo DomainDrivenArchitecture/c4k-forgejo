@@ -9,7 +9,7 @@
   [dda.c4k-common.postgres :as postgres]
   [dda.c4k-common.namespace :as ns]))
 
-(def config-defaults {:issuer "staging", :deploy-federated "false"})
+(def config-defaults {:issuer "staging", :deploy-federated "false", :federation-enabled "false"})
 (def rate-limit-defaults {:max-rate 10, :max-concurrent-requests 5})
 
 (def config? (s/keys :req-un [::forgejo/fqdn 
@@ -19,6 +19,7 @@
                               ::forgejo/service-noreply-address]
                      :opt-un [::forgejo/issuer 
                               ::forgejo/deploy-federated
+                              ::forgejo/federation-enabled
                               ::forgejo/default-app-name 
                               ::forgejo/service-domain-whitelist
                               ::forgejo/forgejo-image-version-overwrite

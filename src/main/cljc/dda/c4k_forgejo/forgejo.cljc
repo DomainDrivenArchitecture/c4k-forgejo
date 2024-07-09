@@ -33,6 +33,7 @@
 (s/def ::default-app-name string?)
 (s/def ::fqdn pred/fqdn-string?)
 (s/def ::deploy-federated boolean-string?)
+(s/def ::federation-enabled boolean-string?)
 (s/def ::mailer-from pred/bash-env-string?)
 (s/def ::mailer-host pred/bash-env-string?)
 (s/def ::mailer-port pred/bash-env-string?)
@@ -53,6 +54,7 @@
                               ::service-noreply-address]
                      :opt-un [::issuer
                               ::deploy-federated
+                              ::federation-enabled
                               ::default-app-name
                               ::service-domain-whitelist
                               ::forgejo-image-version-overwrite]))
@@ -88,7 +90,7 @@
 (defn generate-appini-env
   [config]
   (let [{:keys [default-app-name
-                deploy-federated
+                federation-enabled
                 fqdn
                 mailer-from
                 mailer-host
@@ -97,7 +99,7 @@
                 service-noreply-address]
          :or {default-app-name "forgejo instance"
               service-domain-whitelist fqdn}} config
-        deploy-federated-bool (boolean-from-string deploy-federated)]
+        federation-enabled-bool (boolean-from-string federation-enabled)]
     (->
      (yaml/load-as-edn "forgejo/appini-env-configmap.yaml")
      (cm/replace-all-matching-values-by-new-value "APPNAME" default-app-name)
@@ -109,7 +111,7 @@
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
      (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address)
      (cm/replace-all-matching-values-by-new-value "IS_FEDERATED" 
-                                                  (if deploy-federated-bool
+                                                  (if federation-enabled-bool
                                                     "true"
                                                     "false")))))
 
@@ -166,11 +168,9 @@
 
 (defn-spec generate-deployment pred/map-or-seq?
   [config config?]
-  (let [{:keys [deploy-federated]} config
-        deploy-federated-bool (boolean-from-string deploy-federated)]
     (->
      (yaml/load-as-edn "forgejo/deployment.yaml")
-     (cm/replace-all-matching-values-by-new-value "IMAGE_NAME" (generate-image-str config)))))
+     (cm/replace-all-matching-values-by-new-value "IMAGE_NAME" (generate-image-str config))))
 
 (defn generate-service
   []
