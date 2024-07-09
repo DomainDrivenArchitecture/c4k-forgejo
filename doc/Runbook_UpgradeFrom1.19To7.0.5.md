@@ -59,6 +59,8 @@
 
 ## Upgrade to 7.0.5 (no breaking changes)
 
+TODO: Upgrade to 8.0.0 instead after Release!
+
 1. Scale down Forgejo Deployment: `k scale deployment forgejo --replicas=0`
 1. Delete app.ini: `k exec -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
 1. Set version to `7.0.5` with `k edit deployment forgejo`
@@ -74,9 +76,9 @@
 1. The scope of all access tokens might (invisibly) have changed (in v1.20). Thus, rotate all tokens!
 1. Users should check their ssh keys: if they use rsa keys the minimum length should be 3072 bits! However, shorter keys should still work.
 
-# Known Errors
+## Known Errors
 
-## Error in v1.20.1-0
+### Error in v1.20.1-0
 
 In the logs the following error can be found. This will be resolved automatically with the next upgrade (v1.21).
 
