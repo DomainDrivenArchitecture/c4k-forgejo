@@ -100,15 +100,15 @@
         deploy-federated-bool (boolean-from-string deploy-federated)]
     (->
      (yaml/load-as-edn "forgejo/appini-env-configmap.yaml")
-     (cm/replace-all-matching-values-by-new-value "APPNAME" default-app-name)
-     (cm/replace-all-matching-values-by-new-value "FQDN" fqdn)
-     (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
-     (cm/replace-all-matching-values-by-new-value "FROM" mailer-from)
-     (cm/replace-all-matching-values-by-new-value "MAILERHOST" mailer-host)
-     (cm/replace-all-matching-values-by-new-value "MAILERPORT" mailer-port)
-     (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
-     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address)
-     (cm/replace-all-matching-values-by-new-value "IS_FEDERATED" 
+     (cm/replace-all-matching "APPNAME" default-app-name)
+     (cm/replace-all-matching "FQDN" fqdn)
+     (cm/replace-all-matching "URL" (str "https://" fqdn))
+     (cm/replace-all-matching "FROM" mailer-from)
+     (cm/replace-all-matching "MAILERHOST" mailer-host)
+     (cm/replace-all-matching "MAILERPORT" mailer-port)
+     (cm/replace-all-matching "WHITELISTDOMAINS" service-domain-whitelist)
+     (cm/replace-all-matching "NOREPLY" service-noreply-address)
+     (cm/replace-all-matching "IS_FEDERATED" 
                                                   (if deploy-federated-bool
                                                     "true"
                                                     "false")))))
@@ -121,10 +121,10 @@
                 mailer-pw]} auth]
     (->
      (yaml/load-as-edn "forgejo/secrets.yaml")
-     (cm/replace-all-matching-values-by-new-value "DBUSER" (b64/encode postgres-db-user))
-     (cm/replace-all-matching-values-by-new-value "DBPW" (b64/encode postgres-db-password))
-     (cm/replace-all-matching-values-by-new-value "MAILERUSER" (b64/encode mailer-user))
-     (cm/replace-all-matching-values-by-new-value "MAILERPW" (b64/encode mailer-pw)))))
+     (cm/replace-all-matching "DBUSER" (b64/encode postgres-db-user))
+     (cm/replace-all-matching "DBPW" (b64/encode postgres-db-password))
+     (cm/replace-all-matching "MAILERUSER" (b64/encode mailer-user))
+     (cm/replace-all-matching "MAILERPW" (b64/encode mailer-pw)))))
 
 (defn generate-ingress-and-cert
   [config]
@@ -162,7 +162,7 @@
         data-storage-size (data-storage-by-volume-size volume-total-storage-size)]
     (->     
      (yaml/load-as-edn "forgejo/datavolume.yaml")
-     (cm/replace-all-matching-values-by-new-value "DATASTORAGESIZE" (str (str data-storage-size) "Gi")))))
+     (cm/replace-all-matching "DATASTORAGESIZE" (str (str data-storage-size) "Gi")))))
 
 (defn-spec generate-deployment pred/map-or-seq?
   [config config?]
@@ -170,7 +170,7 @@
         deploy-federated-bool (boolean-from-string deploy-federated)]
     (->
      (yaml/load-as-edn "forgejo/deployment.yaml")
-     (cm/replace-all-matching-values-by-new-value "IMAGE_NAME" (generate-image-str config)))))
+     (cm/replace-all-matching "IMAGE_NAME" (generate-image-str config)))))
 
 (defn generate-service
   []
