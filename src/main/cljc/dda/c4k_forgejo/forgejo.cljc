@@ -128,35 +128,17 @@
      (cm/replace-all-matching "MAILERUSER" (b64/encode mailer-user))
      (cm/replace-all-matching "MAILERPW" (b64/encode mailer-pw)))))
 
-(defn generate-ingress-and-cert
-  [config]
-  (let [{:keys [fqdn]} config]
-    (ing/generate-ingress-and-cert
-     (merge
-      {:service-name "forgejo-service"
-       :service-port 3000
-       :fqdns [fqdn]}
-      config))))
-
-(defn-spec generate-rate-limit-ingress-and-cert pred/map-or-seq?
+(defn-spec generate-ratelimit-ingress-and-cert seq?
   [config config?]
-  (->
-   (generate-ingress-and-cert config) ; returns a vector
-   (#(assoc-in % ; Attention: heavily relying on the output order of ing/generate-ingress-and-cert
-               [1 :metadata :annotations :traefik.ingress.kubernetes.io/router.middlewares]
-               (str
-                (-> (second %) :metadata :annotations :traefik.ingress.kubernetes.io/router.middlewares)
-                ", default-ratelimit@kubernetescrd")))))
-
-
-; using :average and :burst seems sensible, :period may be interesting for fine tuning later on
-(defn-spec generate-rate-limit-middleware pred/map-or-seq?
-  [config rate-limit-config?]
-  (let [{:keys [max-rate max-concurrent-requests]} config]
-  (->
-   (yaml/load-as-edn "forgejo/middleware-ratelimit.yaml")
-   (cm/replace-key-value :average max-rate)
-   (cm/replace-key-value :burst max-concurrent-requests))))
+  (let [{:keys [fqdn max-rate max-concurrent-requests namespace]} config]
+    (ing/generate-simple-ingress (merge
+                                  {:service-name "forgejo-service"
+                                   :service-port 3000
+                                   :fqdns [fqdn]
+                                   :average-rate max-rate
+                                   :burst-rate max-concurrent-requests
+                                   :namespace namespace}
+                                  config))))
 
 (defn-spec generate-data-volume pred/map-or-seq?
   [config vol?]

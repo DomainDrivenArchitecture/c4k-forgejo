@@ -59,9 +59,8 @@
                    (forgejo/generate-service-ssh)
                    (forgejo/generate-data-volume resolved-config)
                    (forgejo/generate-appini-env resolved-config)
-                   (forgejo/generate-secrets auth)
-                   (forgejo/generate-rate-limit-middleware rate-limit-defaults)] ; this does not have a vector as output
-                  (forgejo/generate-rate-limit-ingress-and-cert resolved-config) ; this function has a vector as output
+                   (forgejo/generate-secrets auth)] ; this does not have a vector as output
+                  (forgejo/generate-ratelimit-ingress-and-cert resolved-config) ; this function has a vector as output
                   (when (contains? resolved-config :restic-repository)
                     [(backup/generate-config resolved-config)
                      (backup/generate-secret auth)
