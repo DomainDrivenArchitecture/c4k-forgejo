@@ -89,3 +89,19 @@ In the logs the following error can be found. This will be resolved automaticall
 # Add Shynet Analytics
 
 1. Log into shynet & create new Service
+    1. Copy the generated html snippet and save it somewhere you remember
+1. SSH into prod server
+1. Make the necessary folders and files in forgejo data dir:
+    1. `kubectl exec -n forgejo -it forgejo-... -- bash`
+    1. `mkdir -p /data/gitea/templates/custom`
+    1. `touch /data/gitea/templates/custom/footer.tmpl`
+1. Open the `footer.tmpl` and paste the saved snippet
+1. Restart the pod
+    1. `k scale -n forgejo deployment forgejo --replicas=0`
+    1. `k scale -n forgejo deployment forgejo --replicas=1`
+1. Add Information about analytics: Clone Datenschutz Repo
+    1. `git clone ssh://git@repo.prod.meissa.de:2222/meissa/Datenschutz.git`
+1. Merge forgejo-upgrade into main
+    1. `git merge forgejo-upgrade`
+1. Push to origin
+    1. `git push`
