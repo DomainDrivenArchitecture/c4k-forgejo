@@ -10,7 +10,8 @@
   :target-path "target/%s/"
   :source-paths ["src/main/cljc"
                  "src/main/clj"]
-  :resource-paths ["src/main/resources"]
+  :resource-paths ["src/main/resources"
+                   "project.clj"]
   :repositories [["snapshots" :clojars]
                  ["releases" :clojars]]
   :deploy-repositories [["snapshots" {:sign-releases false :url "https://clojars.org/repo"}]
