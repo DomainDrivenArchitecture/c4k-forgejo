@@ -9,7 +9,14 @@
    [dda.c4k-common.postgres :as postgres]
    [dda.c4k-common.namespace :as ns]))
 
-(def config-defaults {:issuer "staging", :deploy-federated "false"})
+(def config-defaults {:namespace "forgejo"
+                      :issuer "staging"
+                      :deploy-federated "false"
+                      :db-name "forgejo"
+                      :pv-storage-size-gb 5
+                      :pvc-storage-class-name ""
+                      :postgres-image "postgres:14"
+                      :postgres-size :2gb})
 (def rate-limit-defaults {:max-rate 10, :max-concurrent-requests 5})
 
 (def config? (s/keys :req-un [::forgejo/fqdn
@@ -33,48 +40,40 @@
 
 (def vol? (s/keys :req-un [::forgejo/volume-total-storage-size]))
 
-(def postgres-config {:db-name "forgejo"
-                      :pv-storage-size-gb 5
-                      :pvc-storage-class-name ""
-                      :postgres-image "postgres:14"
-                      :postgres-size :2gb})
-
 (defn config-objects [config] ; ToDo: ADR for generate functions - vector or no vector?
-  (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)
-        resolved-config (merge {:namespace "forgejo"} postgres-config config)]
+  (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
     (map yaml/to-string
          (filter #(not (nil? %))
                  (cm/concat-vec
-                  (ns/generate resolved-config)
-                  [(postgres/generate-config resolved-config)
-                   (when (contains? resolved-config :postgres-data-volume-path)
-                     (postgres/generate-persistent-volume (select-keys resolved-config [:postgres-data-volume-path :pv-storage-size-gb])))
-                   (postgres/generate-pvc (merge resolved-config {:pvc-storage-class-name storage-class}))
-                   (postgres/generate-deployment resolved-config)
-                   (postgres/generate-service resolved-config)
-                   (forgejo/generate-deployment resolved-config)
+                  (ns/generate config)
+                  [(postgres/generate-config-configmap config)
+                   (when (contains? config :postgres-data-volume-path)
+                     (postgres/generate-persistent-volume (select-keys config [:postgres-data-volume-path :pv-storage-size-gb])))
+                   (postgres/generate-pvc (merge config {:pvc-storage-class-name storage-class}))
+                   (postgres/generate-deployment config)
+                   (postgres/generate-service config)
+                   (forgejo/generate-deployment config)
                    (forgejo/generate-service)
                    (forgejo/generate-service-ssh)
-                   (forgejo/generate-data-volume resolved-config)
-                   (forgejo/generate-appini-env resolved-config)]
-                  (forgejo/generate-ratelimit-ingress-and-cert resolved-config) ; this function has a vector as output
-                  (when (contains? resolved-config :restic-repository)
-                    [(backup/generate-config resolved-config)
+                   (forgejo/generate-data-volume config)
+                   (forgejo/generate-appini-env config)]
+                  (forgejo/generate-ratelimit-ingress-and-cert config) ; this function has a vector as output
+                  (when (contains? config :restic-repository)
+                    [(backup/generate-config config)
                      (backup/generate-cron)
-                     (backup/generate-backup-restore-deployment resolved-config)])
-                  (when (:contains? resolved-config :mon-cfg)
+                     (backup/generate-backup-restore-deployment config)])
+                  (when (contains? config :mon-cfg)
                     (mon/generate-config)))))))
 
-(defn auth-objects [config auth] ; ToDo: ADR for generate functions - vector or no vector?
-  (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)
-        resolved-config (merge {:namespace "forgejo"} postgres-config config)]
-    (map yaml/to-string
-         (filter #(not (nil? %))
-                 (cm/concat-vec
-                  (ns/generate resolved-config)
-                  [(postgres/generate-secret {:namespace "forgejo"} auth)
-                   (forgejo/generate-secrets auth)]
-                  (when (contains? resolved-config :restic-repository)
-                    [(backup/generate-secret auth)])
-                  (when (:contains? resolved-config :mon-cfg)
-                    (mon/generate-auth (:mon-cfg resolved-config) (:mon-auth auth))))))))
+; REVIEW gec: In general, how do we handle config and auth for auth-objects?
+(defn auth-objects [config] ; ToDo: ADR for generate functions - vector or no vector?
+  (map yaml/to-string
+       (filter #(not (nil? %))
+               (cm/concat-vec
+                (ns/generate config)
+                [(postgres/generate-secret config config) ; "config config" seems not right
+                 (forgejo/generate-secrets config)]
+                (when (contains? config :restic-repository)
+                  [(backup/generate-secret config)])
+                (when (contains? config :mon-cfg)
+                  (mon/generate-auth (:mon-cfg config) (:mon-auth config))))))) ; Here also "config config" seems not right
