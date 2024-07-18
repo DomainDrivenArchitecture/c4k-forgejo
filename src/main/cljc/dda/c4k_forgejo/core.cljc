@@ -65,15 +65,14 @@
                   (when (contains? config :mon-cfg)
                     (mon/generate-config)))))))
 
-; REVIEW gec: In general, how do we handle config and auth for auth-objects?
-(defn auth-objects [config] ; ToDo: ADR for generate functions - vector or no vector?
+(defn auth-objects [config auth]
   (map yaml/to-string
        (filter #(not (nil? %))
                (cm/concat-vec
                 (ns/generate config)
-                [(postgres/generate-secret config config) ; "config config" seems not right
+                [(postgres/generate-secret config auth)
                  (forgejo/generate-secrets config)]
                 (when (contains? config :restic-repository)
                   [(backup/generate-secret config)])
                 (when (contains? config :mon-cfg)
-                  (mon/generate-auth (:mon-cfg config) (:mon-auth config))))))) ; Here also "config config" seems not right
+                  (mon/generate-auth (:mon-cfg config) (:mon-auth auth)))))))
