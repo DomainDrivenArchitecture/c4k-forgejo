@@ -71,8 +71,8 @@
                (cm/concat-vec
                 (ns/generate config)
                 [(postgres/generate-secret config auth)
-                 (forgejo/generate-secrets config)]
+                 (forgejo/generate-secrets auth)]
                 (when (contains? config :restic-repository)
-                  [(backup/generate-secret config)])
+                  [(backup/generate-secret auth)])
                 (when (contains? config :mon-cfg)
                   (mon/generate-auth (:mon-cfg config) (:mon-auth auth)))))))
