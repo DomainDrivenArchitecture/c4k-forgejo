@@ -46,7 +46,7 @@
          (filter #(not (nil? %))
                  (cm/concat-vec
                   (ns/generate config)
-                  [(postgres/generate-config-configmap config)
+                  [(postgres/generate-configmap config)
                    (when (contains? config :postgres-data-volume-path)
                      (postgres/generate-persistent-volume (select-keys config [:postgres-data-volume-path :pv-storage-size-gb])))
                    (postgres/generate-pvc (merge config {:pvc-storage-class-name storage-class}))
