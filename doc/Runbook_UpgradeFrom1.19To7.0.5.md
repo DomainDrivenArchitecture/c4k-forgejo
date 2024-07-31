@@ -37,7 +37,7 @@
 1. Delete app.ini: `k exec -n forgejo -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
 1. Set version to `1.20.1-0` with `k edit -n forgejo deployment forgejo`
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
-1. Check for errors
+1. Check for errors: `k logs -n forgejo forgejo-...`
 
 ## Upgrade to 1.21.1-0
 
@@ -45,7 +45,7 @@
 1. Delete app.ini: `k exec -n forgejo -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
 1. Set version to `1.21.1-0` with `k edit -n forgejo deployment forgejo`
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
-1. Check for errors
+1. Check for errors: `k logs -n forgejo forgejo-...`
 1. After upgrading, login as an admin, go to the `/admin` page and click run `Sync missed branches from git data to databases` (`Fehlende Branches aus den Git-Daten in die Datenbank synchronisieren`). If this is not done there will be messages such as `LoadBranches: branch does not exist in the logs`.
 
 ## Upgrade to 7.0.0
@@ -56,15 +56,15 @@
 1. Delete app.ini: `k exec -n forgejo -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
 1. Set version to `7.0.0` with `k edit -n forgejo deployment forgejo`
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
-1. Check for errors
+1. Check for errors: `k logs -n forgejo forgejo-...`
 
 ## Upgrade to 8.0.0 (no relevant breaking changes)
 
 1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
 1. Delete app.ini: `k exec -n forgejo -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
-1. Set version to `7.0.5` with `k edit -n forgejo deployment forgejo`
+1. Set version to `8.0.0` with `k edit -n forgejo deployment forgejo`
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
-1. Check for errors
+1. Check for errors: `k logs -n forgejo forgejo-...`
 
 ## Post Work
 
