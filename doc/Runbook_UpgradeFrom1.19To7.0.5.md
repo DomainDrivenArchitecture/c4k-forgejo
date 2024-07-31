@@ -6,6 +6,7 @@
 * 1.20.1-0: Breaking https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-20-1-0
 * 1.21.1-0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-1-0
 * 7.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-0
+* 8.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#8-0-0
 
 ## Preparations
 
@@ -57,9 +58,7 @@
 1. Scale up Forgejo Deployment: `k scale deployment forgejo --replicas=1`
 1. Check for errors
 
-## Upgrade to 7.0.5 (no breaking changes)
-
-TODO: Upgrade to 8.0.0 instead after Release!
+## Upgrade to 8.0.0 (no relevant breaking changes)
 
 1. Scale down Forgejo Deployment: `k scale deployment forgejo --replicas=0`
 1. Delete app.ini: `k exec -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
