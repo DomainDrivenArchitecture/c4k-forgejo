@@ -18,8 +18,8 @@
 ### Create 2nd Repo Prod Server
 
 1. Terraform Preparations for 2nd Server: TODO
-1. Install c4k-forgejo Version TODO   
-   with config `"forgejo-image-version-overwrite": "1.19.3-0"`
+1. Install c4k-forgejo Version `3.5.0`!
+   with config `"forgejo-image-version-overwrite": "1.19.3-0"` (in server-setup)
 1. Stop Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
 1. Disable Backup Cron: `k patch -n forgejo cronjobs forgejo-backup -p '{"spec" : {"suspend" : true }}'`
 1. Scale up Backup-Restore Deployment: `kubectl scale -n forgejo deployment backup-restore --replicas=1`
