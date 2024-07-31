@@ -66,6 +66,15 @@
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
 1. Check for errors: `k logs -n forgejo forgejo-...`
 
+## Enable Federation
+
+1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
+1. Adjust configmap: `k edit -n forgejo cm forgejo-env`
+    1. Change `FORGEJO__federation__ENABLED: "false"` TO `FORGEJO__federation__ENABLED: "true"`
+1. Delete app.ini: `k exec -n forgejo -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
+1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
+1. Check for errors: `k logs -n forgejo forgejo-...`
+
 ## Post Work
 
 1. Switch DNS to new server
