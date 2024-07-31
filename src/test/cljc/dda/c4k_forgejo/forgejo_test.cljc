@@ -14,7 +14,7 @@
 
 (deftest should-generate-image-str
   (testing "non-federated-image"
-    (is (= "codeberg.org/forgejo/forgejo:7.0"
+    (is (= "codeberg.org/forgejo/forgejo:8.0"
            (cut/generate-image-str {:fqdn "test.de"
                                     :mailer-from ""
                                     :mailer-host "m.t.de"
@@ -97,7 +97,7 @@
               :spec
               {:containers
                [{:name "forgejo",
-                 :image "codeberg.org/forgejo/forgejo:7.0",
+                 :image "codeberg.org/forgejo/forgejo:8.0",
                  :imagePullPolicy "IfNotPresent",
                  :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
                  :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
