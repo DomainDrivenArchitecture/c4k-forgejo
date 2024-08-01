@@ -12,6 +12,7 @@
 (def config-defaults {:namespace "forgejo"
                       :issuer "staging"
                       :deploy-federated "false"
+                      :federation-enabled "false"
                       :db-name "forgejo"
                       :pv-storage-size-gb 5
                       :pvc-storage-class-name ""
@@ -26,7 +27,8 @@
                               ::forgejo/service-noreply-address]
                      :opt-un [::forgejo/issuer
                               ::forgejo/deploy-federated
-                              ::forgejo/default-app-name
+                              ::forgejo/federation-enabled
+                              ::forgejo/default-app-name 
                               ::forgejo/service-domain-whitelist
                               ::forgejo/forgejo-image-version-overwrite
                               ::backup/restic-repository
