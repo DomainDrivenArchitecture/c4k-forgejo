@@ -12,6 +12,40 @@
 (st/instrument `cut/generate-ingress)
 (st/instrument `cut/generate-secrets)
 
+(deftest should-generate-image-str
+  (testing "non-federated-image"
+    (is (= "codeberg.org/forgejo/forgejo:8.0"
+           (cut/generate-image-str {:fqdn "test.de"
+                                    :mailer-from ""
+                                    :mailer-host "m.t.de"
+                                    :mailer-port "123"
+                                    :service-noreply-address ""
+                                    :deploy-federated "false"})))
+    (is (= "codeberg.org/forgejo/forgejo:1.19.3-0"
+           (cut/generate-image-str {:fqdn "test.de"
+                                    :mailer-from ""
+                                    :mailer-host "m.t.de"
+                                    :mailer-port "123"
+                                    :service-noreply-address ""
+                                    :deploy-federated "false"
+                                    :forgejo-image-version-overwrite "1.19.3-0"}))))
+  (testing "federated-image"
+    (is (= "domaindrivenarchitecture/c4k-forgejo-federated:latest"
+           (cut/generate-image-str {:fqdn "test.de"
+                                    :mailer-from ""
+                                    :mailer-host "m.t.de"
+                                    :mailer-port "123"
+                                    :service-noreply-address ""
+                                    :deploy-federated "true"})))
+    (is (= "domaindrivenarchitecture/c4k-forgejo-federated:3.2.0"
+           (cut/generate-image-str {:fqdn "test.de"
+                                    :mailer-from ""
+                                    :mailer-host "m.t.de"
+                                    :mailer-port "123"
+                                    :service-noreply-address ""
+                                    :deploy-federated "true"
+                                    :forgejo-image-version-overwrite "3.2.0"})))))
+
 (deftest should-generate-appini-env
   (is (= {:APP_NAME-c1 "",
           :APP_NAME-c2 "test forgejo",
@@ -29,21 +63,20 @@
           :FORGEJO__server__ROOT_URL-c2 "https://test.com",
           :FORGEJO__server__SSH_DOMAIN-c1 "test.de",
           :FORGEJO__server__SSH_DOMAIN-c2 "test.com",
-          :FORGEJO__service__EMAIL_DOMAIN_WHITELIST-c1 "adb.de",
-          :FORGEJO__service__EMAIL_DOMAIN_WHITELIST-c2 "test.com,test.net",
+          :FORGEJO__service__EMAIL_DOMAIN_ALLOWLIST-c1 "adb.de",
+          :FORGEJO__service__EMAIL_DOMAIN_ALLOWLIST-c2 "test.com,test.net",
           :FORGEJO__service__NO_REPLY_ADDRESS-c1 "",
           :FORGEJO__service__NO_REPLY_ADDRESS-c2 "noreply@test.com"}
          (th/map-diff (cut/generate-appini-env {:default-app-name ""
-                                                :deploy-federated "false"
-                                                :fqdn "test.de"                                                
+                                                :federation-enabled "false"
+                                                :fqdn "test.de"
                                                 :mailer-from ""
                                                 :mailer-host "m.t.de"
                                                 :mailer-port "123"
                                                 :service-domain-whitelist "adb.de"
-                                                :service-noreply-address ""
-                                                })
+                                                :service-noreply-address ""})
                       (cut/generate-appini-env {:default-app-name "test forgejo"
-                                                :deploy-federated "true"
+                                                :federation-enabled "true"
                                                 :fqdn "test.com"
                                                 :mailer-from "test@test.com"
                                                 :mailer-host "mail.test.com"
@@ -55,7 +88,7 @@
   (testing "non-federated"
     (is (= {:apiVersion "apps/v1",
             :kind "Deployment",
-            :metadata {:name "forgejo", :namespace "default", :labels {:app "forgejo"}},
+            :metadata {:name "forgejo", :namespace "forgejo", :labels {:app "forgejo"}},
             :spec
             {:replicas 1,
              :selector {:matchLabels {:app "forgejo"}},
@@ -64,7 +97,7 @@
               :spec
               {:containers
                [{:name "forgejo",
-                 :image "codeberg.org/forgejo/forgejo:1.19",
+                 :image "codeberg.org/forgejo/forgejo:8.0",
                  :imagePullPolicy "IfNotPresent",
                  :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
                  :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
@@ -82,7 +115,7 @@
   (testing "federated-deployment"
     (is (= {:apiVersion "apps/v1",
             :kind "Deployment",
-            :metadata {:name "forgejo", :namespace "default", :labels {:app "forgejo"}},
+            :metadata {:name "forgejo", :namespace "forgejo", :labels {:app "forgejo"}},
             :spec
             {:replicas 1,
              :selector {:matchLabels {:app "forgejo"}},
@@ -130,26 +163,3 @@
           :storage-c2 "15Gi"}
          (th/map-diff (cut/generate-data-volume {:volume-total-storage-size 1})
                       (cut/generate-data-volume {:volume-total-storage-size 15})))))
-
-(deftest should-generate-middleware-ratelimit
-  (is (= {:apiVersion "traefik.containo.us/v1alpha1",
-          :kind "Middleware",
-          :metadata {:name "ratelimit"},
-          :spec {:rateLimit {:average 10, :burst 5}}}
-         (cut/generate-rate-limit-middleware {:max-rate 10, :max-concurrent-requests 5}))))
-
-(deftest should-generate-middleware-ratelimit-ingress-and-cert
-  (is (= {:traefik.ingress.kubernetes.io/router.entrypoints "web, websecure",
-          :traefik.ingress.kubernetes.io/router.middlewares
-          "default-redirect-https@kubernetescrd, default-ratelimit@kubernetescrd",
-          :metallb.universe.tf/address-pool "public"}
-         (-> (second
-              (cut/generate-rate-limit-ingress-and-cert
-               {:fqdn "test.de"
-                :mailer-from ""
-                :mailer-host "m.t.de"
-                :mailer-port "123"
-                :service-noreply-address ""
-                :average 10
-                :burst 5}))
-             :metadata :annotations))))

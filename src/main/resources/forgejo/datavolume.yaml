@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: forgejo-data-pvc
-  namespace: default
+  namespace: forgejo
   labels:
     app: forgejo
 spec:

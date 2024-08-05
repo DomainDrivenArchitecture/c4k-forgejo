@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: forgejo-backup
+  namespace: forgejo
   labels:
     app.kubernetes.part-of: forgejo
 spec:
