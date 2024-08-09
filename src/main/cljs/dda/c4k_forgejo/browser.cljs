@@ -4,7 +4,7 @@
    [clojure.tools.reader.edn :as edn]
    [dda.c4k-forgejo.core :as core]
    [dda.c4k-forgejo.forgejo :as forgejo]
-   [dda.c4k-common.browser :as br]   
+   [dda.c4k-common.browser :as br]
    [dda.c4k-common.common :as cm]))
 
 (defn generate-group
@@ -73,14 +73,13 @@
       :mailer-host (br/get-content-from-element "mailer-host")
       :mailer-port (br/get-content-from-element "mailer-port")
       :service-noreply-address (br/get-content-from-element "service-noreply-address")
-      :volume-total-storage-size (br/get-content-from-element "volume-total-storage-size" :deserializer js/parseInt)}     
+      :volume-total-storage-size (br/get-content-from-element "volume-total-storage-size" :deserializer js/parseInt)}
      (when (not (st/blank? issuer))
        {:issuer issuer})
      (when (not (st/blank? app-name))
        {:default-app-name app-name})
      (when (not (st/blank? domain-whitelist))
-       {:service-domain-whitelist domain-whitelist})
-     )))
+       {:service-domain-whitelist domain-whitelist}))))
 
 (defn validate-all! []
   (br/validate! "fqdn" ::forgejo/fqdn)
@@ -91,7 +90,7 @@
   (br/validate! "deploy-federated" ::forgejo/deploy-federated :optional true)
   (br/validate! "issuer" ::forgejo/issuer :optional true)
   (br/validate! "app-name" ::forgejo/default-app-name :optional true)
-  (br/validate! "domain-whitelist" ::forgejo/service-domain-whitelist :optional true)  
+  (br/validate! "domain-whitelist" ::forgejo/service-domain-whitelist :optional true)
   (br/validate! "volume-total-storage-size" ::forgejo/volume-total-storage-size :deserializer js/parseInt)
   (br/validate! "auth" forgejo/auth? :deserializer edn/read-string)
   (br/set-form-validated!))
@@ -103,16 +102,21 @@
 
 (defn init []
   (br/append-hickory (generate-content-div))
-  (-> js/document
-      (.getElementById "generate-button")
-      (.addEventListener "click"
-                         #(do (validate-all!)
-                              (-> (cm/generate-common
-                                   (config-from-document)
-                                   (br/get-content-from-element "auth" :deserializer edn/read-string)
-                                   core/config-defaults
-                                   core/k8s-objects)
-                               (br/set-output!)))))
+  (let [config-only false
+        auth-only false]
+    (-> js/document
+        (.getElementById "generate-button")
+        (.addEventListener "click"
+                           #(do (validate-all!)
+                                (-> (cm/generate-cm
+                                     (config-from-document)
+                                     (br/get-content-from-element "auth" :deserializer edn/read-string)
+                                     core/config-defaults
+                                     core/config-objects
+                                     core/auth-objects
+                                     config-only
+                                     auth-only)
+                                    (br/set-output!))))))
   (add-validate-listener "fqdn")
   (add-validate-listener "deploy-federated")
   (add-validate-listener "mailer-from")
@@ -120,7 +124,7 @@
   (add-validate-listener "mailer-port")
   (add-validate-listener "service-noreply-address")
   (add-validate-listener "app-name")
-  (add-validate-listener "domain-whitelist")  
+  (add-validate-listener "domain-whitelist")
   (add-validate-listener "volume-total-storage-size")
   (add-validate-listener "issuer")
   (add-validate-listener "auth"))

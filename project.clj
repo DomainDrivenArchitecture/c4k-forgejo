@@ -1,16 +1,17 @@
-(defproject org.domaindrivenarchitecture/c4k-forgejo "3.4.5-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/c4k-forgejo "3.5.1-SNAPSHOT"
   :description "forgejo c4k-installation package"
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
   :dependencies [[org.clojure/clojure "1.11.3" :scope "provided"]
                  [org.clojure/tools.reader "1.4.2"]
-                 [org.domaindrivenarchitecture/c4k-common-clj "6.4.1"]
+                 [org.domaindrivenarchitecture/c4k-common-clj "7.0.0"]
                  [hickory "0.7.1" :exclusions [viebel/codox-klipse-theme]]]
   :target-path "target/%s/"
   :source-paths ["src/main/cljc"
                  "src/main/clj"]
-  :resource-paths ["src/main/resources"]
+  :resource-paths ["src/main/resources"
+                   "project.clj"]
   :repositories [["snapshots" :clojars]
                  ["releases" :clojars]]
   :deploy-repositories [["snapshots" {:sign-releases false :url "https://clojars.org/repo"}]
