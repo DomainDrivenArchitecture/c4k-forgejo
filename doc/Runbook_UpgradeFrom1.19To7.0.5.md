@@ -10,9 +10,9 @@
 
 ## Preparations
 
-1. Stop Forgejo Prod: `k scale -n forgejo deployment forgejo --replicas=0`
-1. Disable Backup Cron: `k patch -n forgejo cronjobs forgejo-backup -p '{"spec" : {"suspend" : true }}'`
-1. Scale up Backup-Restore Deployment: `kubectl scale -n forgejo deployment backup-restore --replicas=1`
+1. Stop Forgejo Prod: `k scale deployment forgejo --replicas=0`
+1. Disable Backup Cron: `k patch cronjobs forgejo-backup -p '{"spec" : {"suspend" : true }}'`
+1. Scale up Backup-Restore Deployment: `kubectl scale deployment backup-restore --replicas=1`
 1. Execute Manual Backup: `kubectl exec -n forgejo -it backup-restore-... -- /usr/local/bin/backup.sh`
 
 ### Create 2nd Repo Prod Server
