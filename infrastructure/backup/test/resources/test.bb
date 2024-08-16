@@ -2,7 +2,8 @@
 
 (require '[babashka.tasks :as tasks]
          '[dda.backup.management :as mgm]
-         '[dda.backup.backup :as bak])
+         '[dda.backup.backup :as bak]
+         '[dda.backup.restore :as rs])
 
 (defn restic-repo-init!
   []
@@ -15,13 +16,15 @@
   (tasks/shell "mkdir" "-p" "test-backup")
   (spit "test-backup/file" "I was here")
   (bak/backup! {:password-file "restic-pwd"
-                :restic-repository "restic-repo"}
-               ["test-backup"]))
+                :restic-repository "restic-repo"
+                :files ["test-backup"]}))
 
 (defn restic-restore!
   []
   (tasks/shell "mkdir" "-p" "test-restore")
-  (tasks/shell "restic" "restore" "--password-file" "restic-pwd" "--repo" "restic-repo" "--target" "test-restore" "latest"))
+  (rs/restore! {:password-file "restic-pwd"
+                :restic-repository "restic-repo"
+                :target-directory "test-restore"}))
 
 (restic-repo-init!)
 (restic-backup!)

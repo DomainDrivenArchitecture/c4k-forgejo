@@ -18,8 +18,8 @@ function main() {
 
     rm -rf /var/backups/gitea/*
     rm -rf /var/backups/git/repositories/*
-    cp -r /var/backups/restore/gitea /var/backups/ #ToDo: mv instead of cp or rm -rf after
-    cp -r /var/backups/restore/git/repositories /var/backups/git/ #ToDo: mv instead of cp or rm -rf after
+    mv /var/backups/restore/gitea /var/backups/
+    mv /var/backups/restore/git/repositories /var/backups/git/
     
     # adjust file permissions for the git user
     chown -R 1000:1000 /var/backups
