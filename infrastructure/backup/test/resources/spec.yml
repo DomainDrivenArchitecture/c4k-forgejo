@@ -1,0 +1,7 @@
+package:
+  - name: "restic"
+
+command:
+  - command: "bb -h"
+  - command: "/tmp/test.bb"
+  
