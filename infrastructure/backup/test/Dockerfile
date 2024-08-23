@@ -1,7 +1,4 @@
 FROM c4k-forgejo-backup:latest
 
-# install it
-RUN apt update && apt install -qqy openjdk-17-jre-headless
 ADD resources /tmp/
-RUN rm -rf /root/.m2
-RUN /tmp/install-test.bb
+RUN ENV_PASSWORD=env-password FILE_PASSWORD_FILE=/tmp/file_password /tmp/test.bb
