@@ -21,11 +21,15 @@
                                    :pg-password (bc/env-or-file "POSTGRES_PASSWORD")
                                    :snapshot-id "latest"}))
 
+(def aws-config {:aws-access-key-id (bc/env-or-file "AWS_ACCESS_KEY_ID")
+                 :aws-secret-access-key (bc/env-or-file "AWS_SECRET_ACCESS_KEY")})
+
 (def dry-run {:dry-run true :debug true})
 
 (defn prepare!
   []
-  (pg/create-pg-pass! db-config))
+  (pg/create-pg-pass! db-config)
+  (bc/create-aws-credentials! aws-config))
 
 (defn restic-restore!
   []
