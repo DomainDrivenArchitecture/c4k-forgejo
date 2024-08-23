@@ -1,7 +1,6 @@
 #!/usr/bin/env bb
 
 (require
- '[babashka.tasks :as tasks]
  '[dda.backup.core :as bc]
  '[dda.backup.restic :as rc])
 
@@ -13,13 +12,12 @@
 
 (def db-config (merge restic-repo {:backup-path "pg-database"}))
 
+(def aws-config {:aws-access-key-id (bc/env-or-file "AWS_ACCESS_KEY_ID")
+                 :aws-secret-access-key (bc/env-or-file "AWS_SECRET_ACCESS_KEY")})
+
 (defn prepare!
   []
-  (tasks/shell ["mkdir" "-p" "/root/.aws"])
-  (spit "/root/.aws/credentials"
-        (str "[default]\n"
-             "aws_access_key_id=" (bc/env-or-file "AWS_ACCESS_KEY_ID") "\n"
-             "aws_secret_access_key=" (bc/env-or-file "AWS_SECRET_ACCESS_KEY") "\n")))
+  (bc/create-aws-credentials! aws-config))
 
 (defn list-snapshots!
   []
