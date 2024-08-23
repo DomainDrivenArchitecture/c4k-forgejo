@@ -1,9 +1,11 @@
 #!/usr/bin/env bb
 
-(require '[dda.backup.core :as bc]
-         '[dda.backup.restic :as rc]
-         '[dda.backup.postgresql :as pg]
-         '[dda.backup.backup :as bak])
+(require
+ '[babashka.tasks :as tasks]
+ '[dda.backup.core :as bc]
+ '[dda.backup.restic :as rc]
+ '[dda.backup.postgresql :as pg]
+ '[dda.backup.backup :as bak])
 
 (def restic-repo {:password-file (bc/env-or-file "RESTIC_PASSWORD_FILE")
                   :restic-repository (bc/env-or-file "RESTIC_REPOSITORY")})
@@ -23,7 +25,15 @@
 
 (defn prepare!
   []
-  (pg/create-pg-pass! db-config))
+  (tasks/shell ["mkdir" "/root/.aws"])
+  (spit "/root/.aws/credentials" 
+        (str "[default]\n" 
+             "aws_access_key_id=" (bc/env-or-file "AWS_ACCESS_KEY_ID") "\n"
+             "aws_secret_access_key=" (bc/env-or-file "AWS_SECRET_ACCESS_KEY")))
+  (tasks/shell ["chmod" "0600" "/root/.aws/credentials"])
+  (tasks/shell ["chmod" "0600" "/root/.pgpass"]
+  (pg/create-pg-pass! db-config)
+  (tasks/shell ["export" "TEST=hallo"]))
 
 (defn restic-repo-init!
   []
