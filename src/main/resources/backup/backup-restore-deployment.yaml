@@ -21,7 +21,7 @@ spec:
       - image: domaindrivenarchitecture/c4k-forgejo-backup
         name: backup-app
         imagePullPolicy: IfNotPresent
-        command: ["/entrypoint-start-and-wait.sh"]
+        command: ["wait.bb"]
         env:
         - name: POSTGRES_USER
           valueFrom:
