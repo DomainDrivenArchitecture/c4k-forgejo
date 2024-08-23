@@ -11,7 +11,8 @@
                   :restic-repository (bc/env-or-file "RESTIC_REPOSITORY")})
 
 (def file-config (merge restic-repo {:backup-path "files"
-                                     :files ["/var/backups/" "gitea/" "git/repositories/"]}))
+                                     :execution-directory "/var/backups/"
+                                     :files ["gitea/" "git/repositories/"]}))
 
 
 (def db-config (merge restic-repo {:backup-path "pg-database"
