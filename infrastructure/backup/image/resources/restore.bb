@@ -34,13 +34,13 @@
 (defn restic-restore!
   []
   (rs/restore-file! file-config)
-  (tasks/sh "bash" "-c" "rm -rf /var/backups/gitea/*")
-  (tasks/sh "bash" "-c" "rm -rf /var/backups/git/repositories/*")
-  (tasks/sh "mv" "/var/backups/restore/gitea" "/var/backups/")
-  (tasks/sh "mv" "/var/backups/restore/git/repositories" "/var/backups/git/")
-  (tasks/sh "chown" "-R" "1000:1000" "/var/backups")
-  (pg/drop-create-db! db-config)
-  (rs/restore-db! db-config))
+  (tasks/shell ["bash" "-c" "rm -rf /var/backups/gitea/*"])
+  (tasks/shell ["bash" "-c" "rm -rf /var/backups/git/repositories/*"])
+  (tasks/shell ["mv" "/var/backups/restore/gitea" "/var/backups/"])
+  (tasks/shell ["mv" "/var/backups/restore/git/repositories" "/var/backups/git/"])
+  (tasks/shell ["chown" "-R" "1000:1000" "/var/backups"])
+  (pg/drop-create-db! (merge db-config {:debug true}))
+  (rs/restore-db! (merge db-config {:debug true})))
 
 (prepare!)
 (restic-restore!)
