@@ -58,11 +58,11 @@
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
 1. Check for errors: `k logs -n forgejo forgejo-...`
 
-## Upgrade to 8.0.0 (no relevant breaking changes)
+## Upgrade to 8.0.1 (no relevant breaking changes)
 
 1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
 1. Delete app.ini: `k exec -n forgejo -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
-1. Set version to `8.0.0` with `k edit -n forgejo deployment forgejo`
+1. Set version to `8.0.1` with `k edit -n forgejo deployment forgejo`
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
 1. Check for errors: `k logs -n forgejo forgejo-...`
 
