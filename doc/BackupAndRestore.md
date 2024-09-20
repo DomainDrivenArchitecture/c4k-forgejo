@@ -10,32 +10,32 @@
 ## Manual init the restic repository for the first time
 
 1. apply backup-and-restore pod:   
-   `kubectl scale deployment backup-restore --replicas=1`
+   `kubectl -n forgejo scale deployment backup-restore --replicas=1`
 2. exec into pod and execute restore pod (press tab to get your exact pod name)   
-   `kubectl exec -it backup-restore-... -- /usr/local/bin/init.sh`
+   `kubectl -n forgejo exec -it backup-restore-... -- /usr/local/bin/init.bb`
 3. remove backup-and-restore pod:   
-   `kubectl scale deployment backup-restore --replicas=0`
+   `kubectl -n forgejo scale deployment backup-restore --replicas=0`
 
 
 ## Manual backup the restic repository for the first time
 
 1. apply backup-and-restore pod:   
-  `kubectl scale deployment backup-restore --replicas=1`
+  `kubectl -n forgejo scale deployment backup-restore --replicas=1`
 2. exec into pod and execute backup pod (press tab to get your exact pod name)   
-   `kubectl exec -it backup-restore-... -- /usr/local/bin/backup.sh`
+   `kubectl -n forgejo exec -it backup-restore-... -- /usr/local/bin/backup.bb`
 3. remove backup-and-restore pod:   
-   `kubectl scale deployment backup-restore --replicas=0`
+   `kubectl -n forgejo scale deployment backup-restore --replicas=0`
 
 
 ## Manual restore
 
 1. apply backup-and-restore pod:   
-  `kubectl scale deployment backup-restore --replicas=1`
+  `kubectl -n forgejo scale deployment backup-restore --replicas=1`
 2. Scale down forgejo deployment:
-   `kubectl scale deployment forgejo --replicas=0`
+   `kubectl -n forgejo scale deployment forgejo --replicas=0`
 3. exec into pod and execute restore pod (press tab to get your exact pod name)   
-   `kubectl exec -it backup-restore-... -- /usr/local/bin/restore.sh`
+   `kubectl -n forgejo exec -it backup-restore-... -- /usr/local/bin/restore.bb`
 4. Start forgejo again:
-   `kubectl scale deployment forgejo --replicas=1`
+   `kubectl -n forgejo scale deployment forgejo --replicas=1`
 5. remove backup-and-restore pod:   
-   `kubectl scale deployment backup-restore --replicas=0`
+   `kubectl -n forgejo scale deployment backup-restore --replicas=0`
