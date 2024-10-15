@@ -50,6 +50,26 @@
 
 ## Upgrade to 7.0.0
 
+1. Check DB Version.
+    1. MariaDB or MySQL needs to be 8.0 or higher.
+    2. Postgres needs to be 12 or higher
+1. API Endpoints
+    1. Check if the [/repos/{owner}/{repo}/releases](https://code.forgejo.org/api/swagger/#/repository/repoListReleases) API endpoint is used
+        1. as the per_page param is not used for [limit](https://codeberg.org/forgejo/forgejo/commit/0aab2d38a7d91bc8caff332e452364468ce52d9a) anymore
+    2. Check if [/repos/{owner}/{repo}/push_mirrors](https://code.forgejo.org/api/swagger/#/repository/repoListPushMirrors) and [/repos/{owner}/{repo}/push_mirrors](https://code.forgejo.org/api/swagger/#/repository/repoAddPushMirror) API endpoints are used
+        1. The date format of created and last_update fields are now [timestamps](https://codeberg.org/forgejo/forgejo/commit/0ee7cbf725f45650136be45f8e0f74d395f73b5c)
+    3. [pprof](https://forgejo.org/docs/v7.0/admin/config-cheat-sheet/#server-server) endpoint changed labels
+        1. graceful-lifecycle to gracefulLifecycle
+        2. process-type to processType
+        3. process-description to processDescription This allows for those endpoints to be scraped by services requiring prometheus style labels such as grafana-agent.
+1. The Gitea themes were renamed and the \[ui\].THEMES setting must be changed as follows:
+    1. gitea is replaced by gitea-light
+    2. arc-green is replaced by gitea-dark
+    3. auto is replaced by gitea-auto
+1. Migration warning
+    2. If the logs show a line like the following, run `doctor convert` to fix it.
+        3. Current database is using a case-insensitive collation "utf8mb4_general_ci"
+    4. Large instances may experience slow migrations when the database is upgraded to support SHA-256 git repositories.
 1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
 1. Adjust configmap: `k edit -n forgejo cm forgejo-env`
     1. Change `FORGEJO__oauth2__ENABLE: "true"` TO `FORGEJO__oauth2__ENABLED: "true"`
@@ -58,11 +78,11 @@
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
 1. Check for errors: `k logs -n forgejo forgejo-...`
 
-## Upgrade to 8.0.1 (no relevant breaking changes)
+## Upgrade to 8.0.3 (no relevant breaking changes)
 
 1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
 1. Delete app.ini: `k exec -n forgejo -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
-1. Set version to `8.0.1` with `k edit -n forgejo deployment forgejo`
+1. Set version to `8.0.3` with `k edit -n forgejo deployment forgejo`
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
 1. Check for errors: `k logs -n forgejo forgejo-...`
 
