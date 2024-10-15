@@ -69,11 +69,11 @@
 (defn data-storage-by-volume-size
   [total]
   total)
-
+;;TODO: remove unneccessaries, fedaration is merged
 (def federated-image-name "domaindrivenarchitecture/c4k-forgejo-federated")
 (def federated-image-version "latest")
 (def non-federated-image-name "codeberg.org/forgejo/forgejo")
-(def non-federated-image-version "8.0")
+(def non-federated-image-version "8.0.3")
 
 (defn-spec generate-image-str string?
   [config config?]
