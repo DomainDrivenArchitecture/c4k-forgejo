@@ -2,7 +2,7 @@
 
 ## Info: Relevant Breaking Changes:
 
-* 1.19.3:Current version
+* 1.19.3: First version under consideration
 * 1.20.1-0: Breaking https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-20-1-0
 * 1.21.1-0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-1-0
 * 7.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-0
