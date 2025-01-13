@@ -2,34 +2,28 @@
 
 (require '[babashka.tasks :as tasks]
          '[dda.backup.core :as bc]
+         '[dda.backup.config :as cfg]
          '[dda.backup.postgresql :as pg]
          '[dda.backup.restore :as rs])
 
-(def restic-repo {:password-file (bc/env-or-file "RESTIC_PASSWORD_FILE")
-                  :restic-repository (bc/env-or-file "RESTIC_REPOSITORY")})
+(def config (cfg/read-config "/usr/local/bin/config.edn"))
 
-(def file-config (merge restic-repo {:backup-path "files"
-                                     :restore-target-directory "/var/backups/restore"
-                                     :snapshot-id "latest"}))
+(def file-config (merge
+                  (:restic-repo config)
+                  {:backup-path "files"
+                   :restore-target-directory "/var/backups/restore"
+                   :snapshot-id "latest"}))
 
+(def db-config (merge (:db-config config)
+                      {:snapshot-id "latest"}))
 
-(def db-config (merge restic-repo {:backup-path "pg-database"
-                                   :pg-host (bc/env-or-file "POSTGRES_SERVICE")
-                                   :pg-port (bc/env-or-file "POSTGRES_PORT")
-                                   :pg-db (bc/env-or-file "POSTGRES_DB")
-                                   :pg-user (bc/env-or-file "POSTGRES_USER")
-                                   :pg-password (bc/env-or-file "POSTGRES_PASSWORD")
-                                   :snapshot-id "latest"}))
-
-(def aws-config {:aws-access-key-id (bc/env-or-file "AWS_ACCESS_KEY_ID")
-                 :aws-secret-access-key (bc/env-or-file "AWS_SECRET_ACCESS_KEY")})
 
 (def dry-run {:dry-run true :debug true})
 
 (defn prepare!
   []
-  (pg/create-pg-pass! db-config)
-  (bc/create-aws-credentials! aws-config))
+  (bc/create-aws-credentials! (:aws-config config))
+  (pg/create-pg-pass! db-config))
 
 (defn restic-restore!
   []
@@ -39,8 +33,8 @@
   (tasks/shell ["mv" "/var/backups/restore/gitea" "/var/backups/"])
   (tasks/shell ["mv" "/var/backups/restore/git/repositories" "/var/backups/git/"])
   (tasks/shell ["chown" "-R" "1000:1000" "/var/backups"])
-  (pg/drop-create-db! (merge db-config {:debug true}))
-  (rs/restore-db! (merge db-config {:debug true})))
+  (pg/drop-create-db! db-config)
+  (rs/restore-db! db-config))
 
 (prepare!)
 (restic-restore!)

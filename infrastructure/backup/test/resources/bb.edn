@@ -1,3 +1,4 @@
 {:deps {org.clojure/spec.alpha {:mvn/version "0.4.233"}
         orchestra/orchestra {:mvn/version "2021.01.01-1"}
+        aero/aero {:mvn/version "1.1.6"}
         org.domaindrivenarchitecture/dda-backup {:local/root "/usr/local/lib/dda-backup"}}}

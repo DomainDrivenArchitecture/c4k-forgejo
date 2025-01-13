@@ -2,44 +2,27 @@
 
 (require
  '[dda.backup.core :as bc]
+ '[dda.backup.config :as cfg]
  '[dda.backup.restic :as rc]
  '[dda.backup.postgresql :as pg]
  '[dda.backup.backup :as bak])
 
-(def restic-repo {:password-file (bc/env-or-file "RESTIC_PASSWORD_FILE")
-                  :restic-repository (bc/env-or-file "RESTIC_REPOSITORY")})
-
-(def file-config (merge restic-repo {:backup-path "files"
-                                     :execution-directory "/var/backups/"
-                                     :files ["gitea/" "git/repositories/"]}))
-
-
-(def db-config (merge restic-repo {:backup-path "pg-database"
-                                   :pg-host (bc/env-or-file "POSTGRES_SERVICE")
-                                   :pg-port (bc/env-or-file "POSTGRES_PORT")
-                                   :pg-db (bc/env-or-file "POSTGRES_DB")
-                                   :pg-user (bc/env-or-file "POSTGRES_USER")
-                                   :pg-password (bc/env-or-file "POSTGRES_PASSWORD")}))
-
-(def aws-config {:aws-access-key-id (bc/env-or-file "AWS_ACCESS_KEY_ID")
-                 :aws-secret-access-key (bc/env-or-file "AWS_SECRET_ACCESS_KEY")})
-
-(def dry-run {:dry-run true :debug true})
+(def config (cfg/read-config "/usr/local/bin/config.edn"))
 
 (defn prepare!
   []
-  (bc/create-aws-credentials! aws-config)
-  (pg/create-pg-pass! db-config))
+  (bc/create-aws-credentials! (:aws-config config))
+  (pg/create-pg-pass! (:db-config config)))
 
 (defn restic-repo-init!
   []
-  (rc/init! file-config)
-  (rc/init! db-config))
+  (rc/init! (:file-config config))
+  (rc/init! (:db-config config)))
 
 (defn restic-backup!
   []
-  (bak/backup-file! file-config)
-  (bak/backup-db! db-config))
+  (bak/backup-file! (:file-config config))
+  (bak/backup-db! (:db-config config)))
 
 (prepare!)
 (restic-repo-init!)
