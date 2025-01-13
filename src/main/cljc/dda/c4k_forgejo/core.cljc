@@ -1,8 +1,11 @@
 (ns dda.c4k-forgejo.core
   (:require
    [clojure.spec.alpha :as s]
+   #?(:clj [orchestra.core :refer [defn-spec]]
+      :cljs [orchestra.core :refer-macros [defn-spec]])
    [dda.c4k-common.yaml :as yaml]
    [dda.c4k-common.common :as cm]
+   [dda.c4k-common.predicate :as p]
    [dda.c4k-common.monitoring :as mon]
    [dda.c4k-forgejo.forgejo :as forgejo]
    [dda.c4k-forgejo.backup :as backup]
@@ -18,7 +21,9 @@
                       :pvc-storage-class-name ""
                       :postgres-image "postgres:14"
                       :postgres-size :2gb})
+
 (def rate-limit-defaults {:max-rate 10, :max-concurrent-requests 5})
+
 
 (def config? (s/keys :req-un [::forgejo/fqdn
                               ::forgejo/mailer-from
@@ -28,7 +33,7 @@
                      :opt-un [::forgejo/issuer
                               ::forgejo/deploy-federated
                               ::forgejo/federation-enabled
-                              ::forgejo/default-app-name 
+                              ::forgejo/default-app-name
                               ::forgejo/service-domain-whitelist
                               ::forgejo/forgejo-image-version-overwrite
                               ::backup/restic-repository
@@ -37,12 +42,11 @@
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password
                             ::forgejo/mailer-user ::forgejo/mailer-pw
                             ::backup/aws-access-key-id ::backup/aws-secret-access-key]
-                   :opt-un [::backup/restic-password ; TODO gec: Is restic password opt or req?
-                            ::mon/mon-cfg]))
+                   :opt-un [::backup/restic-password
+                            ::mon/mon-auth]))
 
-(def vol? (s/keys :req-un [::forgejo/volume-total-storage-size]))
-
-(defn config-objects [config] ; ToDo: ADR for generate functions - vector or no vector?
+(defn-spec config-objects p/map-or-seq?
+  [config config?]
   (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
     (map yaml/to-string
          (filter #(not (nil? %))
@@ -67,7 +71,9 @@
                   (when (contains? config :mon-cfg)
                     (mon/generate-config)))))))
 
-(defn auth-objects [config auth]
+(defn-spec auth-objects p/map-or-seq?
+  [config config?
+   auth auth?]
   (map yaml/to-string
        (filter #(not (nil? %))
                (cm/concat-vec

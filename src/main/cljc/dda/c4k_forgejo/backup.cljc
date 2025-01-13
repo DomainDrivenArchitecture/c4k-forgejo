@@ -1,6 +1,8 @@
 (ns dda.c4k-forgejo.backup
  (:require
   [clojure.spec.alpha :as s]
+  #?(:clj [orchestra.core :refer [defn-spec]]
+     :cljs [orchestra.core :refer-macros [defn-spec]])
   [dda.c4k-common.yaml :as yaml]
   [dda.c4k-common.base64 :as b64]
   [dda.c4k-common.common :as cm]
@@ -12,26 +14,32 @@
 (s/def ::restic-password p/bash-env-string?)
 (s/def ::restic-repository p/bash-env-string?)
 
+(s/def ::config (s/keys :req-un [::restic-repository]))
+
+(s/def ::auth (s/keys :req-un [::restic-password ::aws-access-key-id ::aws-secret-access-key]
+                      :opt-un [::restic-new-password]))
+
 #?(:cljs
    (defmethod yaml/load-resource :backup [resource-name]
      (get (inline-resources "backup") resource-name)))
 
-(defn generate-config [my-conf]
+(defn-spec generate-config p/map-or-seq?
+  [my-conf ::config]
   (let [{:keys [restic-repository]} my-conf]
     (->
      (yaml/from-string (yaml/load-resource "backup/config.yaml"))
      (cm/replace-key-value :restic-repository restic-repository))))
 
-(defn generate-cron []
+(defn-spec generate-cron p/map-or-seq?
+  []
    (yaml/from-string (yaml/load-resource "backup/cron.yaml")))
 
-(defn generate-backup-restore-deployment [my-conf]
-  (let [backup-restore-yaml (yaml/from-string (yaml/load-resource "backup/backup-restore-deployment.yaml"))]
-    (if (and (contains? my-conf :local-integration-test) (= true (:local-integration-test my-conf)))
-      (cm/replace-named-value backup-restore-yaml "CERTIFICATE_FILE" "/var/run/secrets/localstack-secrets/ca.crt")
-      backup-restore-yaml)))
+(defn-spec generate-backup-restore-deployment p/map-or-seq?
+  [my-conf ::config]
+  (yaml/from-string (yaml/load-resource "backup/backup-restore-deployment.yaml")))
 
-(defn generate-secret [my-auth]
+(defn-spec generate-secret p/map-or-seq?
+  [my-auth ::auth]
   (let [{:keys [aws-access-key-id aws-secret-access-key restic-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "backup/secret.yaml"))

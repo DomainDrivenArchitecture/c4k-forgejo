@@ -44,27 +44,25 @@
 (s/def ::mailer-pw pred/bash-env-string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
 (s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
-(s/def ::max-rate int?) 
+(s/def ::max-rate int?)
 (s/def ::max-concurrent-requests int?)
 
-(def config? (s/keys :req-un [::fqdn
-                              ::mailer-from
-                              ::mailer-host
-                              ::mailer-port
-                              ::service-noreply-address]
-                     :opt-un [::issuer
-                              ::deploy-federated
-                              ::federation-enabled
-                              ::default-app-name
-                              ::service-domain-whitelist
-                              ::forgejo-image-version-overwrite]))
+(s/def ::config (s/keys :req-un [::fqdn
+                                 ::mailer-from
+                                 ::mailer-host
+                                 ::mailer-port
+                                 ::service-noreply-address
+                                 ::volume-total-storage-size
+                                 ::max-rate
+                                 ::max-concurrent-requests]
+                        :opt-un [::issuer
+                                 ::deploy-federated
+                                 ::federation-enabled
+                                 ::default-app-name
+                                 ::service-domain-whitelist
+                                 ::forgejo-image-version-overwrite]))
 
-(def rate-limit-config? (s/keys :req-un [::max-rate
-                                         ::max-concurrent-requests]))
-
-(def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
-
-(def vol? (s/keys :req-un [::volume-total-storage-size]))
+(s/def ::auth (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password ::mailer-user ::mailer-pw]))
 
 (defn data-storage-by-volume-size
   [total]
@@ -76,7 +74,7 @@
 (def non-federated-image-version "8.0.3")
 
 (defn-spec generate-image-str string?
-  [config config?]
+  [config ::config]
   (let [{:keys [deploy-federated forgejo-image-version-overwrite]} config
         deploy-federated-bool (boolean-from-string deploy-federated)]
     (if deploy-federated-bool
@@ -110,16 +108,16 @@
      (cm/replace-all-matching-values-by-new-value "MAILERPORT" mailer-port)
      (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
      (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address)
-     (cm/replace-all-matching-values-by-new-value "IS_FEDERATED" 
+     (cm/replace-all-matching-values-by-new-value "IS_FEDERATED"
                                                   (if federation-enabled-bool
                                                     "true"
                                                     "false")))))
 
-(defn generate-secrets
-  [auth]
-  (let [{:keys [postgres-db-user 
-                postgres-db-password 
-                mailer-user 
+(defn-spec generate-secrets pred/map-or-seq?
+  [auth ::auth]
+  (let [{:keys [postgres-db-user
+                postgres-db-password
+                mailer-user
                 mailer-pw]} auth]
     (->
      (yaml/load-as-edn "forgejo/secrets.yaml")
@@ -128,8 +126,8 @@
      (cm/replace-all-matching "MAILERUSER" (b64/encode mailer-user))
      (cm/replace-all-matching "MAILERPW" (b64/encode mailer-pw)))))
 
-(defn-spec generate-ratelimit-ingress-and-cert seq?
-  [config config?]
+(defn-spec generate-ratelimit-ingress-and-cert pred/map-or-seq?
+  [config ::config]
   (let [{:keys [fqdn max-rate max-concurrent-requests namespace]} config]
     (ing/generate-simple-ingress (merge
                                   {:service-name "forgejo-service"
@@ -141,18 +139,18 @@
                                   config))))
 
 (defn-spec generate-data-volume pred/map-or-seq?
-  [config vol?]
-  (let [{:keys [volume-total-storage-size]} config        
+  [config ::config]
+  (let [{:keys [volume-total-storage-size]} config
         data-storage-size (data-storage-by-volume-size volume-total-storage-size)]
-    (->     
+    (->
      (yaml/load-as-edn "forgejo/datavolume.yaml")
      (cm/replace-all-matching "DATASTORAGESIZE" (str (str data-storage-size) "Gi")))))
 
 (defn-spec generate-deployment pred/map-or-seq?
-  [config config?]
-    (->
-     (yaml/load-as-edn "forgejo/deployment.yaml")
-     (cm/replace-all-matching "IMAGE_NAME" (generate-image-str config))))
+  [config ::config]
+  (->
+   (yaml/load-as-edn "forgejo/deployment.yaml")
+   (cm/replace-all-matching "IMAGE_NAME" (generate-image-str config))))
 
 (defn generate-service
   []

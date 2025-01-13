@@ -5,7 +5,21 @@
    [clojure.spec.test.alpha :as st]
    [dda.c4k-forgejo.backup :as cut]))
 
+(st/instrument `cut/generate-secret)
 (st/instrument `cut/generate-config)
+
+(deftest should-generate-secret
+  (is (= {:apiVersion "v1",
+          :kind "Secret",
+          :metadata {:name "backup-secret", :namespace "forgejo"},
+          :type "Opaque",
+          :data
+          {:aws-access-key-id "YXdzLWlk",
+           :aws-secret-access-key "YXdzLXNlY3JldA==",
+           :restic-password "cmVzdGljLXB3"}}
+         (cut/generate-secret {:aws-access-key-id "aws-id"
+                               :aws-secret-access-key "aws-secret"
+                               :restic-password "restic-pw"}))))
 
 (deftest should-generate-backup-config
   (testing "federated"
