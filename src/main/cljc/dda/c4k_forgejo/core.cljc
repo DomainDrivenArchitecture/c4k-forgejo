@@ -43,6 +43,7 @@
                             ::forgejo/mailer-user ::forgejo/mailer-pw
                             ::backup/aws-access-key-id ::backup/aws-secret-access-key]
                    :opt-un [::backup/restic-password
+                            ::backup/restic-new-password
                             ::mon/mon-auth]))
 
 (defn-spec config-objects p/map-or-seq?

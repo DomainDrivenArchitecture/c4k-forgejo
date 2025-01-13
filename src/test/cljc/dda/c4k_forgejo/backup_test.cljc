@@ -19,7 +19,20 @@
            :restic-password "cmVzdGljLXB3"}}
          (cut/generate-secret {:aws-access-key-id "aws-id"
                                :aws-secret-access-key "aws-secret"
-                               :restic-password "restic-pw"}))))
+                               :restic-password "restic-pw"})))
+  (is (= {:apiVersion "v1",
+          :kind "Secret",
+          :metadata {:name "backup-secret", :namespace "forgejo"},
+          :type "Opaque",
+          :data
+          {:aws-access-key-id "YXdzLWlk",
+           :aws-secret-access-key "YXdzLXNlY3JldA==",
+           :restic-password "b2xk",
+           :restic-new-password "bmV3"}}
+         (cut/generate-secret {:aws-access-key-id "aws-id"
+                               :aws-secret-access-key "aws-secret"
+                               :restic-password "old"
+                               :restic-new-password "new"}))))
 
 (deftest should-generate-backup-config
   (testing "federated"
