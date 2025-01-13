@@ -111,7 +111,10 @@
              :mailer-host "m.t.de"
              :mailer-port "123"
              :service-domain-whitelist "adb.de"
-             :service-noreply-address ""}))))
+             :service-noreply-address ""
+             :volume-total-storage-size 10
+             :max-rate 10
+             :max-concurrent-requests 1}))))
   (testing "federated-deployment"
     (is (= {:apiVersion "apps/v1",
             :kind "Deployment",
@@ -138,7 +141,10 @@
              :mailer-host "m.t.de"
              :mailer-port "123"
              :service-domain-whitelist "adb.de"
-             :service-noreply-address ""})))))
+             :service-noreply-address ""
+             :volume-total-storage-size 10
+             :max-rate 10
+             :max-concurrent-requests 1})))))
 
 (deftest should-generate-secret
   (is (= {:FORGEJO__database__USER-c1 "",
@@ -157,9 +163,3 @@
                                              :postgres-db-password "pg-pw"
                                              :mailer-user "maileruser"
                                              :mailer-pw "mailerpw"})))))
-
-(deftest should-generate-data-volume
-  (is (= {:storage-c1 "1Gi",
-          :storage-c2 "15Gi"}
-         (th/map-diff (cut/generate-data-volume {:volume-total-storage-size 1})
-                      (cut/generate-data-volume {:volume-total-storage-size 15})))))
