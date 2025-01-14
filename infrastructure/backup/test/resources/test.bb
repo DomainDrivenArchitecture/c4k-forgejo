@@ -2,61 +2,66 @@
 
 (require '[babashka.tasks :as tasks]
          '[dda.backup.core :as bc]
+         '[dda.backup.config :as cfg]
          '[dda.backup.restic :as rc]
          '[dda.backup.postgresql :as pg]
          '[dda.backup.backup :as bak]
          '[dda.backup.restore :as rs])
 
-(def restic-repo {:password-file "restic-pwd"
-                  :restic-repository "restic-repo"})
+(def config (cfg/read-config "/usr/local/bin/config.edn"))
 
-(def file-config (merge restic-repo {:backup-path "files"
-                                     :files ["test-backup"]
-                                     :restore-target-directory "test-restore"}))
+(def file-pw-change-config (merge (:file-config config)
+                                  {:new-password-file (bc/env-or-file "RESTIC_NEW_PASSWORD_FILE")}))
 
-
-(def db-config (merge restic-repo {:backup-path "db"
-                                   :pg-db "mydb"
-                                   :pg-user "user"
-                                   :pg-password "password"}))
-
-(def dry-run {:dry-run true :debug true})
+(def file-restore-config (merge
+                          (:restic-repo config)
+                          {:backup-path "files"
+                           :restore-target-directory "/var/backups/restore"
+                           :snapshot-id "latest"}))
 
 (defn prepare!
   []
-  (spit "/tmp/file_password" "file-password")
-  (println (bc/env-or-file "FILE_PASSWORD"))
-  (println (bc/env-or-file "ENV_PASSWORD"))
-  (spit "restic-pwd" "ThePassword")
-  (tasks/shell "mkdir" "-p" "test-backup")
-  (spit "test-backup/file" "I was here")
-  (tasks/shell "mkdir" "-p" "test-restore")
-  (pg/create-pg-pass! db-config))
+  (tasks/shell "mkdir" "-p" "/tmp/restic-repo")
+  (tasks/shell "mkdir" "-p" "/var/backups/gitea")
+  (tasks/shell "mkdir" "-p" "/var/backups/git/repositories")
+  (spit "/var/backups/gitea/file" "I was here")
+  (tasks/shell "mkdir" "-p" "test-restore"))
 
 (defn restic-repo-init!
   []
-  (rc/init! file-config)
-  (rc/init! (merge db-config dry-run)))
+  (rc/init! (:file-config config))
+  (rc/init! (merge (:db-config config)
+                   (:dry-run config))))
 
 (defn restic-backup!
   []
-  (bak/backup-file! file-config)
-  (bak/backup-db! (merge db-config dry-run)))
+  (bak/backup-file! (:file-config config))
+  (bak/backup-db! (merge (:db-config config)
+                         (:dry-run config))))
 
 (defn list-snapshots!
   []
-  (rc/list-snapshots! file-config)
-  (rc/list-snapshots! (merge db-config dry-run)))
+  (rc/list-snapshots! (:file-config config))
+  (rc/list-snapshots! (merge (:db-config config)
+                             (:dry-run config))))
 
 
 (defn restic-restore!
   []
-  (rs/restore-file! file-config)
-  (pg/drop-create-db! (merge db-config dry-run))
-  (rs/restore-db! (merge db-config dry-run)))
+  (pg/drop-create-db! (merge (:db-config config)
+                             (:dry-run config)))
+  (rs/restore-db! (merge (:db-config config)
+                         (:dry-run config)))
+  (rs/restore-file! file-restore-config))
+
+(defn change-password!
+  []
+  (println "change-password!")
+  (rc/change-password! file-pw-change-config))
 
 (prepare!)
 (restic-repo-init!)
 (restic-backup!)
 (list-snapshots!)
 (restic-restore!)
+(change-password!)

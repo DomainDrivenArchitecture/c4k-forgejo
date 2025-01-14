@@ -52,9 +52,8 @@ Mirrors are:
 
 For more details about our repository model see: https://repo.prod.meissa.de/meissa/federate-your-repos
 
-
 ## License
 
-Copyright © 2023, 2024 meissa GmbH
+Copyright © 2023, 2024, 2025 meissa GmbH
 Licensed under the [Apache License, Version 2.0](LICENSE) (the "License")
 Pls. find licenses of our subcomponents [here](doc/SUBCOMPONENT_LICENSE)

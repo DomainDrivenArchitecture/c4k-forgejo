@@ -1,23 +1,15 @@
 #!/usr/bin/env bb
-
 (require
  '[dda.backup.core :as bc]
+ '[dda.backup.config :as cfg]
  '[dda.backup.postgresql :as pg])
 
-
-(def restic-repo {:password-file (bc/env-or-file "RESTIC_PASSWORD_FILE")
-                  :restic-repository (bc/env-or-file "RESTIC_REPOSITORY")})
-
-(def db-config (merge restic-repo {:backup-path "pg-database"
-                                   :pg-host (bc/env-or-file "POSTGRES_SERVICE")
-                                   :pg-port (bc/env-or-file "POSTGRES_PORT")
-                                   :pg-db (bc/env-or-file "POSTGRES_DB")
-                                   :pg-user (bc/env-or-file "POSTGRES_USER")
-                                   :pg-password (bc/env-or-file "POSTGRES_PASSWORD")}))
+(def config (cfg/read-config "/usr/local/bin/config.edn"))
 
 (defn prepare!
   []
-  (pg/create-pg-pass! db-config))
+  (bc/create-aws-credentials! (:aws-config config))
+  (pg/create-pg-pass! (:db-config config)))
 
 (defn wait! []
   (while true
