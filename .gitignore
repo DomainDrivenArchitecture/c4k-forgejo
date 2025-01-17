@@ -25,8 +25,5 @@ public/js/
 *.iml
 .idea/
 
-auth.edn
-config.edn
-
 .eastwood
 

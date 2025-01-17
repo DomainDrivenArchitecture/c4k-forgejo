@@ -1,0 +1,21 @@
+{:restic-repo {:password-file #env-or-file "RESTIC_PASSWORD_FILE"
+               :restic-repository #env-or-file "RESTIC_REPOSITORY"}
+
+ :file-config #merge [#ref [:restic-repo]
+                      {:backup-path "files"
+                       :execution-directory "/var/backups/"
+                       :files ["gitea/" "git/repositories/"]}]
+
+
+ :db-config #merge [#ref [:restic-repo]
+                    {:backup-path "pg-database"
+                     :pg-host #env-or-file "POSTGRES_SERVICE"
+                     :pg-port #env-or-file "POSTGRES_PORT"
+                     :pg-db #env-or-file "POSTGRES_DB"
+                     :pg-user #env-or-file "POSTGRES_USER"
+                     :pg-password #env-or-file "POSTGRES_PASSWORD"}]
+
+ :aws-config {:aws-access-key-id #env-or-file "AWS_ACCESS_KEY_ID"
+              :aws-secret-access-key #env-or-file "AWS_SECRET_ACCESS_KEY"}
+
+ :dry-run {:dry-run true :debug true}}
