@@ -57,11 +57,11 @@
      restic-new-password: new
    ```
 3. Scale backup-restore deployment up:   
-   `kubectl -n nextcloud scale deployment backup-restore --replicas=1`
+   `kubectl -n forgejo scale deployment backup-restore --replicas=1`
 4. exec into pod and execute restore pod   
-   `kubectl -n nextcloud exec -it backup-restore -- change-password.bb`
+   `kubectl -n forgejo exec -it backup-restore -- change-password.bb`
 5. Scale backup-restore deployment down:   
-  `kubectl -n nextcloud scale deployment backup-restore --replicas=0`
+  `kubectl -n forgejo scale deployment backup-restore --replicas=0`
 6. Replace restic-password with restic-new-password in secret   
    ```
    kind: Secret
