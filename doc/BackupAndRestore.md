@@ -1,7 +1,5 @@
 # Backup Architecture details
 
-![](backup.svg)
-
 * we use restic to produce small & encrypted backups
 * backup is scheduled at `schedule: "10 23 * * *"`
 * Forgejo stores files in `/data/gitea` and `/data/git/repositories`, these files are backed up. 
@@ -22,16 +20,16 @@
 
 ## Manual restore
 
-1. Scale down forgejo deployment:
+1. Scale down forgejo deployment:  
    `kubectl -n forgejo scale deployment forgejo --replicas=0`
 2. apply backup-and-restore pod:   
   `kubectl -n forgejo scale deployment backup-restore --replicas=1`
-3. exec into pod and execute restore pod (press tab to get your exact pod name)   
+3. exec into pod and execute restore pod (press tab to get your exact pod name):   
    `kubectl -n forgejo exec -it backup-restore-... -- /usr/local/bin/restore.bb`
-4. Start forgejo again:
-   `kubectl -n forgejo scale deployment forgejo --replicas=1`
-5. remove backup-and-restore pod:   
+4. remove backup-and-restore pod:   
    `kubectl -n forgejo scale deployment backup-restore --replicas=0`
+5. start forgejo again:  
+   `kubectl -n forgejo scale deployment forgejo --replicas=1`
 
 ## Change Password
 
@@ -41,6 +39,7 @@
    metadata:
      name: backup-restore
    spec:
+     ...
        spec:
          containers:
          - name: backup-app
