@@ -39,10 +39,11 @@
                               ::mon/mon-cfg]))
 
 (def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password
-                            ::forgejo/mailer-user ::forgejo/mailer-pw
-                            ::backup/aws-access-key-id ::backup/aws-secret-access-key]
+                            ::forgejo/mailer-user ::forgejo/mailer-pw]
                    :opt-un [::backup/restic-password
                             ::backup/restic-new-password
+                            ::backup/aws-access-key-id 
+                            ::backup/aws-secret-access-key
                             ::mon/mon-auth]))
 
 (defn-spec config-objects p/map-or-seq?

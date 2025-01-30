@@ -35,11 +35,10 @@
  :deploy-federated \"false\"                                                          
  :service-noreply-address \"no-reply@test.de\"
  :volume-total-storage-size \"20\"
- :restic-repository \"s3://yourbucket/your-repo\"
-       :mon-cfg {:cluster-name \"forgejo\"
-                       :cluster-stage \"test\"
-                       :grafana-cloud-url \"https://prometheus-prod-01-eu-west-0.grafana.net/api/prom/push\"}}"
-        "11"))
+ :mon-cfg {:cluster-name \"forgejo\"
+                 :cluster-stage \"test\"
+                 :grafana-cloud-url \"https://prometheus-prod-01-eu-west-0.grafana.net/api/prom/push\"}}"
+        "10"))
       (generate-group
        "auth"
        (br/generate-text-area
@@ -49,7 +48,7 @@
 :mailer-user \"test@test.de\"
 :mailer-pw \"mail-test-password\"
 :mon-auth {:grafana-cloud-user \"your-user-id\"
-           :grafana-cloud-password \"your-cloud-password\"}}"
+                  :grafana-cloud-password \"your-cloud-password\"}}"
         "6"))
       [(br/generate-br)]
       (br/generate-button "generate-button" "Generate c4k yaml")))]
