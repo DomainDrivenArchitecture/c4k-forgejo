@@ -2,7 +2,7 @@
     "name": "c4k-forgejo",
     "description": "Generate c4k yaml for a forgejo deployment.",
     "author": "meissa GmbH",
-    "version": "4.1.2-SNAPSHOT",
+    "version": "4.1.2",
     "homepage": "https://gitlab.com/domaindrivenarchitecture/c4k-forgejo#readme",
     "repository": "https://www.npmjs.com/package/c4k-forgejo",
     "license": "APACHE2",
