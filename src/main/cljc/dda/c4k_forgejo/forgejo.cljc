@@ -100,18 +100,18 @@
         federation-enabled-bool (boolean-from-string federation-enabled)]
     (->
      (yaml/load-as-edn "forgejo/appini-env-configmap.yaml")
-     (cm/replace-all-matching-values-by-new-value "APPNAME" default-app-name)
-     (cm/replace-all-matching-values-by-new-value "FQDN" fqdn)
-     (cm/replace-all-matching-values-by-new-value "URL" (str "https://" fqdn))
-     (cm/replace-all-matching-values-by-new-value "FROM" mailer-from)
-     (cm/replace-all-matching-values-by-new-value "MAILERHOST" mailer-host)
-     (cm/replace-all-matching-values-by-new-value "MAILERPORT" mailer-port)
-     (cm/replace-all-matching-values-by-new-value "WHITELISTDOMAINS" service-domain-whitelist)
-     (cm/replace-all-matching-values-by-new-value "NOREPLY" service-noreply-address)
-     (cm/replace-all-matching-values-by-new-value "IS_FEDERATED"
-                                                  (if federation-enabled-bool
-                                                    "true"
-                                                    "false")))))
+     (cm/replace-all-matching "APPNAME" default-app-name)
+     (cm/replace-all-matching "FQDN" fqdn)
+     (cm/replace-all-matching "URL" (str "https://" fqdn))
+     (cm/replace-all-matching "FROM" mailer-from)
+     (cm/replace-all-matching "MAILERHOST" mailer-host)
+     (cm/replace-all-matching "MAILERPORT" mailer-port)
+     (cm/replace-all-matching "WHITELISTDOMAINS" service-domain-whitelist)
+     (cm/replace-all-matching "NOREPLY" service-noreply-address)
+     (cm/replace-all-matching "IS_FEDERATED"
+                              (if federation-enabled-bool
+                                "true"
+                                "false")))))
 
 (defn-spec generate-secrets pred/map-or-seq?
   [auth ::auth]

@@ -20,10 +20,9 @@
                       :pv-storage-size-gb 5
                       :pvc-storage-class-name ""
                       :postgres-image "postgres:14"
-                      :postgres-size :2gb})
-
-(def rate-limit-defaults {:max-rate 10, :max-concurrent-requests 5})
-
+                      :postgres-size :2gb
+                      :max-rate 10, 
+                      :max-concurrent-requests 5})
 
 (def config? (s/keys :req-un [::forgejo/fqdn
                               ::forgejo/mailer-from
@@ -48,40 +47,42 @@
 
 (defn-spec config-objects p/map-or-seq?
   [config config?]
-  (let [storage-class (if (contains? config :postgres-data-volume-path) :manual :local-path)]
+  (let [resolved-config (merge config-defaults config)
+        storage-class (if (contains? resolved-config :postgres-data-volume-path) :manual :local-path)]
     (map yaml/to-string
          (filter #(not (nil? %))
                  (cm/concat-vec
-                  (ns/generate config)
-                  [(postgres/generate-configmap config)
-                   (when (contains? config :postgres-data-volume-path)
-                     (postgres/generate-persistent-volume (select-keys config [:postgres-data-volume-path :pv-storage-size-gb])))
-                   (postgres/generate-pvc (merge config {:pvc-storage-class-name storage-class}))
-                   (postgres/generate-deployment config)
-                   (postgres/generate-service config)
-                   (forgejo/generate-deployment config)
+                  (ns/generate resolved-config)
+                  [(postgres/generate-configmap resolved-config)
+                   (when (contains? resolved-config :postgres-data-volume-path)
+                     (postgres/generate-persistent-volume (select-keys resolved-config [:postgres-data-volume-path :pv-storage-size-gb])))
+                   (postgres/generate-pvc (merge resolved-config {:pvc-storage-class-name storage-class}))
+                   (postgres/generate-deployment resolved-config)
+                   (postgres/generate-service resolved-config)
+                   (forgejo/generate-deployment resolved-config)
                    (forgejo/generate-service)
                    (forgejo/generate-service-ssh)
-                   (forgejo/generate-data-volume config)
-                   (forgejo/generate-appini-env config)]
-                  (forgejo/generate-ratelimit-ingress-and-cert config) ; this function has a vector as output
-                  (when (contains? config :restic-repository)
-                    [(backup/generate-config config)
+                   (forgejo/generate-data-volume resolved-config)
+                   (forgejo/generate-appini-env resolved-config)]
+                  (forgejo/generate-ratelimit-ingress-and-cert resolved-config) ; this function has a vector as output
+                  (when (contains? resolved-config :restic-repository)
+                    [(backup/generate-config resolved-config)
                      (backup/generate-cron)
-                     (backup/generate-backup-restore-deployment config)])
-                  (when (contains? config :mon-cfg)
+                     (backup/generate-backup-restore-deployment resolved-config)])
+                  (when (contains? resolved-config :mon-cfg)
                     (mon/generate-config)))))))
 
 (defn-spec auth-objects p/map-or-seq?
   [config config?
    auth auth?]
-  (map yaml/to-string
-       (filter #(not (nil? %))
-               (cm/concat-vec
-                (ns/generate config)
-                [(postgres/generate-secret config auth)
-                 (forgejo/generate-secrets auth)]
-                (when (contains? config :restic-repository)
-                  [(backup/generate-secret auth)])
-                (when (contains? config :mon-cfg)
-                  (mon/generate-auth (:mon-cfg config) (:mon-auth auth)))))))
+  (let [resolved-config (merge config-defaults config)]
+    (map yaml/to-string
+         (filter #(not (nil? %))
+                 (cm/concat-vec
+                  (ns/generate resolved-config)
+                  [(postgres/generate-secret resolved-config auth)
+                   (forgejo/generate-secrets auth)]
+                  (when (contains? resolved-config :restic-repository)
+                    [(backup/generate-secret auth)])
+                  (when (contains? resolved-config :mon-cfg)
+                    (mon/generate-auth (:mon-cfg resolved-config) (:mon-auth auth))))))))
