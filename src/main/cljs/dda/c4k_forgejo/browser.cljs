@@ -1,9 +1,9 @@
 (ns dda.c4k-forgejo.browser
   (:require
    [clojure.tools.reader.edn :as edn]
-   [dda.c4k-forgejo.core :as core]
    [dda.c4k-common.browser :as br]
-   [dda.c4k-common.common :as cm]))
+   [dda.c4k-common.common :as cm]
+   [dda.c4k-forgejo.core :as core]))
 
 (defn generate-group
   [name
