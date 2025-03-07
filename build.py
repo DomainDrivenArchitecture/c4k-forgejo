@@ -150,12 +150,12 @@ def inst(project):
         shell=True,
         check=True,
     )
-    package_native(project)
     run(
         "sudo install -m=755 target/uberjar/" + project.name + "-standalone.jar /usr/local/bin/" + project.name + "-standalone.jar",
         shell=True,
         check=True,
     )
+    package_native(project)
     run(
         "sudo install -m=755 target/graalvm/" + project.name + " /usr/local/bin/" + project.name + "",
         shell=True,
