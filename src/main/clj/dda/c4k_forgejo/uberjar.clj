@@ -1,8 +1,8 @@
 (ns dda.c4k-forgejo.uberjar
   (:gen-class)
   (:require
-   [dda.c4k-forgejo.core :as core]
-   [dda.c4k-common.uberjar :as uberjar]))
+   [dda.c4k-common.uberjar :as uberjar]
+   [dda.c4k-forgejo.core :as core]))
 
 (set! *warn-on-reflection* true)
 
