@@ -14,8 +14,8 @@
 
 (def config-defaults {:namespace "forgejo"
                       :issuer "staging"
-                      :deploy-federated "false"
                       :federation-enabled "false"
+                      :forgejo-image "codeberg.org/forgejo/forgejo:8.0.3"
                       :db-name "forgejo"
                       :pv-storage-size-gb 5
                       :pvc-storage-class-name :local-path
@@ -30,11 +30,10 @@
                               ::forgejo/mailer-port
                               ::forgejo/service-noreply-address]
                      :opt-un [::forgejo/issuer
-                              ::forgejo/deploy-federated
                               ::forgejo/federation-enabled
                               ::forgejo/default-app-name
                               ::forgejo/service-domain-whitelist
-                              ::forgejo/forgejo-image-version-overwrite
+                              ::forgejo/forgejo-image
                               ::backup/restic-repository
                               ::mon/mon-cfg]))
 
