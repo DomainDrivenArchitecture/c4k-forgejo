@@ -18,7 +18,7 @@
                       :federation-enabled "false"
                       :db-name "forgejo"
                       :pv-storage-size-gb 5
-                      :pvc-storage-class-name ""
+                      :pvc-storage-class-name :local-path
                       :postgres-image "postgres:14"
                       :postgres-size :2gb
                       :max-rate 10, 
@@ -56,7 +56,8 @@
                   (ns/generate resolved-config)
                   [(postgres/generate-configmap resolved-config)
                    (when (contains? resolved-config :postgres-data-volume-path)
-                     (postgres/generate-persistent-volume (select-keys resolved-config [:postgres-data-volume-path :pv-storage-size-gb])))
+                     (postgres/generate-persistent-volume 
+                      (select-keys resolved-config [:postgres-data-volume-path :pv-storage-size-gb])))
                    (postgres/generate-pvc (merge resolved-config {:pvc-storage-class-name storage-class}))
                    (postgres/generate-deployment resolved-config)
                    (postgres/generate-service resolved-config)
