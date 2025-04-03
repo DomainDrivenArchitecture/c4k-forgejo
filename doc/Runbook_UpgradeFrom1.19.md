@@ -7,7 +7,8 @@
 * 1.21.1-0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-1-0
 * 7.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-0
 * 8.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#8-0-0
-
+* 9.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/9.0.0.md
+* 
 ## Preparations
 
 1. Stop Forgejo Prod: `k scale deployment forgejo --replicas=0`
@@ -83,6 +84,13 @@
 1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
 1. Delete app.ini: `k exec -n forgejo -it backup-restore-... -- rm /var/backups/gitea/conf/app.ini`
 1. Set version to `8.0.3` with `k edit -n forgejo deployment forgejo`
+1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
+1. Check for errors: `k logs -n forgejo forgejo-...`
+
+## Upgrade to 9.0.3 (no relevant breaking changes)
+
+1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
+1. Set version to `9.0.3` with `k edit -n forgejo deployment forgejo`
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
 1. Check for errors: `k logs -n forgejo forgejo-...`
 

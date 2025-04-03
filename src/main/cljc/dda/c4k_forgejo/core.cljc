@@ -15,7 +15,7 @@
 (def config-defaults {:namespace "forgejo"
                       :issuer "staging"
                       :federation-enabled "false"
-                      :forgejo-image "codeberg.org/forgejo/forgejo:8.0.3"
+                      :forgejo-image "codeberg.org/forgejo/forgejo:9.0.3"
                       :db-name "forgejo"
                       :pv-storage-size-gb 5
                       :pvc-storage-class-name :local-path
