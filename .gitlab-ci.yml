@@ -122,11 +122,3 @@ forgejo-backup-image-publish:
   stage: image
   script:
     - cd infrastructure/backup && pyb image publish
-
-# This is currently not needed
-#forgejo-federated-image-publish:
-#  <<: *img
-#  <<: *tag_only
-#  stage: image
-#  script:
-#    - cd infrastructure/federated && pyb image publish
