@@ -94,6 +94,13 @@
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
 1. Check for errors: `k logs -n forgejo forgejo-...`
 
+## Upgrade to 10.0.3 (no relevant breaking changes)
+
+1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
+1. Set version to `10.0.3` with `k edit -n forgejo deployment forgejo`
+1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
+1. Check for errors: `k logs -n forgejo forgejo-...`
+
 ## Enable Federation
 
 1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
