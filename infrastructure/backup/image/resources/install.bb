@@ -14,4 +14,5 @@
 (in/install! "list-snapshots.bb")
 (in/install! "change-password.bb")
 (in/install! "wait.bb")
+(in/install! "monitoring.bb")
 (ub/cleanup-container!)

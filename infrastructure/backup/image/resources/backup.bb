@@ -5,6 +5,7 @@
  '[dda.backup.config :as cfg]
  '[dda.backup.restic :as rc]
  '[dda.backup.postgresql :as pg]
+ '[dda.backup.monitoring :as mon]
  '[dda.backup.backup :as bak])
 
 (def config (cfg/read-config "/usr/local/bin/config.edn"))
@@ -24,6 +25,13 @@
   (bak/backup-file! (:file-config config))
   (bak/backup-db! (:db-config config)))
 
-(prepare!)
-(restic-repo-init!)
-(restic-backup!)
+
+(try
+  (restic-repo-init!)
+  (mon/backup-start-metrics! (:db-config config))
+  (prepare!)
+  (restic-repo-init!)
+  (restic-backup!)
+  (mon/backup-success-metrics! (:db-config config))
+  (catch Exception e
+    (mon/backup-fail-metrics! (:db-config config))))

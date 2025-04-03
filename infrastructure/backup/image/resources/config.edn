@@ -1,11 +1,13 @@
-{:restic-repo {:password-file #env-or-file "RESTIC_PASSWORD_FILE"
-               :restic-repository #env-or-file "RESTIC_REPOSITORY"}
+{:monitoring {:namespace "forgejo"}
+
+ :restic-repo #merge [#ref [:monitoring]
+                      {:password-file #env-or-file "RESTIC_PASSWORD_FILE"
+                       :restic-repository #env-or-file "RESTIC_REPOSITORY"}]
 
  :file-config #merge [#ref [:restic-repo]
                       {:backup-path "files"
                        :execution-directory "/var/backups/"
                        :files ["gitea/" "git/repositories/"]}]
-
 
  :db-config #merge [#ref [:restic-repo]
                     {:backup-path "pg-database"
