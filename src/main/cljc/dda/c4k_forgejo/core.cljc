@@ -7,8 +7,8 @@
    [dda.c4k-common.common :as cm]
    [dda.c4k-common.predicate :as p]
    [dda.c4k-common.monitoring :as mon]
+   [dda.c4k-common.backup :as backup]
    [dda.c4k-forgejo.forgejo :as forgejo]
-   [dda.c4k-forgejo.backup :as backup]
    [dda.c4k-common.postgres :as postgres]
    [dda.c4k-common.namespace :as ns]))
 
@@ -21,6 +21,12 @@
                       :pvc-storage-class-name :local-path
                       :postgres-image "postgres:14"
                       :postgres-size :2gb
+                      :backup-image "domaindrivenarchitecture/c4k-forgejo-backup"
+                      :app-name "forgejo"
+                      :backup-postgres true
+                      :backup-volume-mount {:mount-name "forgejo-data-volume"
+                                            :pvc-name "forgejo-data-pvc"
+                                            :mount-path "/var/backups"}
                       :max-rate 10, 
                       :max-concurrent-requests 5})
 
@@ -67,9 +73,7 @@
                    (forgejo/generate-appini-env resolved-config)]
                   (forgejo/generate-ratelimit-ingress-and-cert resolved-config) ; this function has a vector as output
                   (when (contains? resolved-config :restic-repository)
-                    [(backup/generate-config resolved-config)
-                     (backup/generate-cron)
-                     (backup/generate-backup-restore-deployment resolved-config)])
+                    (backup/config-objects resolved-config))
                   (when (contains? resolved-config :mon-cfg)
                     (mon/generate-config)))))))
 
@@ -84,6 +88,6 @@
                   [(postgres/generate-secret resolved-config auth)
                    (forgejo/generate-secrets auth)]
                   (when (contains? resolved-config :restic-repository)
-                    [(backup/generate-secret auth)])
+                    (backup/auth-objects resolved-config auth))
                   (when (contains? resolved-config :mon-cfg)
                     (mon/generate-auth (:mon-cfg resolved-config) (:mon-auth auth))))))))
