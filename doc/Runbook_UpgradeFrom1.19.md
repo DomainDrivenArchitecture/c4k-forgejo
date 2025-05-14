@@ -9,7 +9,6 @@
 * 8.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#8-0-0
 * 9.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/9.0.0.md
 
-
 ## Preparations
 
 1. Stop Forgejo Prod: `k scale deployment forgejo --replicas=0`
