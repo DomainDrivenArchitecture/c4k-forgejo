@@ -8,7 +8,8 @@
 * 7.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-0
 * 8.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#8-0-0
 * 9.0.0: https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/9.0.0.md
-* 
+
+
 ## Preparations
 
 1. Stop Forgejo Prod: `k scale deployment forgejo --replicas=0`
@@ -98,6 +99,13 @@
 
 1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
 1. Set version to `10.0.3` with `k edit -n forgejo deployment forgejo`
+1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
+1. Check for errors: `k logs -n forgejo forgejo-...`
+
+## Upgrade to 11.0.1 (no relevant breaking changes)
+
+1. Scale down Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=0`
+1. Set version to `11.0.1` with `k edit -n forgejo deployment forgejo`
 1. Scale up Forgejo Deployment: `k scale -n forgejo deployment forgejo --replicas=1`
 1. Check for errors: `k logs -n forgejo forgejo-...`
 

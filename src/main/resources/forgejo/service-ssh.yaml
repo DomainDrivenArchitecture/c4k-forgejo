@@ -8,6 +8,10 @@ metadata:
     metallb.universe.tf/address-pool: public
 spec:
   type: LoadBalancer
+  ipFamilies:
+  - IPv4
+  - IPv6
+  ipFamilyPolicy: PreferDualStack
   selector:
     app: forgejo
   ports:
