@@ -7,6 +7,7 @@
    [dda.c4k-common.common :as cm]
    [dda.c4k-common.monitoring :as mon]
    [dda.c4k-common.backup :as backup]
+   [dda.c4k-common.ingress :as ing]
    [dda.c4k-forgejo.forgejo :as forgejo]
    [dda.c4k-common.postgres :as postgres]
    [dda.c4k-common.namespace :as ns]))
@@ -94,7 +95,7 @@
                  (cm/concat-vec
                   (ns/generate resolved-config)
                   [(postgres/generate-secret resolved-config auth)]
-                  (forgejo/auth auth)
+                  (forgejo/auth config auth)
                   (when (contains? resolved-config :restic-repository)
                     (backup/auth-objects resolved-config auth))
                   (when (contains? resolved-config :mon-cfg)
