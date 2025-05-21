@@ -42,12 +42,13 @@ data:
 
   #[oauth2]
   FORGEJO__oauth2__ENABLED: "true"
+  FORGEJO__oauth2__REGISTER_EMAIL_CONFIRM: REGISTER_EMAIL_CONFIRM
+  FORGEJO__oauth2__ENABLE_AUTO_REGISTRATION: "true"
+  FORGEJO__oauth2__ACCOUNT_LINKING: "login"
 
   #[openid]
-  FORGEJO__openid__ENABLE_OPENID: "true"
-  FORGEJO__openid__ENABLE_OPENID_SIGNIN: "true"
-  FORGEJO__openid__ENABLE_OPENID_SIGNUP: "true"
-
+  FORGEJO__openid__ENABLE_OPENID: "false"
+  
   #[picture]
   FORGEJO__picture__AVATAR_UPLOAD_PATH: /data/gitea/avatars
   FORGEJO__picture__REPOSITORY_AVATAR_UPLOAD_PATH: /data/gitea/repo-avatars
@@ -58,7 +59,7 @@ data:
   FORGEJO__repository__ROOT: /data/git/repositories
   FORGEJO__repository__DEFAULT_PRIVATE: last
   FORGEJO__repository__LOCAL_COPY_PATH: /data/gitea/tmp/local-repo
-  FORGEJO__repository__TEMP_PATH: /data/gitea/uploads    
+  FORGEJO__repository__TEMP_PATH: /data/gitea/uploads
 
   #[security]
   FORGEJO__security__INSTALL_LOCK: "true"
@@ -71,12 +72,12 @@ data:
   FORGEJO__server__SSH_PORT: "2222"     # SSH port displayed in clone URL
 
   #[service]
-  FORGEJO__service__DISABLE_REGISTRATION: "false"  
+  FORGEJO__service__DISABLE_REGISTRATION: "false"
+  FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: ALLOW_ONLY_EXTERNAL_REGISTRATION
   FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
-  FORGEJO__service__REGISTER_EMAIL_CONFIRM: "true"
+  FORGEJO__service__REGISTER_EMAIL_CONFIRM: REGISTER_EMAIL_CONFIRM
   FORGEJO__service__ENABLE_NOTIFY_MAIL: "true"
   FORGEJO__service__EMAIL_DOMAIN_ALLOWLIST: WHITELISTDOMAINS 
-  FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "false"
   FORGEJO__service__ENABLE_BASIC_AUTHENTICATION: "true"
   FORGEJO__service__ENABLE_CAPTCHA: "false"
   FORGEJO__service__DEFAULT_KEEP_EMAIL_PRIVATE: "true"
@@ -87,3 +88,6 @@ data:
   #[session]
   FORGEJO__session__PROVIDER_CONFIG: /data/gitea/sessions
   FORGEJO__session__PROVIDER: file
+  FORGEJO__session__COOKIE_SECURE: "true"
+  FORGEJO__session__SAME_SITE: "strict"
+  FORGEJO__session__SESSION_LIFE_TIME: SESSION_LIFETIME
