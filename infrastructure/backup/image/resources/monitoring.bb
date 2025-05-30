@@ -4,7 +4,7 @@
  '[dda.backup.monitoring :as mon])
 
 (def config {:metrics {:kube_job_status_active 0
-                       :kube_job_status_failed 1
+                       :kube_job_status_failed 0
                        :kube_job_status_succeeded 0
                        :kube_job_status_start_time (/ (System/currentTimeMillis) 1000)}})
 
