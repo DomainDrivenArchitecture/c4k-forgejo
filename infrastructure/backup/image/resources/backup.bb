@@ -27,9 +27,9 @@
 
 
 (try
+  (prepare!)
   (restic-repo-init!)
   (mon/backup-start-metrics! (:db-config config))
-  (prepare!)
   (restic-repo-init!)
   (restic-backup!)
   (mon/backup-success-metrics! (:db-config config))
