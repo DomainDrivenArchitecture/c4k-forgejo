@@ -8,5 +8,5 @@ aws-secret-access-key: "AWS_KEY_SECRET"
 restic-password: "old"
 restic-new-password: "new"
 mon-auth: 
-  grafana-cloud-user: "user"
-  grafana-cloud-password: "password"
+  remote-write-user: "user"
+  remote-write-password: "password"
