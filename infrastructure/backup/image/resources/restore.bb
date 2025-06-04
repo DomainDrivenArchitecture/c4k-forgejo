@@ -28,10 +28,16 @@
 (defn restic-restore!
   []
   (rs/restore-file! file-config)
-  (tasks/shell ["bash" "-c" "rm -rf /var/backups/gitea/*"])
-  (tasks/shell ["bash" "-c" "rm -rf /var/backups/git/repositories/*"])
+  (try 
+    (tasks/shell ["bash" "-c" "rm -rf /var/backups/gitea/*"])
+    (catch Exception e (println e)))
+  (try
+    (tasks/shell ["bash" "-c" "rm -rf /var/backups/git/repositories/*"])
+    (catch Exception e (println e)))
   (tasks/shell ["mv" "/var/backups/restore/gitea" "/var/backups/"])
-  (tasks/shell ["mv" "/var/backups/restore/git/repositories" "/var/backups/git/"])
+  (try 
+    (tasks/shell ["mv" "/var/backups/restore/git/repositories" "/var/backups/git/"])
+    (catch Exception e (println e)))
   (tasks/shell ["chown" "-R" "1000:1000" "/var/backups"])
   (pg/drop-create-db! db-config)
   (rs/restore-db! db-config))
