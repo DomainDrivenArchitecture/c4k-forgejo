@@ -33,70 +33,82 @@
                       :max-rate 100, 
                       :max-concurrent-requests 150})
 
-(def config? (s/keys :req-un [::forgejo/fqdn
-                              ::forgejo/mailer-from
-                              ::forgejo/mailer-host
-                              ::forgejo/mailer-port
-                              ::forgejo/service-noreply-address]
-                     :opt-un [::forgejo/issuer
-                              ::forgejo/federation-enabled
-                              ::forgejo/default-app-name
-                              ::forgejo/session-lifetime
-                              ::forgejo/service-domain-whitelist
-                              ::forgejo/forgejo-image
-                              ::backup/restic-repository
-                              ::mon/mon-cfg]))
+(s/def ::config (s/keys :req-un [::forgejo/fqdn
+                                 ::forgejo/mailer-from
+                                 ::forgejo/mailer-host
+                                 ::forgejo/mailer-port
+                                 ::forgejo/service-noreply-address]
+                        :opt-un [::forgejo/issuer
+                                 ::forgejo/federation-enabled
+                                 ::forgejo/default-app-name
+                                 ::forgejo/session-lifetime
+                                 ::forgejo/service-domain-whitelist
+                                 ::forgejo/forgejo-image
+                                 ::backup/restic-repository
+                                 ::mon/mon-cfg]))
 
-(def auth? (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password
-                            ::forgejo/mailer-user ::forgejo/mailer-pw
-                            ::forgejo/secret-key]
-                   :opt-un [::backup/restic-password
-                            ::backup/restic-new-password
-                            ::backup/aws-access-key-id 
-                            ::backup/aws-secret-access-key
-                            ::mon/mon-auth]))
+(s/def ::auth (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password
+                               ::forgejo/mailer-user ::forgejo/mailer-pw
+                               ::forgejo/secret-key]
+                      :opt-un [::backup/restic-password
+                               ::backup/restic-new-password
+                               ::backup/aws-access-key-id
+                               ::backup/aws-secret-access-key
+                               ::mon/mon-auth]))
+
+(s/def ::config-select (s/* #{"auth" "deployment"}))
 
 (defn-spec config-objects seq?
-  [config config?]
+  [config-select ::config-select
+   config ::config]
   (let [resolved-config (merge config-defaults config)
         storage-class (if (contains? resolved-config :postgres-data-volume-path) :manual :local-path)
-        {:keys [fqdn max-rate max-concurrent-requests namespace]} resolved-config]
+        {:keys [fqdn max-rate max-concurrent-requests namespace]} resolved-config
+        config-parts (if (empty? config-select)
+                       ["auth" "deployment"]
+                       config-select)]
     (map yaml/to-string
-         (filter #(not (nil? %))
-                 (cm/concat-vec
-                  (ns/generate resolved-config)
-                  [(postgres/generate-configmap resolved-config)
-                   (when (contains? resolved-config :postgres-data-volume-path)
-                     (postgres/generate-persistent-volume
-                      (select-keys resolved-config [:postgres-data-volume-path :pv-storage-size-gb])))
-                   (postgres/generate-pvc (merge resolved-config {:pvc-storage-class-name storage-class}))
-                   (postgres/generate-deployment resolved-config)
-                   (postgres/generate-service resolved-config)]
-                  (forgejo/config resolved-config)
-                  (ing/generate-simple-ingress (merge
-                                                {:service-name "forgejo-service"
-                                                 :service-port 3000
-                                                 :fqdns [fqdn]
-                                                 :average-rate max-rate
-                                                 :burst-rate max-concurrent-requests
-                                                 :namespace namespace}
-                                                resolved-config))
-                  (when (contains? resolved-config :restic-repository)
-                    (backup/config-objects resolved-config))
-                  (when (contains? resolved-config :mon-cfg)
-                    (mon/generate-config)))))))
+         (cm/concat-vec
+          (when (some #(= "deployment" %) config-parts)
+            (cm/concat-vec
+             (ns/generate resolved-config)
+             [(postgres/generate-configmap resolved-config)
+              (when (contains? resolved-config :postgres-data-volume-path)
+                (postgres/generate-persistent-volume
+                 (select-keys resolved-config [:postgres-data-volume-path :pv-storage-size-gb])))
+              (postgres/generate-pvc (merge resolved-config {:pvc-storage-class-name storage-class}))
+              (postgres/generate-deployment resolved-config)
+              (postgres/generate-service resolved-config)]
+             (forgejo/config resolved-config)
+             (ing/config-objects (merge
+                                  {:service-name "forgejo-service"
+                                   :service-port 3000
+                                   :fqdns [fqdn]
+                                   :average-rate max-rate
+                                   :burst-rate max-concurrent-requests
+                                   :namespace namespace}
+                                  resolved-config))
+             (when (contains? resolved-config :restic-repository)
+               (backup/config-objects resolved-config))
+             (when (contains? resolved-config :mon-cfg)
+               (mon/config-objects resolved-config))))))))
 
 (defn-spec auth-objects seq?
-  [config config?
-   auth auth?]
-  (let [resolved-config (merge config-defaults config)]
+  [config-select ::config-select
+   config ::config
+   auth ::auth]
+  (let [resolved-config (merge config-defaults config)
+        config-parts (if (empty? config-select)
+                       ["auth" "deployment" "dashboards"]
+                       config-select)]
     (map yaml/to-string
-         (filter #(not (nil? %))
-                 (cm/concat-vec
-                  (ns/generate resolved-config)
-                  [(postgres/generate-secret resolved-config auth)]
-                  (forgejo/auth config auth)
-                  (when (contains? resolved-config :restic-repository)
-                    (backup/auth-objects resolved-config auth))
-                  (when (contains? resolved-config :mon-cfg)
-                    (mon/generate-auth (:mon-cfg resolved-config) (:mon-auth auth))))))))
+         (if (some #(= "auth" %) config-parts)
+           (cm/concat-vec
+            (ns/generate resolved-config)
+            [(postgres/generate-secret resolved-config auth)]
+            (forgejo/auth config auth)
+            (when (contains? resolved-config :restic-repository)
+              (backup/auth-objects resolved-config auth))
+            (when (contains? resolved-config :mon-cfg)
+              (mon/auth-objects (:mon-cfg resolved-config) (:mon-auth auth))))
+           []))))
