@@ -9,8 +9,8 @@
 (defn -main [& cmd-args]
   (uberjar/main-cm
    "c4k-forgejo"
-   ::core/config
-   ::core/auth
+   core/config?
+   core/auth?
    core/config-defaults
    core/config-objects
    core/auth-objects
