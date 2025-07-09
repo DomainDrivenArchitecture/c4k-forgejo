@@ -16,7 +16,7 @@
                       :default-app-name "forgejo instance"
                       :issuer "staging"
                       :federation-enabled "false"
-                      :forgejo-image "codeberg.org/forgejo/forgejo:11.0.1"
+                      :forgejo-image "codeberg.org/forgejo/forgejo:11.0.2"
                       :sso-mode :none
                       :db-name "forgejo"
                       :volume-total-storage-size 50
