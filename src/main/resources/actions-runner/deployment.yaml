@@ -1,3 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: forgejo-runner-service
+  namespace: forgejo
+spec:
+  selector:
+    app: forgejo-runner
+  ports:
+    - name: forgejo-http
+      port: 80
+---
 # Secret data.
 # You will need to retrieve this from the web UI, and your Forgejo instance must be running v1.21+
 # Alternatively, create this with
@@ -114,7 +126,6 @@ data:
       # If you want to allow any volume, please use the following configuration:
       # valid_volumes:
       #   - '**'
-      valid_volumes: []
       # overrides the docker client host with the specified one.
       # If "-" or "", an available docker host will automatically be found.
       # If "automount", an available docker host will automatically be found and mounted in the job container (e.g. /var/run/docker.sock).
@@ -156,55 +167,6 @@ spec:
     spec:
       automountServiceAccountToken: false
       restartPolicy: Always
-      initContainers:
-        - name: runner-register
-          image: code.forgejo.org/forgejo/runner:7.0.0
-          command:
-            - /bin/bash
-            - -c
-          args:
-            - |
-              while : ; do
-                forgejo-runner register --no-interactive --token $(RUNNER_SECRET) --name $(RUNNER_NAME) --instance $(FORGEJO_INSTANCE_URL) && break ;
-                sleep 1 ;
-              done ;
-          env:
-            - name: RUNNER_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: RUNNER_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: runner-secret
-                  key: token
-            - name: FORGEJO_INSTANCE_URL
-              value: forgejo # Service name, we are in the same namespace
-          resources:
-            limits:
-              cpu: '0.5'
-              ephemeral-storage: 100Mi
-              memory: 64Mi
-            requests:
-              cpu: 100m
-              ephemeral-storage: '0'
-              memory: 64Mi
-          volumeMounts:
-            - name: runner-data
-              mountPath: /data
-            - name: config
-              mountPath: /data/config.yaml
-              subPath: "config.yaml"
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            privileged: false
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            seccompProfile:
-              type: RuntimeDefault
       containers:
         - name: runner
           image: code.forgejo.org/forgejo/runner:7.0.0
@@ -217,7 +179,12 @@ spec:
                 echo 'waiting for docker daemon...' ;
                 sleep 5 ;
                 done ;
-              forgejo-runner --config config.yml daemon
+              echo "Done starting runner, registering"
+              forgejo-runner create-runner-file --secret ${RUNNER_TOKEN} --name ${RUNNER_NAME} --instance ${FORGEJO_INSTANCE_URL};
+              echo "=== Conf Dir ==="
+              echo $(ls -la /conf)
+              echo "Done registering, starting runner"
+              forgejo-runner --config /conf/config.yaml daemon
           env:
             - name: DOCKER_HOST
               value: tcp://localhost:2376
@@ -225,6 +192,17 @@ spec:
               value: /certs/client
             - name: DOCKER_TLS_VERIFY
               value: '0'
+            - name: RUNNER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: runner-secret
+                  key: token
+            - name: RUNNER_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: FORGEJO_INSTANCE_URL
+              value: http://forgejo-service:3000
           resources:
             limits:
               cpu: '1'
@@ -242,8 +220,8 @@ spec:
             - name: tmp
               mountPath: /tmp
             - name: config
-              mountPath: /data/config.yaml
-              subPath: "config.yaml"
+              mountPath: /conf
+              readOnly: true
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -254,6 +232,9 @@ spec:
             runAsNonRoot: true
             seccompProfile:
               type: RuntimeDefault
+          ports:
+            - containerPort: 80
+              name: runner-port
         - name: daemon
           image: docker.io/docker:28.3.0-dind
           env:
