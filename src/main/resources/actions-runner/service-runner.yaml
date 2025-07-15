@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: forgejo-runner-service
+  namespace: forgejo
+spec:
+  selector:
+    app: forgejo-runner
+  ports:
+    - name: forgejo-http
+      port: 80
