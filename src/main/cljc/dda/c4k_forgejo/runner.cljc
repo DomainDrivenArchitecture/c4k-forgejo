@@ -12,18 +12,20 @@
    #?(:cljs [dda.c4k-common.macros :refer-macros [inline-resources]])))
 
 (s/def ::runner-id string?)
-(s/def ::forgejo-service-url string?)
+(s/def ::forgejo-service-name string?)
+(s/def ::forgejo-service-port int?)
 (s/def ::runner-token string?)
 
 (s/def ::config (s/keys :req-un [::runner-id
-                                 ::forgejo-service-url]))
+                                 ::forgejo-service-name
+                                 ::forgejo-service-port]))
 (s/def ::auth (s/keys :req-un [::runner-token]))
 
 #?(:cljs
    (defmethod yaml/load-resource :runner [resource-name]
      (get (inline-resources "runner") resource-name)))
 
-(defn-spec generate-appini-env map?
+(defn-spec generate-configmap map?
   [config ::config]
   (let [{:keys [runner-id]} config]
     (->
@@ -35,14 +37,15 @@
   (let [{:keys [runner-token]} auth]
     (->
      (yaml/load-as-edn "runner/secret-runner.yaml")
-     (cm/replace-all-matching "RUNNER_SECRET" (b64/encode runner-token)))))
+     (cm/replace-all-matching "RUNNER_SECRET" runner-token))))
 
 (defn-spec generate-deployment map?
   [config ::config]
-  (let [{:keys [forgejo-service-url]} config]
+  (let [{:keys [forgejo-service-name
+                forgejo-service-port]} config]
     (->
      (yaml/load-as-edn "runner/deployment-runner.yaml")
-     (cm/replace-all-matching "FORGEJO_SERVICE_URL" forgejo-service-url))))
+     (cm/replace-all-matching "FORGEJO_SERVICE_URL" (str "http://" forgejo-service-name ":" forgejo-service-port)))))
 
 (defn-spec generate-service map?
   []
