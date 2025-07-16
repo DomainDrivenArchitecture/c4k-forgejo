@@ -12,13 +12,13 @@
    #?(:cljs [dda.c4k-common.macros :refer-macros [inline-resources]])))
 
 (s/def ::runner-id string?)
-(s/def ::forgejo-service-name string?)
-(s/def ::forgejo-service-port int?)
+(s/def ::service-name string?)
+(s/def ::service-port int?)
 (s/def ::runner-token string?)
 
 (s/def ::config (s/keys :req-un [::runner-id
-                                 ::forgejo-service-name
-                                 ::forgejo-service-port]))
+                                 ::service-name
+                                 ::service-port]))
 (s/def ::auth (s/keys :req-un [::runner-token]))
 
 #?(:cljs
@@ -41,11 +41,11 @@
 
 (defn-spec generate-deployment map?
   [config ::config]
-  (let [{:keys [forgejo-service-name
-                forgejo-service-port]} config]
+  (let [{:keys [service-name
+                service-port]} config]
     (->
      (yaml/load-as-edn "runner/deployment-runner.yaml")
-     (cm/replace-all-matching "FORGEJO_SERVICE_URL" (str "http://" forgejo-service-name ":" forgejo-service-port)))))
+     (cm/replace-all-matching "FORGEJO_SERVICE_URL" (str "http://" service-name ":" service-port)))))
 
 (defn-spec generate-service map?
   []

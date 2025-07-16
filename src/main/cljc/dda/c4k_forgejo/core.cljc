@@ -115,9 +115,7 @@
            (cm/concat-vec
             (ns/generate resolved-config)
             [(postgres/generate-secret resolved-config auth)]
-            (forgejo/auth config auth (if (contains? config :runner-id)
-                                        true
-                                        false))
+            (forgejo/auth config auth)
             (when (contains? config :runner-id)
               (runner/auth auth))
             (when (contains? resolved-config :restic-repository)

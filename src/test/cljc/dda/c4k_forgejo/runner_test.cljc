@@ -14,8 +14,8 @@
 (st/instrument `cut/generate-secrets)
 
 (def config {:runner-id "runner"
-             :forgejo-service-name "service"
-             :forgejo-service-port 3000})
+             :service-name "service"
+             :service-port 3000})
 
 (def auth {:runner-token "adefbc345ffaaegb4533"})
 
