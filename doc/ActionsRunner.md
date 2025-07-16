@@ -17,6 +17,7 @@
      forgejo forgejo-cli actions register --name runner-name --scope myorganization \
          --secret 7c31591e8b67225a116d4a4519ea8e507e08f71f
      ```
+        - This will register the runner as global
     - Forgejo Instanz -> Runner
         -
             ```
