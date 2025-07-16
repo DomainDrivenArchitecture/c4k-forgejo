@@ -151,7 +151,7 @@
                  :args
                  ["echo \"Registering the runner\"\nsu -c \"forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}\" git\n"],
                  :env
-                 [{:name "RUNNER_NAME", :valueFrom {:configMapRef {:name "forgejo-runner-config", :key "runner-id"}}}
+                 [{:name "RUNNER_NAME", :valueFrom {:configMapKeyRef {:name "forgejo-runner-config", :key "runner-id"}}}
                   {:name "RUNNER_TOKEN", :valueFrom {:secretKeyRef {:name "runner-secret", :key "token"}}}]}],
                :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
            (cut/generate-deployment config true)))))

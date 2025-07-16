@@ -31,7 +31,7 @@
             {:name "DOCKER_CERT_PATH", :value "/certs/client"}
             {:name "DOCKER_TLS_VERIFY", :value "0"}
             {:name "RUNNER_TOKEN", :valueFrom {:secretKeyRef {:name "runner-secret", :key "token"}}}
-            {:name "RUNNER_NAME", :valueFrom {:configMapRef {:name "forgejo-runner-config", :key "runner-id"}}}
+            {:name "RUNNER_NAME", :valueFrom {:configMapKeyRef {:name "forgejo-runner-config", :key "runner-id"}}}
             {:name "FORGEJO_INSTANCE_URL", :value "http://service:3000"}],
            :resources
            {:limits {:cpu "1", :ephemeral-storage "3Gi", :memory "4Gi"},

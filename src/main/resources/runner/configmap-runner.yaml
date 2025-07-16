@@ -21,7 +21,7 @@ data:
         DOCKER_CERT_PATH: /certs/client
       env_file: .env
       timeout: 1h # The timeout for a job to be finished.
-      shutdown_timeout: 5min # timeout after cancelling a job
+      shutdown_timeout: 5m # timeout after cancelling a job
       insecure: false
       fetch_timeout: 5s
       fetch_interval: 2s
