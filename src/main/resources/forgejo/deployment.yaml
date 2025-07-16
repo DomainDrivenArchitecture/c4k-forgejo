@@ -21,6 +21,24 @@ spec:
           image: IMAGE_NAME
           imagePullPolicy: IfNotPresent
           # config settings
+          command: # TODO command:, args: and env: should only be inserted conditionally
+            - /bin/bash
+            - -c
+          args:
+            - |
+              echo "Registering the runner"
+              su -c "forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}" git
+          env:
+            - name: RUNNER_NAME
+              valueFrom:
+                configMapRef:
+                  name: forgejo-runner-config
+                  key: runner-id
+            - name: RUNNER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: runner-secret
+                  key: token
           envFrom:
             - configMapRef:
                 name: forgejo-env
