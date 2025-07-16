@@ -8,7 +8,7 @@
    [dda.c4k-forgejo.core :as cut]
     #?(:cljs [dda.c4k-common.macros :refer-macros [inline-resources]])))
 
-(st/instrument `cut/onfig-objects)
+(st/instrument `cut/config-objects)
 (st/instrument `cut/auth-objects)
 
 #?(:cljs
@@ -29,3 +29,14 @@
           (cut/auth-objects []
            (yaml/load-as-edn "forgejo-test/valid-config.yaml")
            (yaml/load-as-edn "forgejo-test/valid-auth.yaml"))))))
+
+(deftest test-whole-generation-with-runner
+  (is (= 38
+         (count
+          (cut/config-objects []
+                              (yaml/load-as-edn "forgejo-test/valid-config-runner.yaml")))))
+  (is (= 6
+         (count
+          (cut/auth-objects []
+                            (yaml/load-as-edn "forgejo-test/valid-config-runner.yaml")
+                            (yaml/load-as-edn "forgejo-test/valid-auth-runner.yaml"))))))
