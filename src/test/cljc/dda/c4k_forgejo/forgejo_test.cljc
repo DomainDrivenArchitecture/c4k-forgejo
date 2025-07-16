@@ -40,8 +40,6 @@
          (get-in (cut/dynamic-config config)
                  [:service-domain-whitelist]))))
 
-
-
 (deftest should-generate-appini-env
   (is (= {:APP_NAME "test forgejo",
           :FORGEJO__admin__DEFAULT_EMAIL_NOTIFICATIONS "enabled",

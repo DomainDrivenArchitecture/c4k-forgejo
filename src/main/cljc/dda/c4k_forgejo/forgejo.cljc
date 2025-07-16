@@ -177,7 +177,7 @@
 
 (defn-spec config seq?
   [config ::config
-   runner ::create-runner]
+   runner ::runner]
   [(generate-deployment config runner)
    (generate-service config)
    (generate-service-ssh)
