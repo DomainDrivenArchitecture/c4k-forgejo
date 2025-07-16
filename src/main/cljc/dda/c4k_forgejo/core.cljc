@@ -48,19 +48,22 @@
                                  ::forgejo/session-lifetime
                                  ::forgejo/service-domain-whitelist
                                  ::forgejo/forgejo-image
+                                 ::runner/runner-id
                                  ::backup/restic-repository
                                  ::mon/mon-cfg]))
 
 (s/def ::auth (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password
                                ::forgejo/mailer-user ::forgejo/mailer-pw
                                ::forgejo/secret-key]
-                      :opt-un [::backup/restic-password
+                      :opt-un [::runner/runner-token
+                               ::backup/restic-password
                                ::backup/restic-new-password
                                ::backup/aws-access-key-id
                                ::backup/aws-secret-access-key
                                ::mon/mon-auth]))
 
 (s/def ::config-select (s/* #{"auth" "deployment"}))
+; TODO Add runner config conditionally on existence of runner secret
 
 (defn-spec config-objects seq?
   [config-select ::config-select
@@ -83,7 +86,11 @@
               (postgres/generate-pvc (merge resolved-config {:pvc-storage-class-name storage-class}))
               (postgres/generate-deployment resolved-config)
               (postgres/generate-service resolved-config)]
-             (forgejo/config resolved-config)
+             (forgejo/config resolved-config (if (contains? config :runner-id)
+                                               true
+                                               false))
+             (when (contains? config :runner-id)
+               (runner/config resolved-config))
              (ing/config-objects (merge
                                   {:fqdns [fqdn]
                                    :average-rate max-rate
@@ -108,7 +115,11 @@
            (cm/concat-vec
             (ns/generate resolved-config)
             [(postgres/generate-secret resolved-config auth)]
-            (forgejo/auth config auth)
+            (forgejo/auth config auth (if (contains? config :runner-id)
+                                        true
+                                        false))
+            (when (contains? config :runner-id)
+              (runner/auth auth))
             (when (contains? resolved-config :restic-repository)
               (backup/auth-objects resolved-config auth))
             (when (contains? resolved-config :mon-cfg)
