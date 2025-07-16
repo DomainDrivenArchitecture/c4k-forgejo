@@ -50,3 +50,13 @@
 (defn-spec generate-service map?
   []
   (yaml/load-as-edn "runner/service-runner.yaml"))
+
+(defn-spec config seq?
+  [config ::config]
+  [(generate-deployment config)
+   (generate-service)
+   (generate-configmap config)])
+
+(defn-spec auth seq?
+  [auth ::auth]
+  [(generate-secret auth)])
