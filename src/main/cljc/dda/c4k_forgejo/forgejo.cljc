@@ -152,10 +152,11 @@
 (defn-spec generate-deployment map?
   [config ::config
    runner ::runner]
-  (let [{:keys [forgejo-image]} config]
+  (let [{:keys [forgejo-image service-port]} config]
     (->
      (yaml/load-as-edn "forgejo/deployment.yaml")
      (cm/replace-all-matching "IMAGE_NAME" forgejo-image)
+     (cm/replace-all-matching "SERVICE_PORT" service-port)
      (#(if runner (assoc-in
                    %
                    [:spec :template :spec :containers]
