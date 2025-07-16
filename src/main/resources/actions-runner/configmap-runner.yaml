@@ -58,3 +58,4 @@ data:
     host:
       # The parent directory of a job's working directory.
       workdir_parent: # If it's empty, $HOME/.cache/act/ will be used.
+  runner-id: RUNNER_ID
