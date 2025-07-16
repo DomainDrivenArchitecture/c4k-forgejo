@@ -9,6 +9,7 @@
    [dda.c4k-common.backup :as backup]
    [dda.c4k-common.ingress :as ing]
    [dda.c4k-forgejo.forgejo :as forgejo]
+   [dda.c4k-forgejo.runner :as runner]
    [dda.c4k-common.postgres :as postgres]
    [dda.c4k-common.namespace :as ns]))
 
