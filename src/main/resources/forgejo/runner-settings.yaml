@@ -8,7 +8,7 @@ args:
 env:
   - name: RUNNER_NAME
     valueFrom:
-      configMapRef:
+      configMapKeyRef:
         name: forgejo-runner-config
         key: runner-id
   - name: RUNNER_TOKEN

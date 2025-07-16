@@ -57,7 +57,7 @@ spec:
                   key: token
             - name: RUNNER_NAME
               valueFrom:
-                configMapRef:
+                configMapKeyRef:
                   name: forgejo-runner-config
                   key: runner-id
             - name: FORGEJO_INSTANCE_URL
