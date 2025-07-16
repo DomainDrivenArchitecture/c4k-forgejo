@@ -7,5 +7,5 @@ spec:
   selector:
     app: forgejo-runner
   ports:
-    - name: forgejo-http
+    - name: runner-http
       port: 80

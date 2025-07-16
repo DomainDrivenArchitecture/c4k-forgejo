@@ -61,7 +61,7 @@ spec:
                   name: forgejo-runner-config
                   key: runner-id
             - name: FORGEJO_INSTANCE_URL
-              value: http://forgejo-service:3000
+              value: FORGEJO_SERVICE_URL # http://forgejo-service:3000
           resources:
             limits:
               cpu: '1'
