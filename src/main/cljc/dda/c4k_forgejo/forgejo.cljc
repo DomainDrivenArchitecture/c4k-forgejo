@@ -46,6 +46,7 @@
 (s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
 (s/def ::max-rate int?)
 (s/def ::max-concurrent-requests int?)
+(s/def ::runner boolean?)
 
 (s/def ::session-lifetime pred/bash-env-string?)
 (s/def ::allow-only-external-registration pred/bash-env-string?)
@@ -149,11 +150,17 @@
      (cm/replace-all-matching "DATASTORAGESIZE" (str (str volume-total-storage-size) "Gi")))))
 
 (defn-spec generate-deployment map?
-  [config ::config]
+  [config ::config
+   runner ::runner]
   (let [{:keys [forgejo-image]} config]
     (->
      (yaml/load-as-edn "forgejo/deployment.yaml")
-     (cm/replace-all-matching "IMAGE_NAME" forgejo-image))))
+     (cm/replace-all-matching "IMAGE_NAME" forgejo-image)
+     (#(if runner (assoc-in
+                   %
+                   [:spec :template :spec :containers]
+                   [(merge (-> % :spec :template :spec :containers first) (yaml/load-as-edn "forgejo/runner-settings.yaml"))])
+           %)))))
 
 (defn-spec generate-service map?
   [config ::config]
@@ -168,9 +175,10 @@
   (yaml/load-as-edn "forgejo/service-ssh.yaml"))
 
 (defn-spec config seq?
-  [config ::config]
-  [(generate-deployment config)
-   (generate-service)
+  [config ::config
+   runner ::create-runner]
+  [(generate-deployment config runner)
+   (generate-service config)
    (generate-service-ssh)
    (generate-data-volume config)
    (generate-appini-env config)])

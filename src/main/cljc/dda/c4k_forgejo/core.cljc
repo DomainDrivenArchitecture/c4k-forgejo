@@ -14,7 +14,6 @@
    [dda.c4k-common.namespace :as ns]))
 
 (def config-defaults {:namespace "forgejo"
-                      :runner-id "forgejo-runner"
                       :service-name "forgejo-service"
                       :service-port 3000
                       :default-app-name "forgejo instance"

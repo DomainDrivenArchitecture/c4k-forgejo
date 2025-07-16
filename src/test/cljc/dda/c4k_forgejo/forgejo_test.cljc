@@ -14,6 +14,7 @@
 (st/instrument `cut/generate-secrets)
 
 (def config {:default-app-name "test forgejo"
+             :runner-id "test-runner"
              :federation-enabled "true"
              :service-name "forgejo-service"
              :service-port 3000
@@ -109,26 +110,53 @@
          (get-in (cut/generate-appini-env (merge config {:sso-mode :keycloak-additional}))
                  [:data :FORGEJO__service__REGISTER_EMAIL_CONFIRM]))))
 
-      (deftest should-generate-deployment
-        (testing "non-federated"
-          (is (= {:apiVersion "apps/v1",
-                  :kind "Deployment",
-                  :metadata {:name "forgejo", :namespace "forgejo", :labels {:app "forgejo"}},
-                  :spec
-                  {:replicas 1,
-                   :selector {:matchLabels {:app "forgejo"}},
-                   :template
-                   {:metadata {:name "forgejo", :labels {:app "forgejo"}},
-                    :spec
-                    {:containers
-                     [{:name "forgejo",
-                       :image "codeberg.org/forgejo/forgejo:8.0.3",
-                       :imagePullPolicy "IfNotPresent",
-                       :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
-                       :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
-                       :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
-                     :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
-                 (cut/generate-deployment config)))))
+(deftest should-generate-deployment
+  (testing "non-federated"
+    (is (= {:apiVersion "apps/v1",
+            :kind "Deployment",
+            :metadata {:name "forgejo", :namespace "forgejo", :labels {:app "forgejo"}},
+            :spec
+            {:replicas 1,
+             :selector {:matchLabels {:app "forgejo"}},
+             :template
+             {:metadata {:name "forgejo", :labels {:app "forgejo"}},
+              :spec
+              {:containers
+               [{:name "forgejo",
+                 :image "codeberg.org/forgejo/forgejo:8.0.3",
+                 :imagePullPolicy "IfNotPresent",
+                 :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
+                 :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
+                 :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
+               :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
+           (cut/generate-deployment config false)))))
+
+(deftest should-generate-deployment-with-runner
+  (testing "non-federated"
+    (is (= {:apiVersion "apps/v1",
+            :kind "Deployment",
+            :metadata {:name "forgejo", :namespace "forgejo", :labels {:app "forgejo"}},
+            :spec
+            {:replicas 1,
+             :selector {:matchLabels {:app "forgejo"}},
+             :template
+             {:metadata {:name "forgejo", :labels {:app "forgejo"}},
+              :spec
+              {:containers
+               [{:name "forgejo",
+                 :image "codeberg.org/forgejo/forgejo:8.0.3",
+                 :imagePullPolicy "IfNotPresent",
+                 :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
+                 :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
+                 :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]
+                 :command ["/bin/bash" "-c"],
+                 :args
+                 ["echo \"Registering the runner\"\nsu -c \"forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}\" git\n"],
+                 :env
+                 [{:name "RUNNER_NAME", :valueFrom {:configMapRef {:name "forgejo-runner-config", :key "runner-id"}}}
+                  {:name "RUNNER_TOKEN", :valueFrom {:secretKeyRef {:name "runner-secret", :key "token"}}}]}],
+               :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
+           (cut/generate-deployment config true)))))
 
 (deftest should-generate-service
   (is (= {:kind "Service",
