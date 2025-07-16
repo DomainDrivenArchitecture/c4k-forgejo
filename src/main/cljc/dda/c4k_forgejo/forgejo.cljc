@@ -156,8 +156,12 @@
      (cm/replace-all-matching "IMAGE_NAME" forgejo-image))))
 
 (defn-spec generate-service map?
-  []
-  (yaml/load-as-edn "forgejo/service.yaml"))
+  [config ::config]
+  (let [{:keys [service-name service-port]} config]
+    (->
+     (yaml/load-as-edn "forgejo/service.yaml")
+     (cm/replace-all-matching "SERVICE_NAME" service-name)
+     (cm/replace-all-matching "SERVICE_PORT" service-port))))
 
 (defn-spec generate-service-ssh map?
   []

@@ -13,6 +13,9 @@
    [dda.c4k-common.namespace :as ns]))
 
 (def config-defaults {:namespace "forgejo"
+                      :runner-id "forgejo-runner"
+                      :service-name "forgejo-service"
+                      :service-port 3000
                       :default-app-name "forgejo instance"
                       :issuer "staging"
                       :federation-enabled "false"
@@ -81,9 +84,7 @@
               (postgres/generate-service resolved-config)]
              (forgejo/config resolved-config)
              (ing/config-objects (merge
-                                  {:service-name "forgejo-service"
-                                   :service-port 3000
-                                   :fqdns [fqdn]
+                                  {:fqdns [fqdn]
                                    :average-rate max-rate
                                    :burst-rate max-concurrent-requests
                                    :namespace namespace}

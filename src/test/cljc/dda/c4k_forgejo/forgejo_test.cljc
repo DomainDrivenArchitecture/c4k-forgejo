@@ -15,6 +15,8 @@
 
 (def config {:default-app-name "test forgejo"
              :federation-enabled "true"
+             :service-name "forgejo-service"
+             :service-port 3000
              :sso-mode :none
              :fqdn "test.com"
              :mailer-from "test@test.com"
@@ -128,19 +130,25 @@
                      :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
                  (cut/generate-deployment config)))))
 
-      (deftest should-generate-secret
-        (is (= {:data
-                {
-                 :FORGEJO__database__PASSWD "cGctcGFzcw==",
-                 :FORGEJO__database__USER "cGctdXNlcg==",
-                 :FORGEJO__mailer__PASSWD "bWFpbGVyLXB3",
-                 :FORGEJO__mailer__USER "bWFpbGVyLXVzZXI=",
-                 :FORGEJO__security__SECRET_KEY "c2VjcmV0LWtleQ=="},
-                :metadata {:name "forgejo-secrets", :namespace "forgejo"},
-                :kind "Secret",
-                :apiVersion "v1"}
-               (cut/generate-secret {:postgres-db-user "pg-user"
-                                     :postgres-db-password "pg-pass"
-                                     :mailer-user "mailer-user"
-                                     :mailer-pw "mailer-pw"
-                                     :secret-key "secret-key"}))))
+(deftest should-generate-service
+  (is (= {:kind "Service",
+          :apiVersion "v1",
+          :metadata {:name "forgejo-service", :namespace "forgejo"},
+          :spec {:selector {:app "forgejo"}, :ports [{:name "forgejo-http", :port 3000}]}}
+         (cut/generate-service config))))
+
+(deftest should-generate-secret
+  (is (= {:data
+          {:FORGEJO__database__PASSWD "cGctcGFzcw==",
+           :FORGEJO__database__USER "cGctdXNlcg==",
+           :FORGEJO__mailer__PASSWD "bWFpbGVyLXB3",
+           :FORGEJO__mailer__USER "bWFpbGVyLXVzZXI=",
+           :FORGEJO__security__SECRET_KEY "c2VjcmV0LWtleQ=="},
+          :metadata {:name "forgejo-secrets", :namespace "forgejo"},
+          :kind "Secret",
+          :apiVersion "v1"}
+         (cut/generate-secret {:postgres-db-user "pg-user"
+                               :postgres-db-password "pg-pass"
+                               :mailer-user "mailer-user"
+                               :mailer-pw "mailer-pw"
+                               :secret-key "secret-key"}))))
