@@ -20,7 +20,7 @@ metadata:
   name: runner-secret
   namespace: forgejo
 stringData:
-  token: 7c31291a8b67225f116d4b4519ba7e507e08f71f # TODO: Proper secret handling once working confirmed
+  token: 7c31291a8b67225f116d4b4519ba7e507e08f71f # Needs to be 40hex chars, with first 16 chars being treated as ID
 ---
 apiVersion: v1
 kind: ConfigMap
