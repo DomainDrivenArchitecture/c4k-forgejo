@@ -30,6 +30,13 @@
 - Cache
     - Wird in der config definiert
 
+## Automated Runner Setup
+
+A command to the pod running the forgejo instance lead to errors:
+Forgejo was not installed properly at command execution time so the pod crashed.
+
+Solution was a kubernetes job that tried registration in its own pod with forgejo data volumes mounted. This way there is no need to programatically alter the main deployment, we just start this job when needed and after successful finish the runner will pick up connection to the forgejo pod.
+
 ## Links
 
 - Labels: https://forgejo.org/docs/latest/admin/actions/#choosing-labels
