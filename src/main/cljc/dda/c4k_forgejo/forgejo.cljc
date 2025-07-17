@@ -150,18 +150,19 @@
      (cm/replace-all-matching "DATASTORAGESIZE" (str (str volume-total-storage-size) "Gi")))))
 
 (defn-spec generate-deployment map?
-  [config ::config
-   runner ::runner]
+  [config ::config]
   (let [{:keys [forgejo-image service-port]} config]
     (->
      (yaml/load-as-edn "forgejo/deployment.yaml")
      (cm/replace-all-matching "IMAGE_NAME" forgejo-image)
-     (cm/replace-all-matching "SERVICE_PORT" service-port)
-     (#(if runner (assoc-in
-                   %
-                   [:spec :template :spec :containers]
-                   [(merge (-> % :spec :template :spec :containers first) (yaml/load-as-edn "forgejo/runner-settings.yaml"))])
-           %)))))
+     (cm/replace-all-matching "SERVICE_PORT" service-port))))
+
+(defn-spec generate-setup-job map?
+  [config ::config]
+  (let [{:keys [forgejo-image]} config]
+    (->
+     (yaml/load-as-edn "forgejo/setup-job.yaml")
+     (cm/replace-all-matching "IMAGE_NAME" forgejo-image))))
 
 (defn-spec generate-service map?
   [config ::config]
@@ -178,7 +179,9 @@
 (defn-spec config seq?
   [config ::config
    runner ::runner]
-  [(generate-deployment config runner)
+  [(generate-deployment config)
+   (when runner 
+     (generate-setup-job config))
    (generate-service config)
    (generate-service-ssh)
    (generate-data-volume config)

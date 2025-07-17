@@ -62,7 +62,6 @@
                                ::mon/mon-auth]))
 
 (s/def ::config-select (s/* #{"auth" "deployment"}))
-; TODO Add runner config conditionally on existence of runner secret
 
 (defn-spec config-objects seq?
   [config-select ::config-select
