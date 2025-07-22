@@ -21,10 +21,6 @@
                                  ::service-port]))
 (s/def ::auth (s/keys :req-un [::runner-token]))
 
-#?(:cljs
-   (defmethod yaml/load-resource :runner [resource-name]
-     (get (inline-resources "runner") resource-name)))
-
 (defn-spec generate-configmap map?
   [config ::config]
   (let [{:keys [runner-id]} config]
