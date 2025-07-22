@@ -126,7 +126,7 @@
      (cm/replace-all-matching "NOREPLY" service-noreply-address)
      (cm/replace-all-matching "IS_FEDERATED" federation-enabled))))
 
-(defn-spec generate-secret pred/map-or-seq?
+(defn-spec generate-secret map?
   [auth ::auth]
   (let [{:keys [postgres-db-user
                 postgres-db-password

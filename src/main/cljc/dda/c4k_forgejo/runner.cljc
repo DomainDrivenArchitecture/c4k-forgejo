@@ -28,7 +28,7 @@
      (yaml/load-as-edn "runner/configmap-runner.yaml")
      (cm/replace-all-matching "RUNNER_ID" runner-id))))
 
-(defn-spec generate-secret pred/map-or-seq?
+(defn-spec generate-secret map?
   [auth ::auth]
   (let [{:keys [runner-token]} auth]
     (->
