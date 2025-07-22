@@ -25,7 +25,7 @@ spec:
         args:
         - | 
           echo "Registering the runner"
-          su -c "forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}" git 
+          su -c "forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}" git
         env:
         - name: RUNNER_NAME
           valueFrom:

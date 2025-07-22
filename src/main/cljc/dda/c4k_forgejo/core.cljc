@@ -84,9 +84,7 @@
               (postgres/generate-pvc (merge resolved-config {:pvc-storage-class-name storage-class}))
               (postgres/generate-deployment resolved-config)
               (postgres/generate-service resolved-config)]
-             (forgejo/config resolved-config (if (contains? config :runner-id)
-                                               true
-                                               false))
+             (forgejo/config resolved-config)
              (when (contains? config :runner-id)
                (runner/config resolved-config))
              (ing/config-objects (merge

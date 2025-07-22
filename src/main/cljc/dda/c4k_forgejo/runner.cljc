@@ -47,6 +47,13 @@
      (yaml/load-as-edn "runner/deployment-runner.yaml")
      (cm/replace-all-matching "FORGEJO_SERVICE_URL" (str "http://" service-name ":" service-port)))))
 
+(defn-spec generate-setup-job map?
+  [config ::config]
+  (let [{:keys [forgejo-image]} config]
+    (->
+     (yaml/load-as-edn "runner/setup-job.yaml")
+     (cm/replace-all-matching "IMAGE_NAME" forgejo-image))))
+
 (defn-spec generate-service map?
   []
   (yaml/load-as-edn "runner/service-runner.yaml"))
@@ -54,6 +61,7 @@
 (defn-spec config seq?
   [config ::config]
   [(generate-deployment config)
+   (generate-setup-job config)
    (generate-service)
    (generate-configmap config)])
 

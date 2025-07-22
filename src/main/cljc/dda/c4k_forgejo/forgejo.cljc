@@ -46,7 +46,6 @@
 (s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
 (s/def ::max-rate int?)
 (s/def ::max-concurrent-requests int?)
-(s/def ::runner boolean?)
 
 (s/def ::session-lifetime pred/bash-env-string?)
 (s/def ::allow-only-external-registration pred/bash-env-string?)
@@ -157,13 +156,6 @@
      (cm/replace-all-matching "IMAGE_NAME" forgejo-image)
      (cm/replace-all-matching "SERVICE_PORT" service-port))))
 
-(defn-spec generate-setup-job map?
-  [config ::config]
-  (let [{:keys [forgejo-image]} config]
-    (->
-     (yaml/load-as-edn "forgejo/setup-job.yaml")
-     (cm/replace-all-matching "IMAGE_NAME" forgejo-image))))
-
 (defn-spec generate-service map?
   [config ::config]
   (let [{:keys [service-name service-port]} config]
@@ -177,11 +169,8 @@
   (yaml/load-as-edn "forgejo/service-ssh.yaml"))
 
 (defn-spec config seq?
-  [config ::config
-   runner ::runner]
+  [config ::config]
   [(generate-deployment config)
-   (when runner 
-     (generate-setup-job config))
    (generate-service config)
    (generate-service-ssh)
    (generate-data-volume config)

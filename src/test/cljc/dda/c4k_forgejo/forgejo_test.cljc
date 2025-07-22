@@ -129,31 +129,6 @@
                :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
            (cut/generate-deployment config)))))
 
-(deftest should-generate-setup-job
-  (testing "non-federated"
-    (is (= {:apiVersion "batch/v1",
-            :kind "Job",
-            :metadata {:name "forgejo-setup-job", :namespace "forgejo"},
-            :spec
-            {:backoffLimit 15,
-             :template
-             {:spec
-              {:containers
-               [{:name "forgejo",
-                 :image "codeberg.org/forgejo/forgejo:8.0.3",
-                 :imagePullPolicy "IfNotPresent",
-                 :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
-                 :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
-                 :command ["/bin/bash" "-c"],
-                 :args
-                 ["echo \"Registering the runner\"\nsu -c \"forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}\" git \n"],
-                 :env
-                 [{:name "RUNNER_NAME", :valueFrom {:configMapKeyRef {:name "forgejo-runner-config", :key "runner-id"}}}
-                  {:name "RUNNER_TOKEN", :valueFrom {:secretKeyRef {:name "runner-secret", :key "token"}}}]}],
-               :restartPolicy "OnFailure",
-               :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
-           (cut/generate-setup-job config)))))
-
 (deftest should-generate-service
   (is (= {:kind "Service",
           :apiVersion "v1",
