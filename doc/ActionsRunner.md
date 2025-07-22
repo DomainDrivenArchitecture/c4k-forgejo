@@ -2,40 +2,32 @@
 
 ## Runner Installation
 
-  [Via OCI Image](https://forgejo.org/docs/next/admin/runner-installation/#oci-image-installation)  
-- Wir verwenden offline registration da wir eine Kubernetes Resource erstellen
-    - Vermutlich können wir im ersten Schritt händisch ein secret generieren und im gopass unterbringen
-        - Das secret wird dann an die forgejo instanz und den runner verteilt
+We use the install [via OCI Image](https://forgejo.org/docs/v11.0/admin/actions/runner-installation/).
+
+## Runner Registration
+
+Two registration steps need to be done:
+
+* On the runner side
+    * The runner needs to know the service address of the forgejo instance
+    * The runner needs to be given a name and a registration token
+    * Inside the container: `forgejo-runner create-runner-file --secret ${RUNNER_TOKEN} --name ${RUNNER_NAME} --instance ${FORGEJO_INSTANCE_URL};`
+* On the instance side
+    * The instance needs to be informed about the runner name and token
+    * Inside the container: `su -c "forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}" git`
+* The runner name will be inserted by c4k-forgejo
+* The runner token will be made available via kubernetes secret to the instance and the runner
+    * The token must be a 40-character long string of hexadecimal numbers.
+    * The first 16 characters will be used as an identifier for the runner, while the rest is the actual secret.
 
 ## Runner Config
 
-- Es wird dind (Docker in Docker) verwendet
-- Configuration [Via configmap](https://code.forgejo.org/forgejo/runner/issues/132#issuecomment-4848)
-- Registrierung
-    - Runner -> Forgejo Instanz
-    -```
-     forgejo forgejo-cli actions register --name runner-name --scope myorganization \
-         --secret 7c31591e8b67225a116d4a4519ea8e507e08f71f
-     ```
-        - This will register the runner as global
-    - Forgejo Instanz -> Runner
-        -
-            ```
-            forgejo-runner create-runner-file --instance https://example.conf \
-                    --secret 7c31591e8b67225a116d4a4519ea8e507e08f71f
-            ```
-    - The secret must be a 40-character long string of hexadecimal numbers. 
-        The first 16 characters will be used as an identifier for the runner,   
-        while the rest is the actual secret.  
-- Cache
-    - Wird in der config definiert
+Configuration [via configmap](https://code.forgejo.org/forgejo/runner/issues/132#issuecomment-4848)
 
 ## Automated Runner Setup
 
-A command to the pod running the forgejo instance lead to errors:
-Forgejo was not installed properly at command execution time so the pod crashed.
-
-Solution was a kubernetes job that tried registration in its own pod with forgejo data volumes mounted. This way there is no need to programatically alter the main deployment, we just start this job when needed and after successful finish the runner will pick up connection to the forgejo pod.
+Is done by a kubernetes batch job. The forgejo pod needs to run for a bit to finish setup.
+So a setup-job for the runner itself tries registration in its own pod with forgejo data volumes mounted is used. This way there is no need to programatically alter the main deployment, we just start this job when needed and after successful finish the runner will pick up connection to the forgejo pod.
 
 ## Links
 
