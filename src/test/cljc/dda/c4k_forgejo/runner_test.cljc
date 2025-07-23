@@ -87,10 +87,11 @@
                  :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
                  :command ["/bin/bash" "-c"],
                  :args
-                 ["echo \"Registering the runner\"\nsu -c \"forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}\" git\n"],
+                 ["while [[ $(curl -k -s -i ${FORGEJO_INSTANCE_URL}/api/v1/version | grep -o \"200\") != \"200\" ]]; do sleep 5; echo 'Waiting for forgejo...'; done\necho \"Registering the runner\"\nsu -c \"forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}\" git\n"],
                  :env
                  [{:name "RUNNER_NAME", :valueFrom {:configMapKeyRef {:name "forgejo-runner-config", :key "runner-id"}}}
-                  {:name "RUNNER_TOKEN", :valueFrom {:secretKeyRef {:name "runner-secret", :key "token"}}}]}],
+                  {:name "RUNNER_TOKEN", :valueFrom {:secretKeyRef {:name "runner-secret", :key "token"}}}
+                  {:name "FORGEJO_INSTANCE_URL", :value "service:3000"}]}],
                :restartPolicy "OnFailure",
                :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
            (cut/generate-setup-job config)))))

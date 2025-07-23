@@ -23,7 +23,8 @@ spec:
         - /bin/bash
         - -c
         args:
-        - | 
+        - |
+          while [[ $(curl -k -s -i ${FORGEJO_INSTANCE_URL}/api/v1/version | grep -o "200") != "200" ]]; do sleep 5; echo 'Waiting for forgejo...'; done
           echo "Registering the runner"
           su -c "forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}" git
         env:
@@ -37,6 +38,8 @@ spec:
             secretKeyRef:
               name: runner-secret
               key: token
+        - name: FORGEJO_INSTANCE_URL
+          value: FORGEJO_SERVICE_URL
       restartPolicy: OnFailure
       volumes:
       - name: forgejo-data-volume
