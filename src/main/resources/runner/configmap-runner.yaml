@@ -45,7 +45,7 @@ data:
     container:
       network: host # Could be host, bridge or the name of a custom network.
       enable_ipv6: false # Whether to create networks with IPv6 enabled. Requires the Docker daemon to be set up accordingly. Only takes effect if "network" is set to "".
-      privileged: true # Whether to use privileged mode or not when launching task containers (privileged mode is required for Docker-in-Docker).
+      privileged: false # Whether to use privileged mode or not when launching task containers (privileged mode is required for Docker-in-Docker).
       options: # And other options to be used when the container is started (eg, --volume /etc/ssl/certs:/etc/ssl/certs:ro).
         -v /certs/client:/certs/client
       workdir_parent: # If it's empty, /workspace will be used.
