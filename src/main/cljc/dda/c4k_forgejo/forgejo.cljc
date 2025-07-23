@@ -76,10 +76,6 @@
                                ::mailer-pw
                                ::secret-key]))
 
-#?(:cljs
-   (defmethod yaml/load-resource :forgejo [resource-name]
-     (get (inline-resources "forgejo") resource-name)))
-
 (defn-spec dynamic-config ::enhanced-config
   [config ::config]
   (let [{:keys [fqdn

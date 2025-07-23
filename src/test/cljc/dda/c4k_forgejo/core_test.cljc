@@ -1,19 +1,13 @@
 (ns dda.c4k-forgejo.core-test
   (:require
-   #?(:clj [clojure.test :refer [deftest is are testing run-tests]]
-      :cljs [cljs.test :refer-macros [deftest is are testing run-tests]])
+   [clojure.test :refer [deftest is are testing run-tests]]
    [clojure.spec.alpha :as s]
    [clojure.spec.test.alpha :as st]
    [dda.c4k-common.yaml :as yaml]
-   [dda.c4k-forgejo.core :as cut]
-    #?(:cljs [dda.c4k-common.macros :refer-macros [inline-resources]])))
+   [dda.c4k-forgejo.core :as cut]))
 
 (st/instrument `cut/config-objects)
 (st/instrument `cut/auth-objects)
-
-#?(:cljs
-   (defmethod yaml/load-resource :forgejo-test [resource-name]
-     (get (inline-resources "forgejo-test") resource-name)))
 
 (deftest validate-valid-resources
   (is (s/valid? ::cut/config (yaml/load-as-edn "forgejo-test/valid-config.yaml")))
