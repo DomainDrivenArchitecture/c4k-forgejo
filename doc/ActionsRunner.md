@@ -29,6 +29,29 @@ Configuration [via configmap](https://code.forgejo.org/forgejo/runner/issues/132
 Is done by a kubernetes batch job. The forgejo pod needs to run for a bit to finish setup.
 So a setup-job for the runner itself tries registration in its own pod with forgejo data volumes mounted is used. This way there is no need to programatically alter the main deployment, we just start this job when needed and after successful finish the runner will pick up connection to the forgejo pod.
 
+## Runner Deployment Internal Architecture
+
+```mermaid
+block-beta
+    columns 1
+    Server:1
+    space:1
+    Node:1
+    space:1
+    Pod["Runner Deployment Pod"]:1
+    id1{{"Container can access internally via localhost"}}:1
+    space:1
+    block:cc
+        c1["Runner Container"]
+        c2["DIND Container"]
+    end
+    
+    Server -- "hosts" --> Node
+    Node -- "hosts" --> Pod
+    Pod -- "hosts" --> c1
+    Pod -- "hosts" --> c2
+```
+
 ## Links
 
 - Labels: https://forgejo.org/docs/latest/admin/actions/#choosing-labels
