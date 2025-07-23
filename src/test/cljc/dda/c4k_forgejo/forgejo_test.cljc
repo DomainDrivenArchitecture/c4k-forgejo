@@ -122,10 +122,19 @@
                      [{:name "forgejo",
                        :image "codeberg.org/forgejo/forgejo:8.0.3",
                        :imagePullPolicy "IfNotPresent",
-                       :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
-                       :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
+                       :envFrom [{:configMapRef {:name "forgejo-env"}} 
+                                 {:configMapRef {:name "system-env"}}
+                                 {:secretRef {:name "forgejo-secrets"}}],
+                       :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}
+                                      {:name "system-file",
+                                       :mountPath "/etc/ssh/sshd_config.d/sshd-config.conf",
+                                       :subPath "sshd-config.conf",
+                                       :readOnly true}],
                        :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
-                     :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
+                     :volumes [{:name "forgejo-data-volume", 
+                                :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}
+                               {:name "system-file",
+                                :configMap {:name "system-file"}}]}}}}
                  (cut/generate-deployment config)))))
 
       (deftest should-generate-secret

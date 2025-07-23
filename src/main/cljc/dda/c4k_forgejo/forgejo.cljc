@@ -9,6 +9,7 @@
    [dda.c4k-common.base64 :as b64]
    [dda.c4k-common.predicate :as pred]
    [dda.c4k-common.postgres :as postgres]
+   [dda.c4k-common.namespace :as nspace]
    #?(:cljs [dda.c4k-common.macros :refer-macros [inline-resources]])))
 
 (defn domain-list?
@@ -126,6 +127,16 @@
      (cm/replace-all-matching "NOREPLY" service-noreply-address)
      (cm/replace-all-matching "IS_FEDERATED" federation-enabled))))
 
+(defn-spec system-env map?
+  [config ::config]
+  (let [{:keys [namespace]} (dynamic-config config)]
+    (nspace/load-and-adjust-namespace "forgejo/system-env-configmap.yaml" namespace)))
+
+(defn-spec system-file map?
+  [config ::config]
+  (let [{:keys [namespace]} (dynamic-config config)]
+     (nspace/load-and-adjust-namespace "forgejo/system-file-configmap.yaml" namespace)))
+
 (defn-spec generate-secret pred/map-or-seq?
   [auth ::auth]
   (let [{:keys [postgres-db-user
@@ -165,11 +176,13 @@
 
 (defn-spec config seq?
   [config ::config]
-  [(generate-deployment config)
-   (generate-service)
-   (generate-service-ssh)
+  [(system-env config)
+   (system-file config)
+   (generate-appini-env config)
    (generate-data-volume config)
-   (generate-appini-env config)])
+   (generate-deployment config)
+   (generate-service)
+   (generate-service-ssh)])
 
 (defn-spec auth seq?
   [config ::config

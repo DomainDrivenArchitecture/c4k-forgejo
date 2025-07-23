@@ -20,7 +20,7 @@
   (is (s/valid? ::cut/auth (yaml/load-as-edn "forgejo-test/valid-auth.yaml"))))
 
 (deftest test-whole-generation
-  (is (= 35
+  (is (= 37
          (count
           (cut/config-objects []
            (yaml/load-as-edn "forgejo-test/valid-config.yaml")))))
