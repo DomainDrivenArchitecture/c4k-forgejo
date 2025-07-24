@@ -8,8 +8,7 @@
    [dda.c4k-common.base64 :as b64]
    [dda.c4k-common.predicate :as pred]
    [dda.c4k-common.postgres :as postgres]
-   [dda.c4k-common.namespace :as nspace]
-   #?(:cljs [dda.c4k-common.macros :refer-macros [inline-resources]])))
+   [dda.c4k-common.namespace :as nspace]))
 
 (defn domain-list?
   [input]
