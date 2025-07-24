@@ -2,14 +2,11 @@
   (:require
    [clojure.test :refer [deftest is are testing run-tests]]
    [clojure.spec.test.alpha :as st]
-   [clojure.spec.alpha :as s]
-   [dda.c4k-common.test-helper :as th]
-   [dda.c4k-common.base64 :as b64]
    [dda.c4k-forgejo.runner :as cut]))
 
-(st/instrument `cut/dynamic-config)
+(st/instrument `cut/generate-setup-job)
 (st/instrument `cut/generate-deployment)
-(st/instrument `cut/generate-appini-env)
+(st/instrument `cut/generate-configmap)
 (st/instrument `cut/generate-secrets)
 
 (def config {:runner-id "runner"

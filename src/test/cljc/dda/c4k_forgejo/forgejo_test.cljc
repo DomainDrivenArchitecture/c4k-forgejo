@@ -2,9 +2,6 @@
   (:require
    [clojure.test :refer [deftest is are testing run-tests]]
    [clojure.spec.test.alpha :as st]
-   [clojure.spec.alpha :as s]
-   [dda.c4k-common.test-helper :as th]
-   [dda.c4k-common.base64 :as b64]
    [dda.c4k-forgejo.forgejo :as cut]))
 
 (st/instrument `cut/dynamic-config)
@@ -24,9 +21,7 @@
              :mailer-port "456"
              :service-noreply-address "noreply@test.com"
              :forgejo-image "codeberg.org/forgejo/forgejo:8.0.3"
-             :volume-total-storage-size 50
-             :max-rate 100,
-             :max-concurrent-requests 150})
+             :volume-total-storage-size 50})
 
 (deftest should-enhance-config-dynamic
   (is (= "86400"

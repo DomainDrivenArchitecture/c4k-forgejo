@@ -32,8 +32,8 @@
                       :backup-volume-mount {:mount-name "forgejo-data-volume"
                                             :pvc-name "forgejo-data-pvc"
                                             :mount-path "/var/backups"}
-                      :max-rate 100, 
-                      :max-concurrent-requests 150})
+                      :average-rate 100, 
+                      :burst-rate 150})
 
 (s/def ::config (s/keys :req-un [::forgejo/fqdn
                                  ::forgejo/mailer-from
@@ -66,8 +66,7 @@
   [config-select ::config-select
    config ::config]
   (let [resolved-config (merge config-defaults config)
-        storage-class (if (contains? resolved-config :postgres-data-volume-path) :manual :local-path)
-        {:keys [fqdn max-rate max-concurrent-requests namespace]} resolved-config
+        {:keys [fqdn average-rate burst-rate namespace]} resolved-config
         config-parts (if (empty? config-select)
                        ["auth" "deployment"]
                        config-select)]
@@ -76,20 +75,14 @@
           (when (some #(= "deployment" %) config-parts)
             (cm/concat-vec
              (ns/generate resolved-config)
-             [(postgres/generate-configmap resolved-config)
-              (when (contains? resolved-config :postgres-data-volume-path)
-                (postgres/generate-persistent-volume
-                 (select-keys resolved-config [:postgres-data-volume-path :pv-storage-size-gb])))
-              (postgres/generate-pvc (merge resolved-config {:pvc-storage-class-name storage-class}))
-              (postgres/generate-deployment resolved-config)
-              (postgres/generate-service resolved-config)]
+             (postgres/config-objects resolved-config)
              (forgejo/config resolved-config)
              (when (contains? config :runner-id)
                (runner/config resolved-config))
              (ing/config-objects (merge
                                   {:fqdns [fqdn]
-                                   :average-rate max-rate
-                                   :burst-rate max-concurrent-requests
+                                   :average-rate average-rate
+                                   :burst-rate burst-rate
                                    :namespace namespace}
                                   resolved-config))
              (when (contains? resolved-config :restic-repository)
@@ -109,7 +102,7 @@
          (if (some #(= "auth" %) config-parts)
            (cm/concat-vec
             (ns/generate resolved-config)
-            [(postgres/generate-secret resolved-config auth)]
+            (postgres/auth-objects resolved-config auth)
             (forgejo/auth config auth)
             (when (contains? config :runner-id)
               (runner/auth auth))

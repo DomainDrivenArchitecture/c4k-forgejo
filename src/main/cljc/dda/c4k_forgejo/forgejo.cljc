@@ -44,8 +44,6 @@
 (s/def ::mailer-pw string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
 (s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
-(s/def ::max-rate int?)
-(s/def ::max-concurrent-requests int?)
 
 (s/def ::session-lifetime pred/bash-env-string?)
 (s/def ::allow-only-external-registration pred/bash-env-string?)
@@ -59,9 +57,7 @@
                                  ::mailer-host
                                  ::mailer-port
                                  ::service-noreply-address
-                                 ::volume-total-storage-size
-                                 ::max-rate
-                                 ::max-concurrent-requests]
+                                 ::volume-total-storage-size]
                         :opt-un [::issuer
                                  ::federation-enabled                                 
                                  ::service-domain-whitelist]))
