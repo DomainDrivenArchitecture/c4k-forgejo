@@ -2,14 +2,12 @@
   (:require
    [clojure.spec.alpha :as s]
    [clojure.string :as st]
-   #?(:clj [orchestra.core :refer [defn-spec]]
-      :cljs [orchestra.core :refer-macros [defn-spec]])
+   [orchestra.core :refer [defn-spec]]
    [dda.c4k-common.yaml :as yaml]
    [dda.c4k-common.common :as cm]
    [dda.c4k-common.base64 :as b64]
    [dda.c4k-common.predicate :as pred]
-   [dda.c4k-common.postgres :as postgres]
-   #?(:cljs [dda.c4k-common.macros :refer-macros [inline-resources]])))
+   [dda.c4k-common.postgres :as postgres]))
 
 (defn domain-list?
   [input]
@@ -78,10 +76,6 @@
                                ::mailer-pw
                                ::secret-key]))
 
-#?(:cljs
-   (defmethod yaml/load-resource :forgejo [resource-name]
-     (get (inline-resources "forgejo") resource-name)))
-
 (defn-spec dynamic-config ::enhanced-config
   [config ::config]
   (let [{:keys [fqdn
@@ -126,7 +120,7 @@
      (cm/replace-all-matching "NOREPLY" service-noreply-address)
      (cm/replace-all-matching "IS_FEDERATED" federation-enabled))))
 
-(defn-spec generate-secret pred/map-or-seq?
+(defn-spec generate-secret map?
   [auth ::auth]
   (let [{:keys [postgres-db-user
                 postgres-db-password
@@ -150,14 +144,19 @@
 
 (defn-spec generate-deployment map?
   [config ::config]
-  (let [{:keys [forgejo-image]} config]
+  (let [{:keys [forgejo-image service-port]} config]
     (->
      (yaml/load-as-edn "forgejo/deployment.yaml")
-     (cm/replace-all-matching "IMAGE_NAME" forgejo-image))))
+     (cm/replace-all-matching "IMAGE_NAME" forgejo-image)
+     (cm/replace-all-matching "SERVICE_PORT" service-port))))
 
 (defn-spec generate-service map?
-  []
-  (yaml/load-as-edn "forgejo/service.yaml"))
+  [config ::config]
+  (let [{:keys [service-name service-port]} config]
+    (->
+     (yaml/load-as-edn "forgejo/service.yaml")
+     (cm/replace-all-matching "SERVICE_NAME" service-name)
+     (cm/replace-all-matching "SERVICE_PORT" service-port))))
 
 (defn-spec generate-service-ssh map?
   []
@@ -166,7 +165,7 @@
 (defn-spec config seq?
   [config ::config]
   [(generate-deployment config)
-   (generate-service)
+   (generate-service config)
    (generate-service-ssh)
    (generate-data-volume config)
    (generate-appini-env config)])

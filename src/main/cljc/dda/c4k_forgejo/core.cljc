@@ -1,22 +1,24 @@
 (ns dda.c4k-forgejo.core
   (:require
    [clojure.spec.alpha :as s]
-   #?(:clj [orchestra.core :refer [defn-spec]]
-      :cljs [orchestra.core :refer-macros [defn-spec]])
+   [orchestra.core :refer [defn-spec]]
    [dda.c4k-common.yaml :as yaml]
    [dda.c4k-common.common :as cm]
    [dda.c4k-common.monitoring :as mon]
    [dda.c4k-common.backup :as backup]
    [dda.c4k-common.ingress :as ing]
    [dda.c4k-forgejo.forgejo :as forgejo]
+   [dda.c4k-forgejo.runner :as runner]
    [dda.c4k-common.postgres :as postgres]
    [dda.c4k-common.namespace :as ns]))
 
 (def config-defaults {:namespace "forgejo"
+                      :service-name "forgejo-service"
+                      :service-port 3000
                       :default-app-name "forgejo instance"
                       :issuer "staging"
                       :federation-enabled "false"
-                      :forgejo-image "codeberg.org/forgejo/forgejo:11.0.1"
+                      :forgejo-image "codeberg.org/forgejo/forgejo:11.0.2"
                       :sso-mode :none
                       :db-name "forgejo"
                       :volume-total-storage-size 50
@@ -44,13 +46,15 @@
                                  ::forgejo/session-lifetime
                                  ::forgejo/service-domain-whitelist
                                  ::forgejo/forgejo-image
+                                 ::runner/runner-id
                                  ::backup/restic-repository
                                  ::mon/mon-cfg]))
 
 (s/def ::auth (s/keys :req-un [::postgres/postgres-db-user ::postgres/postgres-db-password
                                ::forgejo/mailer-user ::forgejo/mailer-pw
                                ::forgejo/secret-key]
-                      :opt-un [::backup/restic-password
+                      :opt-un [::runner/runner-token
+                               ::backup/restic-password
                                ::backup/restic-new-password
                                ::backup/aws-access-key-id
                                ::backup/aws-secret-access-key
@@ -80,10 +84,10 @@
               (postgres/generate-deployment resolved-config)
               (postgres/generate-service resolved-config)]
              (forgejo/config resolved-config)
+             (when (contains? config :runner-id)
+               (runner/config resolved-config))
              (ing/config-objects (merge
-                                  {:service-name "forgejo-service"
-                                   :service-port 3000
-                                   :fqdns [fqdn]
+                                  {:fqdns [fqdn]
                                    :average-rate max-rate
                                    :burst-rate max-concurrent-requests
                                    :namespace namespace}
@@ -107,6 +111,8 @@
             (ns/generate resolved-config)
             [(postgres/generate-secret resolved-config auth)]
             (forgejo/auth config auth)
+            (when (contains? config :runner-id)
+              (runner/auth auth))
             (when (contains? resolved-config :restic-repository)
               (backup/auth-objects resolved-config auth))
             (when (contains? resolved-config :mon-cfg)

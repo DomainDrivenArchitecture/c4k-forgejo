@@ -1,12 +1,11 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: forgejo-service
+  name: SERVICE_NAME # forgejo-service
   namespace: forgejo
 spec:
   selector:
     app: forgejo
   ports:
     - name: forgejo-http
-      port: 3000
-
+      port: SERVICE_PORT # 3000

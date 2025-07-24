@@ -30,7 +30,6 @@ def initialize(project):
         "release_artifacts": [
             "target/graalvm/" + name,
             "target/uberjar/" + name + "-standalone.jar",
-            "target/frontend-build/" + name + ".js",
         ],
     }
     
@@ -44,12 +43,6 @@ def test_clj(project):
 
 
 @task
-def test_cljs(project):
-    run("shadow-cljs compile test", shell=True, check=True)
-    run("node target/node-tests.js", shell=True, check=True)
-
-
-@task
 def test_schema(project):
     run("lein uberjar", shell=True, check=True)
     run(
@@ -57,37 +50,6 @@ def test_schema(project):
         + "src/test/resources/forgejo-test/valid-config.yaml "
         + "src/test/resources/forgejo-test/valid-auth.yaml | "
         + """kubeconform --kubernetes-version 1.23.0 --strict --skip "Certificate,Middleware" -""",
-        shell=True,
-        check=True,
-    )
-
-
-@task
-def report_frontend(project):
-    run("mkdir -p target/frontend-build", shell=True, check=True)
-    run(
-        "shadow-cljs run shadow.cljs.build-report frontend target/frontend-build/build-report.html",
-        shell=True,
-        check=True,
-    )
-
-
-@task
-def package_frontend(project):
-    run("mkdir -p target/frontend-build", shell=True, check=True)
-    run("shadow-cljs release frontend", shell=True, check=True)
-    run(
-        "cp public/js/main.js target/frontend-build/" + project.name + ".js",
-        shell=True,
-        check=True,
-    )
-    run(
-        "sha256sum target/frontend-build/c4k-forgejo.js > target/frontend-build/" + project.name + ".js.sha256",
-        shell=True,
-        check=True,
-    )
-    run(
-        "sha512sum target/frontend-build/c4k-forgejo.js > target/frontend-build/" + project.name + ".js.sha512",
         shell=True,
         check=True,
     )
@@ -229,6 +191,5 @@ def linttest(project, release_type):
     build = get_devops_build(project)
     build.update_release_type(release_type)
     test_clj(project)
-    test_cljs(project)
     test_schema(project)
     lint(project)

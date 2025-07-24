@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forgejo-runner-config
+  namespace: forgejo
+  labels:
+    app: forgejo-runner
+data:
+  config.yaml: |-
+    # The level of logging, can be trace, debug, info, warn, error, fatal
+    log:
+      level: info
+      job_level: info
+
+    runner:
+      file: .runner # the registration result.
+      capacity: 1 # Execute how many tasks concurrently at the same time.
+      envs: # Extra environment variables to run jobs.
+        DOCKER_HOST: tcp://localhost:2376
+        DOCKER_TLS_VERIFY: 0
+        DOCKER_CERT_PATH: /certs/client
+      env_file: .env
+      timeout: 1h # The timeout for a job to be finished.
+      shutdown_timeout: 5m # timeout after cancelling a job
+      insecure: false
+      fetch_timeout: 5s
+      fetch_interval: 2s
+      report_interval: 1s
+      # The labels of a runner are used to determine which jobs the runner can run, and how to run them.
+      # Like: ["macos-arm64:host", "ubuntu-latest:docker://node:20-bookworm", "ubuntu-22.04:docker://node:20-bookworm"]
+      # If it's empty when registering, it will ask for inputting labels.
+      # If it's empty when executing the `daemon`, it will use labels in the `.runner` file.
+      labels: ["ubuntu-latest:docker://ubuntu:latest"]
+
+    cache:
+      enabled: true
+      dir: "" # If it's empty, the cache data will be stored in $HOME/.cache/actcache.
+      host: "" # It's not for the address to listen, but the address to connect from job containers.
+      port: 0 # 0 means to use a random available port.
+      proxy_port: 0 # 0 means to use a random available port.
+      external_server: "" # If it's specified, it will be used to set the ACTIONS_CACHE_URL environment variable. The URL should generally end with "/".
+      secret: "" # When using an external cache server it is required to set the same secret for the runner and the cache server.
+      actions_cache_url_override: "" # This should only be used if the runner host is not reachable from the workflow containers, and requires further setup.
+
+    container:
+      network: host # Could be host, bridge or the name of a custom network.
+      enable_ipv6: false # Whether to create networks with IPv6 enabled. Requires the Docker daemon to be set up accordingly. Only takes effect if "network" is set to "".
+      privileged: false # Whether to use privileged mode or not when launching task containers (privileged mode is required for Docker-in-Docker).
+      options: # And other options to be used when the container is started (eg, --volume /etc/ssl/certs:/etc/ssl/certs:ro).
+        -v /certs/client:/certs/client
+      workdir_parent: # If it's empty, /workspace will be used.
+      valid_volumes:
+          - /certs/client
+      docker_host: "-"
+      force_pull: false
+      force_rebuild: false
+
+    host:
+      # The parent directory of a job's working directory.
+      workdir_parent: # If it's empty, $HOME/.cache/act/ will be used.
+  runner-id: RUNNER_ID
