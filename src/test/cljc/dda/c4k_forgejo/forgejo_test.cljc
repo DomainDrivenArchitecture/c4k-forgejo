@@ -1,7 +1,6 @@
 (ns dda.c4k-forgejo.forgejo-test
   (:require
-   #?(:clj [clojure.test :refer [deftest is are testing run-tests]]
-      :cljs [cljs.test :refer-macros [deftest is are testing run-tests]])
+   [clojure.test :refer [deftest is are testing run-tests]]
    [clojure.spec.test.alpha :as st]
    [clojure.spec.alpha :as s]
    [dda.c4k-common.test-helper :as th]
@@ -14,7 +13,10 @@
 (st/instrument `cut/generate-secrets)
 
 (def config {:default-app-name "test forgejo"
+             :runner-id "test-runner"
              :federation-enabled "true"
+             :service-name "forgejo-service"
+             :service-port 3000
              :sso-mode :none
              :fqdn "test.com"
              :mailer-from "test@test.com"
@@ -36,8 +38,6 @@
   (is (= "test.com"
          (get-in (cut/dynamic-config config)
                  [:service-domain-whitelist]))))
-
-
 
 (deftest should-generate-appini-env
   (is (= {:APP_NAME "test forgejo",
@@ -107,49 +107,54 @@
          (get-in (cut/generate-appini-env (merge config {:sso-mode :keycloak-additional}))
                  [:data :FORGEJO__service__REGISTER_EMAIL_CONFIRM]))))
 
-      (deftest should-generate-deployment
-        (testing "non-federated"
-          (is (= {:apiVersion "apps/v1",
-                  :kind "Deployment",
-                  :metadata {:name "forgejo", :namespace "forgejo", :labels {:app "forgejo"}},
-                  :spec
-                  {:replicas 1,
-                   :selector {:matchLabels {:app "forgejo"}},
-                   :template
-                   {:metadata {:name "forgejo", :labels {:app "forgejo"}},
-                    :spec
-                    {:containers
-                     [{:name "forgejo",
-                       :image "codeberg.org/forgejo/forgejo:8.0.3",
-                       :imagePullPolicy "IfNotPresent",
-                       :envFrom [{:configMapRef {:name "forgejo-env"}} 
-                                 {:configMapRef {:name "system-env"}}
-                                 {:secretRef {:name "forgejo-secrets"}}],
-                       :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}
-                                      {:name "system-file",
-                                       :mountPath "/etc/ssh/sshd_config.d/sshd-config.conf",
-                                       :subPath "sshd-config.conf",
-                                       :readOnly true}],
-                       :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
-                     :volumes [{:name "forgejo-data-volume", 
-                                :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}
-                               {:name "system-file",
-                                :configMap {:name "system-file"}}]}}}}
-                 (cut/generate-deployment config)))))
+(deftest should-generate-deployment
+  (testing "non-federated"
+    (is (= {:apiVersion "apps/v1",
+            :kind "Deployment",
+            :metadata {:name "forgejo", :namespace "forgejo", :labels {:app "forgejo"}},
+            :spec
+            {:replicas 1,
+             :selector {:matchLabels {:app "forgejo"}},
+             :template
+             {:metadata {:name "forgejo", :labels {:app "forgejo"}},
+              :spec
+              {:containers
+               [{:name "forgejo",
+                 :image "codeberg.org/forgejo/forgejo:8.0.3",
+                 :imagePullPolicy "IfNotPresent",
+                 :envFrom [{:configMapRef {:name "forgejo-env"}}
+                           {:configMapRef {:name "system-env"}}
+                           {:secretRef {:name "forgejo-secrets"}}],
+                 :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}
+                                {:name "system-file",
+                                 :mountPath "/etc/ssh/sshd_config.d/sshd-config.conf",
+                                 :subPath "sshd-config.conf",
+                                 :readOnly true}],
+                 :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
+               :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}
+                         {:name "system-file",
+                          :configMap {:name "system-file"}}]}}}}
+           (cut/generate-deployment config)))))
 
-      (deftest should-generate-secret
-        (is (= {:data
-                {
-                 :FORGEJO__database__PASSWD "cGctcGFzcw==",
-                 :FORGEJO__database__USER "cGctdXNlcg==",
-                 :FORGEJO__mailer__PASSWD "bWFpbGVyLXB3",
-                 :FORGEJO__mailer__USER "bWFpbGVyLXVzZXI=",
-                 :FORGEJO__security__SECRET_KEY "c2VjcmV0LWtleQ=="},
-                :metadata {:name "forgejo-secrets", :namespace "forgejo"},
-                :kind "Secret",
-                :apiVersion "v1"}
-               (cut/generate-secret {:postgres-db-user "pg-user"
-                                     :postgres-db-password "pg-pass"
-                                     :mailer-user "mailer-user"
-                                     :mailer-pw "mailer-pw"
-                                     :secret-key "secret-key"}))))
+(deftest should-generate-service
+  (is (= {:kind "Service",
+          :apiVersion "v1",
+          :metadata {:name "forgejo-service", :namespace "forgejo"},
+          :spec {:selector {:app "forgejo"}, :ports [{:name "forgejo-http", :port 3000}]}}
+         (cut/generate-service config))))
+
+(deftest should-generate-secret
+  (is (= {:data
+          {:FORGEJO__database__PASSWD "cGctcGFzcw==",
+           :FORGEJO__database__USER "cGctdXNlcg==",
+           :FORGEJO__mailer__PASSWD "bWFpbGVyLXB3",
+           :FORGEJO__mailer__USER "bWFpbGVyLXVzZXI=",
+           :FORGEJO__security__SECRET_KEY "c2VjcmV0LWtleQ=="},
+          :metadata {:name "forgejo-secrets", :namespace "forgejo"},
+          :kind "Secret",
+          :apiVersion "v1"}
+         (cut/generate-secret {:postgres-db-user "pg-user"
+                               :postgres-db-password "pg-pass"
+                               :mailer-user "mailer-user"
+                               :mailer-pw "mailer-pw"
+                               :secret-key "secret-key"}))))

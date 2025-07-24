@@ -16,26 +16,6 @@ or with packages from https://code.visualstudio.com/Download
 
 install extension "Calva: Clojure & ClojureScript Interactive Programming"
 
-## cljs / js-dev setup
-
-```
-sudo apt install npm
-sudo npm install -g npx
-
-# maybe
-sudo npm install -g shadow-cljs
-
-# in project root to retrieve all dependencies
-npm install --ignore-scripts
-npx shadow-cljs compile test
-```
-
-### create frontend script
-
-```
-npx shadow-cljs release frontend
-```
-
 ## graalvm-setup
 
 ```

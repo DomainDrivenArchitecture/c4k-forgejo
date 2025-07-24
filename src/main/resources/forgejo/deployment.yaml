@@ -38,7 +38,7 @@ spec:
           ports:
             - containerPort: 22
               name: git-ssh
-            - containerPort: 3000
+            - containerPort: SERVICE_PORT
               name: forgejo
       volumes:
         - name: forgejo-data-volume

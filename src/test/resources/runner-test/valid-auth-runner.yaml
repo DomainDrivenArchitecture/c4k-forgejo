@@ -1,0 +1,13 @@
+postgres-db-user: "forgejo"
+postgres-db-password: "forgejo-db-password"
+mailer-user: ""
+mailer-pw: ""
+secret-key: ""
+aws-access-key-id: "AWS_KEY_ID"
+aws-secret-access-key: "AWS_KEY_SECRET"
+restic-password: "old"
+restic-new-password: "new"
+runner-token: "adfd4534d45dd6ef549"
+mon-auth: 
+  remote-write-user: "user"
+  remote-write-password: "password"

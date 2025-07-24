@@ -1,0 +1,17 @@
+default-app-name: "Meissas awesome forgejo"
+fqdn: "test.de"
+issuer: "staging"
+runner-id: "forgejo-runner"
+mailer-from: "test@test.de"
+mailer-host: "test.de"
+mailer-port: "123"
+service-whitelist-domains: "test.de"
+service-noreply-address: "noreply@test.de"
+volume-total-storage-size: 6
+restic-repository: "repo-path"
+deploy-federated: "false"
+mon-cfg: 
+  cluster-name: "forgejo"
+  cluster-stage: "test"
+  mode: 
+    remote-write-url: "url-for-your-prom-remote-write-endpoint"

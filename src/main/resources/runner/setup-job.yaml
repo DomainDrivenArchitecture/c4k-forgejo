@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job 
+metadata:
+  name: forgejo-setup-job
+  namespace: forgejo
+spec:
+  backoffLimit: 15
+  template:
+    spec:
+      containers:
+      - name: forgejo
+        image: IMAGE_NAME
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: forgejo-env
+        - secretRef:
+            name: forgejo-secrets
+        volumeMounts:
+        - name: forgejo-data-volume
+          mountPath: /data
+        command:
+        - /bin/bash
+        - -c
+        args:
+        - |
+          while [[ $(curl -k -s -i ${FORGEJO_INSTANCE_URL}/api/v1/version | grep -o "200") != "200" ]]; do sleep 5; echo 'Waiting for forgejo...'; done
+          echo "Registering the runner"
+          su -c "forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}" git
+        env:
+        - name: RUNNER_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: forgejo-runner-config
+              key: runner-id
+        - name: RUNNER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: runner-secret
+              key: token
+        - name: FORGEJO_INSTANCE_URL
+          value: FORGEJO_SERVICE_URL
+      restartPolicy: OnFailure
+      volumes:
+      - name: forgejo-data-volume
+        persistentVolumeClaim:
+          claimName: forgejo-data-pvc
