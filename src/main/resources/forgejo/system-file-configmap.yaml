@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: system-file
+  namespace: forgejo
+data:
+  sshd-config.conf: |
+    LoginGraceTime 0
+    PerSourcePenalties no

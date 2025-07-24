@@ -5,7 +5,7 @@ metadata:
   namespace: forgejo
   annotations: 
     metallb.universe.tf/allow-shared-ip: "shared-ip-service-group"
-    metallb.universe.tf/address-pool: public
+    metallb.universe.tf/address-pool: "public"
 spec:
   type: LoadBalancer
   ipFamilies:

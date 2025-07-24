@@ -2,9 +2,6 @@
   (:require
    [clojure.test :refer [deftest is are testing run-tests]]
    [clojure.spec.test.alpha :as st]
-   [clojure.spec.alpha :as s]
-   [dda.c4k-common.test-helper :as th]
-   [dda.c4k-common.base64 :as b64]
    [dda.c4k-forgejo.forgejo :as cut]))
 
 (st/instrument `cut/dynamic-config)
@@ -24,9 +21,7 @@
              :mailer-port "456"
              :service-noreply-address "noreply@test.com"
              :forgejo-image "codeberg.org/forgejo/forgejo:8.0.3"
-             :volume-total-storage-size 50
-             :max-rate 100,
-             :max-concurrent-requests 150})
+             :volume-total-storage-size 50})
 
 (deftest should-enhance-config-dynamic
   (is (= "86400"
@@ -122,10 +117,18 @@
                [{:name "forgejo",
                  :image "codeberg.org/forgejo/forgejo:8.0.3",
                  :imagePullPolicy "IfNotPresent",
-                 :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
-                 :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
+                 :envFrom [{:configMapRef {:name "forgejo-env"}}
+                           {:configMapRef {:name "system-env"}}
+                           {:secretRef {:name "forgejo-secrets"}}],
+                 :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}
+                                {:name "system-file",
+                                 :mountPath "/etc/ssh/sshd_config.d/sshd-config.conf",
+                                 :subPath "sshd-config.conf",
+                                 :readOnly true}],
                  :ports [{:containerPort 22, :name "git-ssh"} {:containerPort 3000, :name "forgejo"}]}],
-               :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
+               :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}
+                         {:name "system-file",
+                          :configMap {:name "system-file"}}]}}}}
            (cut/generate-deployment config)))))
 
 (deftest should-generate-service

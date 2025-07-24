@@ -8,6 +8,7 @@ name = 'c4k-forgejo'
 MODULE = 'not-used'
 PROJECT_ROOT_PATH = '.'
 
+
 @init
 def initialize(project):
     project.build_depends_on("ddadevops>=4.7.0")
@@ -131,11 +132,11 @@ def upload_clj(project):
 
 @task
 def lint(project):
-    #run(
-    #    "lein eastwood",
-    #    shell=True,
-    #    check=True,
-    #)
+    run(
+       "lein eastwood",
+       shell=True,
+       check=True,
+    )
     run(
         "lein ancient check",
         shell=True,
@@ -177,10 +178,12 @@ def tag(project):
     build = get_devops_build(project)
     build.tag_bump_and_push_release()
 
+
 @task
 def publish_artifacts(project):
     build = get_devops_build(project)
     build.publish_artifacts()
+
 
 def release(project):
     prepare(project)

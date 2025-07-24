@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: system-env
+  namespace: forgejo
+data:
+  SSH_INCLUDE_FILE: '/etc/ssh/sshd_config.d/*.conf'

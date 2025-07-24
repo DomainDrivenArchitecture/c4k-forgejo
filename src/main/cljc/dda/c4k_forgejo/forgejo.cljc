@@ -7,7 +7,8 @@
    [dda.c4k-common.common :as cm]
    [dda.c4k-common.base64 :as b64]
    [dda.c4k-common.predicate :as pred]
-   [dda.c4k-common.postgres :as postgres]))
+   [dda.c4k-common.postgres :as postgres]
+   [dda.c4k-common.namespace :as nspace]))
 
 (defn domain-list?
   [input]
@@ -42,8 +43,6 @@
 (s/def ::mailer-pw string?)
 (s/def ::issuer pred/letsencrypt-issuer?)
 (s/def ::volume-total-storage-size (partial pred/int-gt-n? 5))
-(s/def ::max-rate int?)
-(s/def ::max-concurrent-requests int?)
 
 (s/def ::session-lifetime pred/bash-env-string?)
 (s/def ::allow-only-external-registration pred/bash-env-string?)
@@ -57,9 +56,7 @@
                                  ::mailer-host
                                  ::mailer-port
                                  ::service-noreply-address
-                                 ::volume-total-storage-size
-                                 ::max-rate
-                                 ::max-concurrent-requests]
+                                 ::volume-total-storage-size]
                         :opt-un [::issuer
                                  ::federation-enabled                                 
                                  ::service-domain-whitelist]))
@@ -120,6 +117,16 @@
      (cm/replace-all-matching "NOREPLY" service-noreply-address)
      (cm/replace-all-matching "IS_FEDERATED" federation-enabled))))
 
+(defn-spec system-env map?
+  [config ::config]
+  (let [{:keys [namespace]} (dynamic-config config)]
+    (nspace/load-and-adjust-namespace "forgejo/system-env-configmap.yaml" namespace)))
+
+(defn-spec system-file map?
+  [config ::config]
+  (let [{:keys [namespace]} (dynamic-config config)]
+     (nspace/load-and-adjust-namespace "forgejo/system-file-configmap.yaml" namespace)))
+
 (defn-spec generate-secret map?
   [auth ::auth]
   (let [{:keys [postgres-db-user
@@ -164,11 +171,13 @@
 
 (defn-spec config seq?
   [config ::config]
-  [(generate-deployment config)
-   (generate-service config)
-   (generate-service-ssh)
+  [(system-env config)
+   (system-file config)
+   (generate-appini-env config)
    (generate-data-volume config)
-   (generate-appini-env config)])
+   (generate-deployment config)
+   (generate-service config)
+   (generate-service-ssh)])
 
 (defn-spec auth seq?
   [config ::config
