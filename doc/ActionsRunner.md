@@ -1,6 +1,12 @@
 # Forgejo Runner Setup & Config
 
-## Caveats
+## Actions
+
+### Secrets
+
+See secrets documentation here: https://forgejo.org/docs/latest/user/actions/basic-concepts/#secrets
+
+### Caveats
 
 * When the workflow file is invalid, there will be no error shown on the forgejo web-ui. Instead the workflow will just not appear on push. Errors can be followed in the forgejo logs though.
 
@@ -13,7 +19,7 @@
         workflow_dispatch:
     ```
 
-## Getting actions
+### Getting actions
 
 Actions code is hosted [here](https://code.forgejo.org/actions).
 ```yaml
@@ -35,11 +41,13 @@ jobs:
         uses: https://data.forgejo.org/actions/checkout@v4
 ```
 
-## Runner Installation
+## Runner
+
+### Runner Installation
 
 We use the install [via OCI Image](https://forgejo.org/docs/v11.0/admin/actions/runner-installation/).
 
-## Runner Registration
+### Runner Registration
 
 Two registration steps need to be done:
 
@@ -59,12 +67,12 @@ Two registration steps need to be done:
 
 Configuration [via configmap](https://code.forgejo.org/forgejo/runner/issues/132#issuecomment-4848)
 
-## Automated Runner Setup
+### Automated Runner Setup
 
 Is done by a kubernetes batch job. The forgejo pod needs to run for a bit to finish setup.
 So a setup-job for the runner itself tries registration in its own pod with forgejo data volumes mounted is used. This way there is no need to programatically alter the main deployment, we just start this job when needed and after successful finish the runner will pick up connection to the forgejo pod.
 
-## Runner Deployment Internal Architecture
+### Runner Deployment Internal Architecture
 
 ```mermaid
 block-beta
@@ -87,7 +95,7 @@ block-beta
     Pod -- "hosts" --> c2
 ```
 
-## Links
+### Links
 
 - Labels: https://forgejo.org/docs/latest/admin/actions/#choosing-labels
 - Runner Config: https://forgejo.org/docs/next/admin/runner-installation/#configuration
