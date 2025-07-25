@@ -2,6 +2,41 @@
 
 ## Actions
 
+### Caveats
+
+* When the workflow file is invalid, there will be no error shown on the forgejo web-ui. Instead the workflow will just not appear on push. Errors can be followed in the forgejo logs though.
+
+* The workflow file needs to exist on main to be picked up, even for branches and it needs to have triggers
+  * ```yaml
+    name: build-website
+    on:
+        pull_request:
+        push:
+        workflow_dispatch:
+    ```
+
+### Getting actions
+
+Actions code is hosted [here](https://code.forgejo.org/actions).
+```yaml
+#Example:
+name: build-website
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    container:
+      image: 'node:24.4'
+    steps:
+      - name: checkout-code
+        uses: https://data.forgejo.org/actions/checkout@v4
+```
+
 ### Secrets & Variables
 
 Secrets and variables can be set on different levels:
@@ -37,40 +72,10 @@ jobs:
             echo "${TOKEN}" > ~/.token
 ```
 
-### Caveats
+## Uploading Artifacts
 
-* When the workflow file is invalid, there will be no error shown on the forgejo web-ui. Instead the workflow will just not appear on push. Errors can be followed in the forgejo logs though.
-
-* The workflow file needs to exist on main to be picked up, even for branches and it needs to have triggers
-  * ```yaml
-    name: build-website
-    on:
-        pull_request:
-        push:
-        workflow_dispatch:
-    ```
-
-### Getting actions
-
-Actions code is hosted [here](https://code.forgejo.org/actions).
-```yaml
-#Example:
-name: build-website
-
-on:
-  pull_request:
-  push:
-  workflow_dispatch:
-
-jobs:
-  build-site:
-    runs-on: ubuntu-latest
-    container:
-      image: 'node:24.4'
-    steps:
-      - name: checkout-code
-        uses: https://data.forgejo.org/actions/checkout@v4
-```
+See here: https://forgejo.org/docs/latest/user/packages/generic/
+In the generic case, this is only a curl command with authentication.
 
 ## Runner
 
