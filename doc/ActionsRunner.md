@@ -1,8 +1,31 @@
 # Forgejo Runner Setup & Config
 
+## Caveats
+
+When the workflow file is invalid, there will be no error shown on the forgejo web-ui. 
+Instead the workflow will just not appear on push. Errors can be followed in the forgejo logs though.
+
 ## Getting actions
 
 Actions code is hosted [here](https://code.forgejo.org/actions).
+```yaml
+#Example:
+name: build-website
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    container:
+      image: 'node:24.4'
+    steps:
+      - name: checkout-code
+        uses: https://data.forgejo.org/actions/checkout@v4
+```
 
 ## Runner Installation
 
