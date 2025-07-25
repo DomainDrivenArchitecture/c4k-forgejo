@@ -4,7 +4,14 @@
 
 * When the workflow file is invalid, there will be no error shown on the forgejo web-ui. Instead the workflow will just not appear on push. Errors can be followed in the forgejo logs though.
 
-* The workflow file needs to exist on main to be picked up, even for branches
+* The workflow file needs to exist on main to be picked up, even for branches and it needs to have triggers
+  * ```yaml
+    name: build-website
+    on:
+        pull_request:
+        push:
+        workflow_dispatch:
+    ```
 
 ## Getting actions
 
