@@ -1,5 +1,9 @@
 # Forgejo Runner Setup & Config
 
+## Getting actions
+
+Actions code is hosted [here](https://code.forgejo.org/actions).
+
 ## Runner Installation
 
 We use the install [via OCI Image](https://forgejo.org/docs/v11.0/admin/actions/runner-installation/).
