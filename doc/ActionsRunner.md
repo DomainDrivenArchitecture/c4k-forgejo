@@ -2,9 +2,40 @@
 
 ## Actions
 
-### Secrets
+### Secrets & Variables
+
+Secrets and variables can be set on different levels:
+* Repo
+* Owner
+* Org
+
+They can always be found in the settings under Runner.
 
 See secrets documentation here: https://forgejo.org/docs/latest/user/actions/basic-concepts/#secrets
+
+```yaml
+# Accessing secrets and vars example
+name: build-website
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    container:
+      image: 'node:24.4'
+    steps:
+      - name: build
+        env:
+          USER: ${{ vars.WEBSITE_USER }}
+          TOKEN: ${{ secrets.WEBSITE_USER_TOKEN }}
+        run: |
+            echo "Hi, ${USER} placing your token ..."
+            echo "${TOKEN}" > ~/.token
+```
 
 ### Caveats
 
