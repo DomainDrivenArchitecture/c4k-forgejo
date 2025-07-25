@@ -15,6 +15,8 @@
         workflow_dispatch:
     ```
 
+* If the token does not have the correct access rights, uploading a package may fail silently (due to curl not failing on auth errors)
+
 ### Getting actions
 
 Actions code is hosted [here](https://code.forgejo.org/actions).
