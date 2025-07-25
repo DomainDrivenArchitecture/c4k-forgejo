@@ -88,7 +88,7 @@
              (when (contains? resolved-config :restic-repository)
                (backup/config-objects resolved-config))
              (when (contains? resolved-config :mon-cfg)
-               (mon/config-objects resolved-config))))))))
+               (mon/config-objects (:mon-cfg resolved-config)))))))))
 
 (defn-spec auth-objects seq?
   [config-select ::config-select
