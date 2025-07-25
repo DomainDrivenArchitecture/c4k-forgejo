@@ -74,10 +74,21 @@ jobs:
             echo "${TOKEN}" > ~/.token
 ```
 
-## Uploading Artifacts
+## Uploading Packages & Artifacts
 
-See here: https://forgejo.org/docs/latest/user/packages/generic/
-In the generic case, this is only a curl command with authentication.
+### Packages
+
+Uploading packages will be done via [respective package manager](https://forgejo.org/docs/v11.0/user/packages/) of the programming language. There is also a [generic package registry](https://forgejo.org/docs/latest/user/packages/generic/) which can be accessed with curl and proper authentication.
+
+Packages are located in the package registry e.g. https://your-forgejo.org/api/packages/repo-owner/generic/package-name/package-version/package.zip (or any other filetype you chose to upload)
+
+### Artifacts
+
+Artifacts can be uploaded with the [upload artifacts action](https://code.forgejo.org/actions/upload-artifact/src/branch/main). Note, that for self hosted runners v3 needs to be used.
+
+See Forgejo relevant info on uploading artifacts here: https://forgejo.org/docs/latest/user/actions/advanced-features/#artifacts
+
+Artifacts are located under the respective pipeline run, e.g. https://your-forgejo.org/meissa/some-repo/actions/runs/24/artifacts/your-artifact
 
 ## Runner
 
