@@ -5,7 +5,7 @@
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
   :dependencies [[org.clojure/clojure "1.12.1" :scope "provided"]
                  [org.clojure/tools.reader "1.5.2"]
-                 [org.domaindrivenarchitecture/c4k-common-clj "12.0.0"]
+                 [org.domaindrivenarchitecture/c4k-common-clj "12.0.1"]
                  [hickory "0.7.1" :exclusions [viebel/codox-klipse-theme]]]
   :target-path "target/%s/"
   :source-paths ["src/main/cljc"

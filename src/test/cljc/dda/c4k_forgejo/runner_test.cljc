@@ -22,7 +22,7 @@
            :imagePullPolicy "IfNotPresent",
            :command ["/bin/bash" "-c"],
            :args
-           ["while ! nc -z localhost 2376 </dev/null ; do\n  echo 'waiting for docker daemon...' ;\n  sleep 5 ;\n  done ;\necho \"Done starting runner, registering\"\nforgejo-runner create-runner-file --secret ${RUNNER_TOKEN} --name ${RUNNER_NAME} --instance ${FORGEJO_INSTANCE_URL};\necho \"=== Conf Dir ===\"\necho $(ls -la /conf)\necho \"Done registering, starting runner\"\nforgejo-runner --config /conf/config.yaml daemon\n"],
+           ["while ! nc -z localhost 2376 </dev/null ; do\n  echo 'Waiting for docker daemon...' ;\n  sleep 5 ;\n  done ;\necho \"Done waiting for docker daemon, registering\"\nforgejo-runner create-runner-file --secret ${RUNNER_TOKEN} --name ${RUNNER_NAME} --instance ${FORGEJO_INSTANCE_URL};\necho \"Done registering, starting runner\"\nforgejo-runner --config /conf/config.yaml daemon\n"],
            :env
            [{:name "DOCKER_HOST", :value "tcp://localhost:2376"}
             {:name "DOCKER_CERT_PATH", :value "/certs/client"}
