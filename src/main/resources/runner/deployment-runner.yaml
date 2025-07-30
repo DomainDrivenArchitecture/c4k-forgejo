@@ -34,13 +34,11 @@ spec:
           args:
             - |
               while ! nc -z localhost 2376 </dev/null ; do
-                echo 'waiting for docker daemon...' ;
+                echo 'Waiting for docker daemon...' ;
                 sleep 5 ;
                 done ;
-              echo "Done starting runner, registering"
+              echo "Done waiting for docker daemon, registering"
               forgejo-runner create-runner-file --secret ${RUNNER_TOKEN} --name ${RUNNER_NAME} --instance ${FORGEJO_INSTANCE_URL};
-              echo "=== Conf Dir ==="
-              echo $(ls -la /conf)
               echo "Done registering, starting runner"
               forgejo-runner --config /conf/config.yaml daemon
           env:
