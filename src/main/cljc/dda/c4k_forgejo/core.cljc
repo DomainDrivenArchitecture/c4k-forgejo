@@ -18,7 +18,7 @@
                       :default-app-name "forgejo instance"
                       :issuer "staging"
                       :federation-enabled "false"
-                      :forgejo-image "codeberg.org/forgejo/forgejo:11.0.2"
+                      :forgejo-image "localhost:forgejo:forgejo-test-dev-undo-like-pr34"
                       :sso-mode :none
                       :db-name "forgejo"
                       :volume-total-storage-size 50
