@@ -29,11 +29,6 @@ spec:
           while [[ $(curl -k -s -i ${FORGEJO_INSTANCE_URL}/api/v1/version | grep -o "200") != "200" ]]; do sleep 5; echo 'Waiting for forgejo...'; done
           echo "Registering the runner"
           su -c "forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}" git
-          echo "Creating certificate for docker daemon and runner"
-          apk add openssl
-          rm -rf /custom-certs/*
-          mkdir -p /custom-certs/client
-          openssl req -newkey rsa:4096 -x509 -sha512 -days 365 -nodes -out /custom-certs/client/cert.pem -keyout /custom-certs/client/ca.pem -subj ${CUSTOM_CERT_SUBJECT}
         env:
         - name: RUNNER_NAME
           valueFrom:
@@ -47,8 +42,6 @@ spec:
               key: token
         - name: FORGEJO_INSTANCE_URL
           value: FORGEJO_SERVICE_URL
-        - name: CUSTOM_CERT_SUBJECT
-          value: CERT_SUBJECT
       restartPolicy: OnFailure
       volumes:
       - name: forgejo-data-volume

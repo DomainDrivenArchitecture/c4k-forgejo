@@ -50,8 +50,7 @@
     (->
      (yaml/load-as-edn "runner/setup-job.yaml")
      (cm/replace-all-matching "IMAGE_NAME" forgejo-image)
-     (cm/replace-all-matching "FORGEJO_SERVICE_URL" (str service-name ":" service-port))
-     (cm/replace-all-matching "CERT_SUBJECT" (str "/CN=" fqdn)))))
+     (cm/replace-all-matching "FORGEJO_SERVICE_URL" (str service-name ":" service-port)))))
 
 (defn-spec generate-volume map?
   []
