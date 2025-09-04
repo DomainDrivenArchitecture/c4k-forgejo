@@ -119,7 +119,8 @@ spec:
               - key: "config.yaml"
                 path: "config.yaml"
         - name: docker-certs
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: runner-cert-pvc
         - name: runner-data
           emptyDir: {}
         - name: tmp

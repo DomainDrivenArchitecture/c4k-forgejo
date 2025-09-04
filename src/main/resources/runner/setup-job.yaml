@@ -19,6 +19,8 @@ spec:
         volumeMounts:
         - name: forgejo-data-volume
           mountPath: /data
+        - name: runner-certs
+          mountPath: /custom-certs
         command:
         - /bin/bash
         - -c
@@ -45,3 +47,6 @@ spec:
       - name: forgejo-data-volume
         persistentVolumeClaim:
           claimName: forgejo-data-pvc
+      - name: runner-certs
+        persistentVolumeClaim:
+          claimName: runner-cert-pvc
