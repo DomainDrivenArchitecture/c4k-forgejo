@@ -9,7 +9,8 @@
 (st/instrument `cut/generate-configmap)
 (st/instrument `cut/generate-secrets)
 
-(def config {:runner-id "runner"
+(def config {:fqdn "test.example.de"
+             :runner-id "runner"
              :service-name "service"
              :service-port 3000
              :forgejo-image "codeberg.org/forgejo/forgejo:8.0.3"})
@@ -81,14 +82,15 @@
                  :image "codeberg.org/forgejo/forgejo:8.0.3",
                  :imagePullPolicy "IfNotPresent",
                  :envFrom [{:configMapRef {:name "forgejo-env"}} {:secretRef {:name "forgejo-secrets"}}],
-                 :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"}],
+                 :volumeMounts [{:name "forgejo-data-volume", :mountPath "/data"} {:name "runner-certs", :mountPath "/custom-certs"}],
                  :command ["/bin/bash" "-c"],
                  :args
-                 ["while [[ $(curl -k -s -i ${FORGEJO_INSTANCE_URL}/api/v1/version | grep -o \"200\") != \"200\" ]]; do sleep 5; echo 'Waiting for forgejo...'; done\necho \"Registering the runner\"\nsu -c \"forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}\" git\n"],
+                 ["while [[ $(curl -k -s -i ${FORGEJO_INSTANCE_URL}/api/v1/version | grep -o \"200\") != \"200\" ]]; do sleep 5; echo 'Waiting for forgejo...'; done\necho \"Registering the runner\"\nsu -c \"forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}\" git\necho \"Creating certificate for docker daemon and runner\"\nmkdir -p /custom-certs/client\nopenssl req -newkey rsa:4096 -x509 -sha512 -days 365 -nodes -out /custom-certs/client/custom-cert.pem -keyout /custom-certs/custom-cert-priv.pem -subj ${CUSTOM_CERT_SUBJECT}\n"],
                  :env
                  [{:name "RUNNER_NAME", :valueFrom {:configMapKeyRef {:name "forgejo-runner-config", :key "runner-id"}}}
                   {:name "RUNNER_TOKEN", :valueFrom {:secretKeyRef {:name "runner-secret", :key "token"}}}
-                  {:name "FORGEJO_INSTANCE_URL", :value "service:3000"}]}],
+                  {:name "FORGEJO_INSTANCE_URL", :value "service:3000"}
+                  {:name "CUSTOM_CERT_SUBJECT", :value "/CN=test.example.de"}]}],
                :restartPolicy "OnFailure",
-               :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}}]}}}}
+               :volumes [{:name "forgejo-data-volume", :persistentVolumeClaim {:claimName "forgejo-data-pvc"}} {:name "runner-certs", :persistentVolumeClaim {:claimName "runner-cert-pvc"}}]}}}}
            (cut/generate-setup-job config)))))
