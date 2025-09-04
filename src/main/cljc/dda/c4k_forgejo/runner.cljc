@@ -45,11 +45,17 @@
   [config ::config]
   (let [{:keys [forgejo-image
                 service-name
-                service-port]} config]
+                service-port
+                fqdn]} config]
     (->
      (yaml/load-as-edn "runner/setup-job.yaml")
      (cm/replace-all-matching "IMAGE_NAME" forgejo-image)
-     (cm/replace-all-matching "FORGEJO_SERVICE_URL" (str service-name ":" service-port)))))
+     (cm/replace-all-matching "FORGEJO_SERVICE_URL" (str service-name ":" service-port))
+     (cm/replace-all-matching "CERT_SUBJECT" (str "/CN=" fqdn)))))
+
+(defn-spec generate-volume map?
+  []
+  (yaml/load-as-edn "runner/cert-volume.yaml"))
 
 (defn-spec generate-service map?
   []
@@ -59,6 +65,7 @@
   [config ::config]
   [(generate-deployment config)
    (generate-setup-job config)
+   (generate-volume)
    (generate-service)
    (generate-configmap config)])
 
