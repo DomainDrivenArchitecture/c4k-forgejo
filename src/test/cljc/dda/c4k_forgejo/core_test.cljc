@@ -27,7 +27,7 @@
            (yaml/load-as-edn "forgejo-test/valid-auth.yaml"))))))
 
 (deftest test-whole-generation-with-runner
-  (is (= 42
+  (is (= 43
          (count
           (cut/config-objects []
                               (yaml/load-as-edn "runner-test/valid-config-runner.yaml")))))
