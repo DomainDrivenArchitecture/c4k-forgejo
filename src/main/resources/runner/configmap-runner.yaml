@@ -15,10 +15,6 @@ data:
     runner:
       file: .runner # the registration result.
       capacity: 1 # Execute how many tasks concurrently at the same time.
-      envs: # Extra environment variables to run jobs.
-        DOCKER_HOST: tcp://localhost:2376
-        DOCKER_TLS_VERIFY: 0
-        DOCKER_CERT_PATH: /certs/client
       env_file: .env
       timeout: 1h # The timeout for a job to be finished.
       shutdown_timeout: 5m # timeout after cancelling a job
