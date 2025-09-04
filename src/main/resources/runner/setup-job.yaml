@@ -30,8 +30,10 @@ spec:
           echo "Registering the runner"
           su -c "forgejo forgejo-cli actions register --name ${RUNNER_NAME} --secret ${RUNNER_TOKEN}" git
           echo "Creating certificate for docker daemon and runner"
+          apk add openssl
+          rm -rf /custom-certs/*
           mkdir -p /custom-certs/client
-          openssl req -newkey rsa:4096 -x509 -sha512 -days 365 -nodes -out /custom-certs/client/custom-cert.pem -keyout /custom-certs/custom-cert-priv.pem -subj ${CUSTOM_CERT_SUBJECT}
+          openssl req -newkey rsa:4096 -x509 -sha512 -days 365 -nodes -out /custom-certs/client/cert.pem -keyout /custom-certs/client/ca.pem -subj ${CUSTOM_CERT_SUBJECT}
         env:
         - name: RUNNER_NAME
           valueFrom:
